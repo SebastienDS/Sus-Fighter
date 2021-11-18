@@ -34,7 +34,7 @@ public class Duel implements Displayable {
         var player1 = players.get(0);
         var player2 = players.get(1);
         var needFlip = player1.needFlip(player2);
-        players.stream().forEach(player -> player.update(needFlip));
+        players.stream().forEach(player -> player.update(needFlip, map.getFloorHeight()));
     }
 
     @Override

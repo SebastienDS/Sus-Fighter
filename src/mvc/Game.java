@@ -43,14 +43,15 @@ public class Game implements Runnable {
 
         var players = List.of(
             new Player("Player 1", new Coordinate(50, 50), Element.WATER, command1,
-                    Path.of("resources", "images", "character", "DarkShadowRedDragonXxX.png"), false),
+                    Path.of("resources", "images", "character", "red"), false),
             new Player("Player 2", new Coordinate(200, 50), Element.FIRE, command2,
-                    Path.of("resources", "images", "character", "DarkShadowPurplePhoenixXxX.png"), true)
+                    Path.of("resources", "images", "character", "purple"), true)
         );
 
         players.stream().forEach(p -> display.addKeyListener(p));
 
-        var map = new Map(Path.of("resources","images", "map", "XxXAmongUwUXxX.jpg"), Element.WATER, new ArrayList<>());
+        var map = new Map(Path.of("resources","images", "map", "XxXAmongUwUXxX.jpg"),
+                Element.WATER, new ArrayList<>(), 0.9 * display.getHeight());
 
         duel = new Duel(players, map, Optional.empty());
     }

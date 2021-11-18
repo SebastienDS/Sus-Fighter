@@ -4,9 +4,11 @@ import mvc.Display;
 
 import java.awt.*;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ImagePlayer {
 
@@ -18,10 +20,14 @@ public class ImagePlayer {
     private final HashMap<ImageKey, Image> images;
 
     public ImagePlayer(Path directory) throws IOException {
+        Objects.requireNonNull(directory);
         images = new HashMap<>();
-        var image = ImageManager.resize(ImageManager.loadImage(Objects.requireNonNull(directory)), 150, 300);
-        images.put(ImageKey.IDLE, image);
-        images.put(ImageKey.IDLE_FLIPPED, ImageManager.flip(image));
+        for (var path : Files.list(directory).collect(Collectors.toList())) {
+            var image = ImageManager.resize(ImageManager.loadImage(path), 150, 300);
+            var name = path.getFileName().toString().replaceFirst("[.][^.]+$", "");
+            images.put(ImageKey.valueOf(name), image);
+            images.put(ImageKey.valueOf(name + "_FLIPPED"), ImageManager.flip(image));
+        }
     }
 
 

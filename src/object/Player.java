@@ -21,9 +21,10 @@ public class Player implements KeyListener, Displayable {
     private final Command command;
     private final ImagePlayer images;
     private boolean isFlipped;
+    private boolean jump;
 
-    private int dx = 0;
-    private int dy = 0;
+    private double dx = 0;
+    private double dy = 0;
 
     public Player(String name, Coordinate coordinate, Element element, Command command, Path path, boolean isFlipped) throws IOException {
         this.name = Objects.requireNonNull(name);
@@ -49,8 +50,9 @@ public class Player implements KeyListener, Displayable {
         else if (key == command.get(KeyCode.RIGHT)) {
             dx = 5;
         }
-        else if (key == command.get(KeyCode.UP)) {
-            dy = -5;
+        else if (key == command.get(KeyCode.UP) && !jump) {
+            dy = -50;
+            jump = true;
         }
         else if (key == command.get(KeyCode.DOWN)) {
             dy = 5;
@@ -78,10 +80,14 @@ public class Player implements KeyListener, Displayable {
         g.drawImage(image, coordinate.getX(), coordinate.getY(), null);
     }
 
-    public void update(boolean needFlip) {
-        coordinate.move(dx, dy);
+    public void update(boolean needFlip, double floorHeight) {
+        dy += 0.1;
+        coordinate.move(dx, dy, 0, Display.display().getWidth(), 0, floorHeight);
         if(needFlip) {
             isFlipped = !isFlipped;
+        }
+        if(jump && floorHeight <= coordinate.getY()){
+            jump = !jump;
         }
     }
 

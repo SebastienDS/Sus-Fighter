@@ -1,5 +1,7 @@
 package object;
 
+import mvc.Display;
+
 public class Coordinate {
     private double x;
     private double y;
@@ -17,8 +19,10 @@ public class Coordinate {
         return (int)y;
     }
 
-    public void move(double dx, double dy) {
+    public void move(double dx, double dy, double minX, double maxX, double minY, double maxY) {
         x += dx;
+        x = (((x < minX) ? minX : x) > maxX) ? maxX : x;
         y += dy;
+        y = (y > maxY) ? maxY : y;
     }
 }
