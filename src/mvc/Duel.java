@@ -5,6 +5,7 @@ import object.Map;
 import object.Player;
 import object.WeaponCase;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +21,7 @@ public class Duel {
 
     public Duel(List<Player> players, Map map, Optional<Event> currentEvent) {
         this.players = Objects.requireNonNull(players);
-        this.map = Objects.requireNonNull(map);
+        this.map = map;
         this.currentEvent = Objects.requireNonNull(currentEvent);
         weapons = new ArrayList<>();
 
@@ -29,5 +30,13 @@ public class Duel {
 
     public long time() {
         return System.currentTimeMillis() - startTime;
+    }
+
+    public void update() {
+        players.stream().forEach(p -> p.update());
+    }
+
+    public void display(Graphics g) {
+        players.stream().forEach(p -> p.display(g));
     }
 }

@@ -1,7 +1,18 @@
+package mvc;
+
+
+
+import object.Command;
+import object.Command.KeyCode;
+import object.Coordinate;
+import object.Element;
+import object.Player;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Objects;
+import java.util.List;
+import java.util.Optional;
 
 public class Game implements Runnable {
 
@@ -11,20 +22,37 @@ public class Game implements Runnable {
 
     private Thread thread;
     private boolean running = false;
-    private final Rectangle rect;
-    private int dx = 0;
-    private int dy = 0;
+
+    private Duel duel;
 
     public Game(String title, int width, int height) {
         Objects.requireNonNull(title);
         display = new Display(title, width, height);
 
-        display.addKeyListener(new KeyAdapter());
-        rect = new Rectangle((width + 50) / 2, (height + 50) / 2, 50, 50);
+        var command1 = new Command();
+        command1.addKeyCode(KeyCode.LEFT, KeyEvent.VK_Q)
+                .addKeyCode(KeyCode.RIGHT, KeyEvent.VK_D)
+                .addKeyCode(KeyCode.UP, KeyEvent.VK_Z)
+                .addKeyCode(KeyCode.DOWN, KeyEvent.VK_S);
+
+        var command2 = new Command();
+        command2.addKeyCode(KeyCode.LEFT, KeyEvent.VK_LEFT)
+                .addKeyCode(KeyCode.RIGHT, KeyEvent.VK_RIGHT)
+                .addKeyCode(KeyCode.UP, KeyEvent.VK_UP)
+                .addKeyCode(KeyCode.DOWN, KeyEvent.VK_DOWN);
+
+        var players = List.of(
+            new Player("Player 1", new Coordinate(50, 50), Element.WATER, command1),
+            new Player("Player 2", new Coordinate(200, 50), Element.FIRE, command2)
+        );
+
+        players.stream().forEach(p -> display.addKeyListener(p));
+
+        duel = new Duel(players, null, Optional.empty());
     }
 
     private void update() {
-        rect.translate(dx, dy);
+        duel.update();
     }
 
     private void render(Graphics g) {
@@ -33,38 +61,7 @@ public class Game implements Runnable {
 
         g.clearRect(0, 0, w, h);
 
-        g.setColor(Color.BLACK);
-        g.drawRect(rect.x, rect.y, rect.width, rect.height);
-
-        System.out.println(rect);
-    }
-
-    private class KeyAdapter implements KeyListener {
-        @Override
-        public void keyTyped(KeyEvent e) {
-        }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            var key = e.getKeyCode();
-
-            switch (key) {
-                case KeyEvent.VK_LEFT -> dx = -5;
-                case KeyEvent.VK_RIGHT -> dx = 5;
-                case KeyEvent.VK_UP -> dy = -5;
-                case KeyEvent.VK_DOWN -> dy = 5;
-            }
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-            var key = e.getKeyCode();
-
-            switch (key) {
-                case KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT -> dx = 0;
-                case KeyEvent.VK_UP, KeyEvent.VK_DOWN -> dy = 0;
-            }
-        }
+        duel.display(g);
     }
 
     @Override
@@ -74,6 +71,8 @@ public class Game implements Runnable {
         long now;
         long lastTime = System.nanoTime();
 
+        var g = display.getGraphics();
+
         while (running) {
             now = System.nanoTime();
             delta += (now - lastTime) / tickDuration;
@@ -82,16 +81,14 @@ public class Game implements Runnable {
             if (delta >= 1) {
                 update();
 
-                var g = display.getGraphics();
                 render(g);
-                g.dispose();
-
                 display.render();
 
                 delta--;
             }
         }
 
+        g.dispose();
         stop();
     }
 

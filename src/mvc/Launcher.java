@@ -1,3 +1,7 @@
+package mvc;
+
+import mvc.Game;
+
 import java.awt.*;
 
 public class Launcher {

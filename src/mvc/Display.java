@@ -1,3 +1,5 @@
+package mvc;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
