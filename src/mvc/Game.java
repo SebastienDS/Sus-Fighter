@@ -2,14 +2,14 @@ package mvc;
 
 
 
-import object.Command;
+import object.*;
 import object.Command.KeyCode;
-import object.Coordinate;
-import object.Element;
-import object.Player;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +25,7 @@ public class Game implements Runnable {
 
     private Duel duel;
 
-    public Game(String title, int width, int height) {
+    public Game(String title, int width, int height) throws IOException {
         Objects.requireNonNull(title);
         display = new Display(title, width, height);
 
@@ -42,13 +42,17 @@ public class Game implements Runnable {
                 .addKeyCode(KeyCode.DOWN, KeyEvent.VK_DOWN);
 
         var players = List.of(
-            new Player("Player 1", new Coordinate(50, 50), Element.WATER, command1),
-            new Player("Player 2", new Coordinate(200, 50), Element.FIRE, command2)
+            new Player("Player 1", new Coordinate(50, 50), Element.WATER, command1,
+                    Path.of("resources", "images", "character", "DarkShadowRedDragonXxX.png"), false),
+            new Player("Player 2", new Coordinate(200, 50), Element.FIRE, command2,
+                    Path.of("resources", "images", "character", "DarkShadowPurplePhoenixXxX.png"), true)
         );
 
         players.stream().forEach(p -> display.addKeyListener(p));
 
-        duel = new Duel(players, null, Optional.empty());
+        var map = new Map(Path.of("resources","images", "map", "XxXAmongUwUXxX.jpg"), Element.WATER, new ArrayList<>());
+
+        duel = new Duel(players, map, Optional.empty());
     }
 
     private void update() {
@@ -61,7 +65,7 @@ public class Game implements Runnable {
 
         g.clearRect(0, 0, w, h);
 
-        duel.display(g);
+        duel.display(display);
     }
 
     @Override

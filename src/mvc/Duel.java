@@ -1,9 +1,7 @@
 package mvc;
 
+import object.*;
 import object.Event;
-import object.Map;
-import object.Player;
-import object.WeaponCase;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -11,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Duel {
+public class Duel implements Displayable {
 
     private final List<Player> players;
     private final Map map;
@@ -33,10 +31,16 @@ public class Duel {
     }
 
     public void update() {
-        players.stream().forEach(p -> p.update());
+        var player1 = players.get(0);
+        var player2 = players.get(1);
+        var needFlip = player1.needFlip(player2);
+        players.stream().forEach(player -> player.update(needFlip));
     }
 
-    public void display(Graphics g) {
-        players.stream().forEach(p -> p.display(g));
+    @Override
+    public void display(Display d) {
+        map.display(d);
+        players.stream().forEach(p -> p.display(d));
+
     }
 }

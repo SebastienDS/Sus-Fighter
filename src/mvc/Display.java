@@ -6,7 +6,9 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.util.Objects;
 
-class Display {
+public class Display {
+
+	private static Display DISPLAY;
 
 	private final JFrame frame;
 	private final Canvas canvas;
@@ -42,6 +44,11 @@ class Display {
 
 		canvas.createBufferStrategy(3);
 		bs = canvas.getBufferStrategy();
+		DISPLAY = this;
+	}
+
+	public static Display display() {
+		return DISPLAY;
 	}
 
 	public int getWidth() {
