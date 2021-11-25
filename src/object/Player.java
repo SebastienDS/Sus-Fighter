@@ -99,4 +99,26 @@ public class Player implements KeyListener, Displayable {
     public boolean needFlip(Player player){
         return coordinate.getX() < player.coordinate.getX() && isFlipped || player.coordinate.getX() < coordinate.getX() && player.isFlipped;
     }
+
+    public void push(Player player2) {
+        if(collision(player2) && Math.abs(dx) > Math.abs(player2.dx)){
+            player2.coordinate.move(dx, 0, 0, Display.display().getWidth() - width, Double.MIN_VALUE ,Double.MAX_VALUE);
+        }
+    }
+
+    private boolean collision(Player player2) {
+        return collisionX(player2, true) && collisionY(player2, true);
+    }
+
+    private boolean collisionX(Player player2, boolean firstPlayer){
+        return coordinate.getX() + width >= player2.coordinate.getX()
+                && coordinate.getX() + width <= player2.coordinate.getX() + player2.width
+                || firstPlayer && player2.collisionX(this, false);
+    }
+
+    private boolean collisionY(Player player2, boolean firstPlayer){
+        return  coordinate.getY() + height >= player2.coordinate.getY()
+                && coordinate.getY() + height <= player2.coordinate.getY() + player2.height
+                || firstPlayer && player2.collisionY(this, false);
+    }
 }
