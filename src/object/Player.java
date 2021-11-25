@@ -22,6 +22,8 @@ public class Player implements KeyListener, Displayable {
     private final ImagePlayer images;
     private boolean isFlipped;
     private boolean jump;
+    private final int width;
+    private final int height;
 
     private double dx = 0;
     private double dy = 0;
@@ -34,6 +36,8 @@ public class Player implements KeyListener, Displayable {
         statistic = new Statistic();
         this.isFlipped = isFlipped;
         images = new ImagePlayer(path);
+        width = images.get(ImageKey.IDLE).getWidth(null);
+        height = images.get(ImageKey.IDLE).getHeight(null);
     }
 
     @Override
@@ -53,6 +57,7 @@ public class Player implements KeyListener, Displayable {
         else if (key == command.get(KeyCode.UP) && !jump) {
             dy = -50;
             jump = true;
+            System.out.println(jump);
         }
         else if (key == command.get(KeyCode.DOWN)) {
             dy = 5;
@@ -67,7 +72,7 @@ public class Player implements KeyListener, Displayable {
             dx = 0;
         }
         else if (key == command.get(KeyCode.UP) || key == command.get(KeyCode.DOWN)) {
-            dy = 0;
+
         }
     }
 
@@ -81,12 +86,12 @@ public class Player implements KeyListener, Displayable {
     }
 
     public void update(boolean needFlip, double floorHeight) {
-        dy += 0.1;
-        coordinate.move(dx, dy, 0, Display.display().getWidth(), 0, floorHeight);
+        dy += 1;
+        coordinate.move(dx, dy, 0, Display.display().getWidth() - width, 0, floorHeight - height);
         if(needFlip) {
             isFlipped = !isFlipped;
         }
-        if(jump && floorHeight <= coordinate.getY()){
+        if(jump && (int) (floorHeight - height) <= coordinate.getY()){
             jump = !jump;
         }
     }
