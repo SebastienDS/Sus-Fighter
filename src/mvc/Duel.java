@@ -36,8 +36,9 @@ public class Duel implements Displayable {
         var needFlip = player1.needFlip(player2);
         player1.update(needFlip, map.getFloorHeight());
         player2.update(needFlip, map.getFloorHeight());
-        player1.push(player2);
-        player2.push(player1);
+        player1.interact(player2, map.getFloorHeight());
+        player2.interact(player1, map.getFloorHeight());
+
     }
 
     @Override

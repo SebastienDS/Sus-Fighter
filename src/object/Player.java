@@ -49,15 +49,14 @@ public class Player implements KeyListener, Displayable {
         var key = e.getKeyCode();
 
         if (key == command.get(KeyCode.LEFT)) {
-            dx = -5;
+            dx = -10;
         }
         else if (key == command.get(KeyCode.RIGHT)) {
-            dx = 5;
+            dx = 10;
         }
         else if (key == command.get(KeyCode.UP) && !jump) {
-            dy = -50;
+            dy = -30;
             jump = true;
-            System.out.println(jump);
         }
         else if (key == command.get(KeyCode.DOWN)) {
             dy = 5;
@@ -101,9 +100,18 @@ public class Player implements KeyListener, Displayable {
     }
 
     public void push(Player player2) {
-        if(collision(player2) && Math.abs(dx) > Math.abs(player2.dx)){
+        if(collision(player2) && player2.isPushable() && Math.abs(dx) > Math.abs(player2.dx)){
             player2.coordinate.move(dx, 0, 0, Display.display().getWidth() - width, Double.MIN_VALUE ,Double.MAX_VALUE);
+            return;
         }
+        if(collision(player2) &&  Math.abs(dx) >= Math.abs(player2.dx)){
+            coordinate.move(-dx, 0, 0, Display.display().getWidth() - width, Double.MIN_VALUE ,Double.MAX_VALUE);
+        }
+
+    }
+
+    private boolean isPushable() {
+        return coordinate.getX() > 0 && coordinate.getX() < Display.display().getWidth() - width;
     }
 
     private boolean collision(Player player2) {
@@ -120,5 +128,20 @@ public class Player implements KeyListener, Displayable {
         return  coordinate.getY() + height >= player2.coordinate.getY()
                 && coordinate.getY() + height <= player2.coordinate.getY() + player2.height
                 || firstPlayer && player2.collisionY(this, false);
+    }
+
+    public void interact(Player player2, double floorHeight) {
+        this.push(player2);
+        this.manageHeadCollision(player2, floorHeight);
+    }
+
+    private void manageHeadCollision(Player player2, double floorHeight) {
+        /*if(collisionX(player2, false) && player2.coordinate.getY() > coordinate.getY()){
+            coordinate.move(0, 0, Double.MIN_VALUE, Double.MAX_VALUE, 0, floorHeight - player2.height - height - 3);
+            if(jump && coordinate.getY() >= floorHeight - player2.height - height - 3){
+                jump = !jump;
+            }
+        }*/
+
     }
 }
