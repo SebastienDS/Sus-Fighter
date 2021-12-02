@@ -24,9 +24,12 @@ public class Player implements KeyListener, Displayable {
     private boolean jump;
     private final int width;
     private final int height;
+    private KeyCode xMovement;
 
     private double dx = 0;
     private double dy = 0;
+    private double push = 0;
+    private double heightAugmentation = 0;
 
     public Player(String name, Coordinate coordinate, Element element, Command command, Path path, boolean isFlipped) throws IOException {
         this.name = Objects.requireNonNull(name);
@@ -50,9 +53,11 @@ public class Player implements KeyListener, Displayable {
 
         if (key == command.get(KeyCode.LEFT)) {
             dx = -10;
+            xMovement = KeyCode.LEFT;
         }
         else if (key == command.get(KeyCode.RIGHT)) {
             dx = 10;
+            xMovement = KeyCode.RIGHT;
         }
         else if (key == command.get(KeyCode.UP) && !jump) {
             dy = -30;
@@ -66,12 +71,8 @@ public class Player implements KeyListener, Displayable {
     @Override
     public void keyReleased(KeyEvent e) {
         var key = e.getKeyCode();
-
-        if (key == command.get(KeyCode.LEFT) || key == command.get(KeyCode.RIGHT)) {
+        if ((key == command.get(KeyCode.LEFT) || key == command.get(KeyCode.RIGHT)) && key == command.get(xMovement)) {
             dx = 0;
-        }
-        else if (key == command.get(KeyCode.UP) || key == command.get(KeyCode.DOWN)) {
-
         }
     }
 
@@ -81,18 +82,20 @@ public class Player implements KeyListener, Displayable {
         g.setColor(Color.BLACK);
         var imageKey = (isFlipped) ? ImageKey.IDLE_FLIPPED : ImageKey.IDLE;
         var image = images.get(imageKey);
-        g.drawImage(image, coordinate.getX(), coordinate.getY(), null);
+        g.drawImage(image, coordinate.getX(), coordinate.getY(),Color.BLACK, null);
     }
 
     public void update(boolean needFlip, double floorHeight) {
         dy += 1;
-        coordinate.move(dx, dy, 0, Display.display().getWidth() - width, 0, floorHeight - height);
+        coordinate.move(dx + push, dy, 0, Display.display().getWidth() - width, 0, floorHeight - height - heightAugmentation);
         if(needFlip) {
             isFlipped = !isFlipped;
         }
-        if(jump && (int) (floorHeight - height) <= coordinate.getY()){
-            jump = !jump;
+        if((int) (floorHeight - height) <= coordinate.getY()){
+            dy = 0;
+            if(jump) jump = false;
         }
+        push = 0;
     }
 
     public boolean needFlip(Player player){
@@ -100,12 +103,12 @@ public class Player implements KeyListener, Displayable {
     }
 
     public void push(Player player2) {
-        if(collision(player2) && player2.isPushable() && Math.abs(dx) > Math.abs(player2.dx)){
-            player2.coordinate.move(dx, 0, 0, Display.display().getWidth() - width, Double.MIN_VALUE ,Double.MAX_VALUE);
+        if(collision(player2, 3) && player2.isPushable() && Math.abs(dx) > Math.abs(player2.dx)){
+            player2.push = dx;
             return;
         }
-        if(collision(player2) &&  Math.abs(dx) >= Math.abs(player2.dx)){
-            coordinate.move(-dx, 0, 0, Display.display().getWidth() - width, Double.MIN_VALUE ,Double.MAX_VALUE);
+        if(collision(player2, 3) &&  Math.abs(dx) >= Math.abs(player2.dx)){
+            push = -dx;
         }
 
     }
@@ -114,34 +117,66 @@ public class Player implements KeyListener, Displayable {
         return coordinate.getX() > 0 && coordinate.getX() < Display.display().getWidth() - width;
     }
 
-    private boolean collision(Player player2) {
-        return collisionX(player2, true) && collisionY(player2, true);
+    private boolean collision(Player player2, int margin) {
+        return collisionX(player2) && collisionY(player2, margin);
+    }
+
+    private boolean collisionX(Player player2){
+        return collisionX(player2, true);
     }
 
     private boolean collisionX(Player player2, boolean firstPlayer){
-        return coordinate.getX() + width >= player2.coordinate.getX()
-                && coordinate.getX() + width <= player2.coordinate.getX() + player2.width
+        return nextX() + width >= player2.nextX()
+                && nextX() + width <= player2.nextX() + player2.width
                 || firstPlayer && player2.collisionX(this, false);
     }
 
-    private boolean collisionY(Player player2, boolean firstPlayer){
-        return  coordinate.getY() + height >= player2.coordinate.getY()
-                && coordinate.getY() + height <= player2.coordinate.getY() + player2.height
-                || firstPlayer && player2.collisionY(this, false);
+    private boolean collisionY(Player player2, double margin){
+        return collisionY(player2, margin, true);
     }
 
-    public void interact(Player player2, double floorHeight) {
+    private boolean collisionY(Player player2, double margin, boolean firstPlayer){
+        return  nextY() + height - margin >= player2.nextY()
+                && nextY() + height - margin <= player2.nextY() + player2.height
+                || firstPlayer && player2.collisionY(this, margin,false);
+    }
+
+    public void interact(Player player2) {
+        this.blockJump(player2);
+        this.manageHeadCollision(player2);
         this.push(player2);
-        this.manageHeadCollision(player2, floorHeight);
     }
 
-    private void manageHeadCollision(Player player2, double floorHeight) {
-        /*if(collisionX(player2, false) && player2.coordinate.getY() > coordinate.getY()){
-            coordinate.move(0, 0, Double.MIN_VALUE, Double.MAX_VALUE, 0, floorHeight - player2.height - height - 3);
-            if(jump && coordinate.getY() >= floorHeight - player2.height - height - 3){
-                jump = !jump;
-            }
-        }*/
+    private void blockJump(Player player2) {
+        double height_difference = ((player2.coordinate.getY() + player2.height) - coordinate.getY());
+        if(jump && collisionX(player2) && height_difference < 5 && height_difference > - 5  && dy < 0 ){
+           dy = player2.dy;
+        }
+    }
 
+    private void manageHeadCollision(Player player2) {
+        //verify that there is a collision in x and that the foot of the player is higher than the head of the other player
+        if(!(collisionX(player2) && player2.coordinate.getY() >= coordinate.getY() + height - dy)){
+            heightAugmentation = 0;
+            return;
+        }
+        //verify that player isn't in the air
+        if(!(nextY() + height >= player2.nextY())) {
+            heightAugmentation = player2.height - 1;
+            return;
+        }
+        dy = -1;
+        heightAugmentation = player2.height - 1;
+        if (jump) {
+            jump = false;
+        }
+    }
+
+    private double nextX(){
+        return coordinate.getX() + dx;
+    }
+
+    private double nextY() {
+        return coordinate.getY() + dy;
     }
 }
