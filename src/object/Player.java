@@ -3,7 +3,6 @@ package object;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -29,7 +28,8 @@ public class Player implements KeyListener, Displayable {
     private double dx = 0;
     private double dy = 0;
     private double push = 0;
-    private double heightAugmentation = 0;
+    private double minHeight;
+    private double maxHeight;
 
     public Player(String name, Coordinate coordinate, Element element, Command command, Path path, boolean isFlipped) throws IOException {
         this.name = Objects.requireNonNull(name);
@@ -63,8 +63,9 @@ public class Player implements KeyListener, Displayable {
             dy = -30;
             jump = true;
         }
-        else if (key == command.get(KeyCode.DOWN)) {
-            dy = 5;
+        else if (key == command.get(KeyCode.DOWN) && jump) {
+            if(dy < 0) dy = 0;
+            else dy += 5;
         }
     }
 
@@ -85,16 +86,24 @@ public class Player implements KeyListener, Displayable {
         g.drawImage(image, coordinate.getX(), coordinate.getY(),Color.BLACK, null);
     }
 
-    public void update(boolean needFlip, double floorHeight) {
-        dy += 1;
-        coordinate.move(dx + push, dy, 0, Display.display().getWidth() - width, 0, floorHeight - height - heightAugmentation);
+    private void manageFlip(boolean needFlip){
         if(needFlip) {
             isFlipped = !isFlipped;
         }
-        if((int) (floorHeight - height) <= coordinate.getY()){
+    }
+
+    private void manageGround(){
+        if((int) (maxHeight) <= coordinate.getY()){
             dy = 0;
             if(jump) jump = false;
         }
+    }
+
+    public void update(boolean needFlip) {
+        dy += 1;
+        coordinate.move(dx + push, dy, 0, Display.display().getWidth() - width, minHeight, maxHeight);
+        manageFlip(needFlip);
+        manageGround();
         push = 0;
     }
 
@@ -110,7 +119,6 @@ public class Player implements KeyListener, Displayable {
         if(collision(player2, 3) &&  Math.abs(dx) >= Math.abs(player2.dx)){
             push = -dx;
         }
-
     }
 
     private boolean isPushable() {
@@ -141,35 +149,21 @@ public class Player implements KeyListener, Displayable {
                 || firstPlayer && player2.collisionY(this, margin,false);
     }
 
-    public void interact(Player player2) {
-        this.blockJump(player2);
-        this.manageHeadCollision(player2);
+    public void interact(Player player2, double minHeight, double floorHeight) {
+        this.manageHeadCollision(player2, minHeight, floorHeight);
         this.push(player2);
     }
 
-    private void blockJump(Player player2) {
-        double height_difference = ((player2.coordinate.getY() + player2.height) - coordinate.getY());
-        if(jump && collisionX(player2) && height_difference < 5 && height_difference > - 5  && dy < 0 ){
-           dy = player2.dy;
-        }
-    }
-
-    private void manageHeadCollision(Player player2) {
-        //verify that there is a collision in x and that the foot of the player is higher than the head of the other player
-        if(!(collisionX(player2) && player2.coordinate.getY() >= coordinate.getY() + height - dy)){
-            heightAugmentation = 0;
+    private void manageHeadCollision(Player player2, double minHeight, double floorHeight) {
+        double height_difference = (coordinate.getY() + height - dy) - (player2.coordinate.getY() + player2.dy);
+        if(!(height_difference < 5 && height_difference > -5 && coordinate.getY() < player2.coordinate.getY()
+                && collisionX(player2) && maxHeight != player2.coordinate.getY())){
+            maxHeight = floorHeight - height;
+            player2.minHeight = minHeight;
             return;
         }
-        //verify that player isn't in the air
-        if(!(nextY() + height >= player2.nextY())) {
-            heightAugmentation = player2.height - 1;
-            return;
-        }
-        dy = -1;
-        heightAugmentation = player2.height - 1;
-        if (jump) {
-            jump = false;
-        }
+        maxHeight = player2.coordinate.getY() - height;
+        player2.minHeight = coordinate.getY() + height;
     }
 
     private double nextX(){

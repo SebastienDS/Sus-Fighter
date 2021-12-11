@@ -21,7 +21,7 @@ public class Coordinate {
 
     public void move(double dx, double dy, double minX, double maxX, double minY, double maxY) {
         x += dx;
-        x = Math.min((Math.max(x, minX)), maxX);
+        x = Math.min(Math.max(x, minX), maxX);
         y += dy;
         y = Math.min(y, maxY);
     }

@@ -34,10 +34,10 @@ public class Duel implements Displayable {
         var player1 = players.get(0);
         var player2 = players.get(1);
         var needFlip = player1.needFlip(player2);
-        player1.interact(player2);
-        player2.interact(player1);
-        player1.update(needFlip, map.getFloorHeight());
-        player2.update(needFlip, map.getFloorHeight());
+        player1.interact(player2, map.getMinHeight(), map.getFloorHeight());
+        player2.interact(player1, map.getMinHeight(), map.getFloorHeight());
+        player1.update(needFlip);
+        player2.update(needFlip);
 
     }
 

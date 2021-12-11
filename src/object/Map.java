@@ -14,12 +14,17 @@ public class Map {
     private final Element element;
     private final List<Event> events;
     private final double floorHeight;
+    private final double minHeight;
 
-    public Map(Path path, Element element, List<Event> events, double floorHeight) throws IOException {
+    public Map(Path path, Element element, List<Event> events, double minHeight, double floorHeight) throws IOException {
         this.element = Objects.requireNonNull(element);
         this.events = Objects.requireNonNull(events);
         this.image = ImageManager.resize(ImageManager.loadImage(Objects.requireNonNull(path)), Display.display().getWidth(), Display.display().getHeight());
         this.floorHeight = floorHeight;
+        this.minHeight = minHeight;
+    }
+    public Map(Path path, Element element, List<Event> events, double floorHeight) throws  IOException{
+        this(path, element, events, Double.MIN_VALUE, floorHeight);
     }
 
     public void display(Display d) {
@@ -31,4 +36,6 @@ public class Map {
     public double getFloorHeight(){
         return floorHeight;
     }
+
+    public double getMinHeight() {return minHeight;}
 }
