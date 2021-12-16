@@ -51,7 +51,7 @@ public class Game implements Runnable {
         players.stream().forEach(p -> display.addKeyListener(p));
 
         var map = new Map(Path.of("resources","images", "map", "XxXAmongUwUXxX.jpg"),
-                Element.WATER, new ArrayList<>(), 0.9 * display.getHeight());
+                Element.WATER, new ArrayList<>(), 0.9f * display.getHeight());
 
         duel = new Duel(players, map, Optional.empty());
     }
