@@ -10,35 +10,34 @@ import java.util.Objects;
 import mvc.Display;
 import object.Command.KeyCode;
 import object.ImagePlayer.ImageKey;
+import org.jbox2d.common.Vec2;
 
 public class Player implements KeyListener, Displayable {
 
     private final String name;
-    private final Coordinate coordinate;
+    private final Rectangle body;
     private final Statistic statistic;
     private final Element element;
     private final Command command;
     private final ImagePlayer images;
     private boolean isFlipped;
-    private boolean jump;
-    private final int width;
-    private final int height;
-    private KeyCode xMovement;
 
-    private double dx = 0;
-    private double dy = 0;
-    private double push = 0;
+    private boolean jump = false;
+    private boolean canJump = true;
+    private KeyCode xMovement = KeyCode.LEFT;
 
-    public Player(String name, Coordinate coordinate, Element element, Command command, Path path, boolean isFlipped) throws IOException {
+    private final Vec2 velocity = new Vec2(0, 0);
+
+
+    public Player(String name, Rectangle body, Element element, Command command, Path path, boolean isFlipped) throws IOException {
         this.name = Objects.requireNonNull(name);
-        this.coordinate = Objects.requireNonNull(coordinate);
+        this.body = Objects.requireNonNull(body);
         this.element = Objects.requireNonNull(element);
         this.command = Objects.requireNonNull(command);
         statistic = new Statistic();
         this.isFlipped = isFlipped;
+
         images = new ImagePlayer(path);
-        width = images.get(ImageKey.IDLE).getWidth(null);
-        height = images.get(ImageKey.IDLE).getHeight(null);
     }
 
     @Override
@@ -50,28 +49,33 @@ public class Player implements KeyListener, Displayable {
         var key = e.getKeyCode();
 
         if (key == command.get(KeyCode.LEFT)) {
-            dx = -10;
+            velocity.x = -10;
             xMovement = KeyCode.LEFT;
+            isFlipped = true;
         }
         else if (key == command.get(KeyCode.RIGHT)) {
-            dx = 10;
+            velocity.x = 10;
             xMovement = KeyCode.RIGHT;
+            isFlipped = false;
         }
-        else if (key == command.get(KeyCode.UP) && !jump) {
-            dy = -30;
+
+        else if (key == command.get(KeyCode.UP) && canJump) {
+            velocity.y = -25;
             jump = true;
+            canJump = false;
         }
         else if (key == command.get(KeyCode.DOWN) && jump) {
-            if(dy < 0) dy = 0;
-            else dy += 5;
+            if (velocity.y < 0) velocity.y = 0;
+            else velocity.y += 20;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         var key = e.getKeyCode();
+
         if ((key == command.get(KeyCode.LEFT) || key == command.get(KeyCode.RIGHT)) && key == command.get(xMovement)) {
-            dx = 0;
+            velocity.x = 0;
         }
     }
 
@@ -81,7 +85,8 @@ public class Player implements KeyListener, Displayable {
         g.setColor(Color.BLACK);
         var imageKey = (isFlipped) ? ImageKey.IDLE_FLIPPED : ImageKey.IDLE;
         var image = images.get(imageKey);
-        g.drawImage(image, coordinate.getX(), coordinate.getY(),Color.BLACK, null);
+
+        g.drawImage(image, body.x, body.y, Color.BLACK, null);
     }
 
     private void manageFlip(boolean needFlip) {
@@ -90,15 +95,23 @@ public class Player implements KeyListener, Displayable {
         }
     }
 
-    public void update(boolean needFlip) {
+    public void update(boolean needFlip, Vec2 gravity, Rectangle bounds) {
+        velocity.x += gravity.x;
+        velocity.y += gravity.y;
 
+        body.x += velocity.x;
+        body.y += velocity.y;
+
+        body.x = Math.min(Math.max(bounds.x, body.x), bounds.x + bounds.width - body.width);
+        body.y = Math.min(Math.max(bounds.y, body.y), bounds.y + bounds.height - body.height);
+
+        if (body.y == bounds.y + bounds.height - body.height) {
+            canJump = true;
+            jump = false;
+        }
     }
 
-    public boolean needFlip(Player player){
-        return coordinate.getX() < player.coordinate.getX() && isFlipped || player.coordinate.getX() < coordinate.getX() && player.isFlipped;
-    }
-
-    public Coordinate getCoordinate(){
-        return coordinate;
+    public boolean needFlip(Player player) {
+        return body.x < player.body.x && isFlipped || player.body.x < body.x && player.isFlipped;
     }
 }

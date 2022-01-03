@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ImageManager {
+public class Images {
 
     public static BufferedImage loadImage(Path path) throws IOException {
         try( var inputStream = Files.newInputStream(path)){

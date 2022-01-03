@@ -17,25 +17,18 @@ import java.util.Optional;
 public class Duel implements Displayable {
 
     private final List<Player> players;
-    private final Map map;
-    private final World world;
+    private final Field map;
     private Optional<Event> currentEvent;
     private final List<WeaponCase> weapons;
     private long startTime;
 
-    public Duel(List<Player> players, Map map, Optional<Event> currentEvent) {
-        this.players = Objects.requireNonNull(players);
+    public Duel(List<Player> players, Field map, Optional<Event> currentEvent) {
+        this.players = List.copyOf(Objects.requireNonNull(players));
         this.map = map;
         this.currentEvent = Objects.requireNonNull(currentEvent);
         weapons = new ArrayList<>();
         startTime = System.currentTimeMillis();
-        world = new World(map.gravity());
-        Physics.addBodyStatic(world, 0, map.floorHeight(), Display.display().getWidth(), Display.display().getHeight());
-        Physics.addDynamicBody(world, players.get(0).getCoordinate().getX(), players.get(0).getCoordinate().getY(), 150, 300, 1f, 0.3f);
-        var body = Physics.addDynamicBody(world, players.get(0).getCoordinate().getX(), players.get(0).getCoordinate().getY(), 150, 300, 1f, 0.3f);
     }
-
-
 
     public long time() {
         return System.currentTimeMillis() - startTime;
@@ -45,14 +38,14 @@ public class Duel implements Displayable {
         var player1 = players.get(0);
         var player2 = players.get(1);
         var needFlip = player1.needFlip(player2);
-        player1.update(needFlip);
-        player2.update(needFlip);
 
+        player1.update(needFlip, map.gravity(), map.bounds());
+        player2.update(needFlip, map.gravity(), map.bounds());
     }
 
     @Override
     public void display(Display d) {
         map.display(d);
-        players.stream().forEach(p -> p.display(d));
+        players.forEach(p -> p.display(d));
     }
 }

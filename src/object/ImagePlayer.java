@@ -1,7 +1,5 @@
 package object;
 
-import mvc.Display;
-
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,10 +21,10 @@ public class ImagePlayer {
         Objects.requireNonNull(directory);
         images = new HashMap<>();
         for (var path : Files.list(directory).collect(Collectors.toList())) {
-            var image = ImageManager.resize(ImageManager.loadImage(path), 150, 300);
+            var image = Images.resize(Images.loadImage(path), 150, 300);
             var name = path.getFileName().toString().replaceFirst("[.][^.]+$", "");
             images.put(ImageKey.valueOf(name), image);
-            images.put(ImageKey.valueOf(name + "_FLIPPED"), ImageManager.flip(image));
+            images.put(ImageKey.valueOf(name + "_FLIPPED"), Images.flip(image));
         }
     }
 

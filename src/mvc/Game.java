@@ -41,17 +41,18 @@ public class Game implements Runnable {
                 .addKeyCode(KeyCode.UP, KeyEvent.VK_UP)
                 .addKeyCode(KeyCode.DOWN, KeyEvent.VK_DOWN);
 
+
+        var map = new Field(Path.of("resources","images", "map", "XxXAmongUwUXxX.jpg"),
+                Element.WATER, new ArrayList<>(), 0.95f * display.getHeight());
+
         var players = List.of(
-            new Player("Player 1", new Coordinate(50, 50), Element.WATER, command1,
-                    Path.of("resources", "images", "character", "red"), false),
-            new Player("Player 2", new Coordinate(200, 50), Element.FIRE, command2,
-                    Path.of("resources", "images", "character", "purple"), true)
+            new Player("Player 1", new Rectangle(150, 150, 150, 300),
+                    Element.WATER, command1, Path.of("resources", "images", "character", "red"), false),
+            new Player("Player 2",  new Rectangle(600, 150, 150, 300),
+                    Element.FIRE, command2, Path.of("resources", "images", "character", "purple"), true)
         );
 
-        players.stream().forEach(p -> display.addKeyListener(p));
-
-        var map = new Map(Path.of("resources","images", "map", "XxXAmongUwUXxX.jpg"),
-                Element.WATER, new ArrayList<>(), 0.9f * display.getHeight());
+        players.forEach(display::addKeyListener);
 
         duel = new Duel(players, map, Optional.empty());
     }
