@@ -53,7 +53,7 @@ public class Game implements Runnable {
 
         players.forEach(display::addKeyListener);
         images = new Images();
-        duel = new Duel(players, map, Optional.empty(), images, Path.of("resources", "images", "map", "UwU.jpg"));
+        duel = new Duel(players, map, Optional.empty(), images, 90, Path.of("resources", "images", "map", "UwU.jpg"));
 
 
     }
