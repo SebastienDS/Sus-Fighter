@@ -83,10 +83,9 @@ public class Game implements Runnable {
             now = System.nanoTime();
             delta += (now - lastTime) / tickDuration;
             lastTime = now;
-
             if (delta >= 1) {
                 update();
-
+                show_menu();
                 render(g, images);
                 display.render();
 
@@ -96,6 +95,9 @@ public class Game implements Runnable {
 
         g.dispose();
         stop();
+    }
+
+    private void show_menu() {
     }
 
     public synchronized void start() {
