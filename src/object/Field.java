@@ -1,7 +1,6 @@
 package object;
 
 import mvc.Display;
-import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 import java.io.IOException;
@@ -26,7 +25,7 @@ public record Field(Image image, Element element, List<Event> events, float minH
             events,
             Float.MIN_VALUE,
             floorHeight,
-            new Vec2(0f, 1f),
+            new Vec2(0f, 1),
             new Rectangle(0, 0, Display.display().getWidth(), (int)floorHeight)
         );
     }

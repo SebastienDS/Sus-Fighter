@@ -72,7 +72,7 @@ public class Game implements Runnable {
 
     @Override
     public void run() {
-        double tickDuration = 1000000000 / FPS;
+        double tickDuration = 1000000000.0 / (double)FPS;
         double delta = 0;
         long now;
         long lastTime = System.nanoTime();

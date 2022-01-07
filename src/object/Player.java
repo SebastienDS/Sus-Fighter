@@ -10,7 +10,6 @@ import java.util.Objects;
 import mvc.Display;
 import object.Command.KeyCode;
 import object.ImagePlayer.ImageKey;
-import org.jbox2d.common.Vec2;
 
 public class Player implements KeyListener, Displayable {
 
@@ -49,24 +48,24 @@ public class Player implements KeyListener, Displayable {
         var key = e.getKeyCode();
 
         if (key == command.get(KeyCode.LEFT)) {
-            velocity.x = -10;
+            velocity.setX(-10);
             xMovement = KeyCode.LEFT;
             isFlipped = true;
         }
         else if (key == command.get(KeyCode.RIGHT)) {
-            velocity.x = 10;
+            velocity.setX(10);
             xMovement = KeyCode.RIGHT;
             isFlipped = false;
         }
 
         else if (key == command.get(KeyCode.UP) && canJump) {
-            velocity.y = -25;
+            velocity.setY(-25);
             jump = true;
             canJump = false;
         }
         else if (key == command.get(KeyCode.DOWN) && jump) {
-            if (velocity.y < 0) velocity.y = 0;
-            else velocity.y += 20;
+            if (velocity.getY() < 0) velocity.setY(0);
+            else velocity.addY(20);
         }
     }
 
@@ -75,7 +74,7 @@ public class Player implements KeyListener, Displayable {
         var key = e.getKeyCode();
 
         if ((key == command.get(KeyCode.LEFT) || key == command.get(KeyCode.RIGHT)) && key == command.get(xMovement)) {
-            velocity.x = 0;
+            velocity.setX(0);
         }
     }
 
@@ -96,11 +95,11 @@ public class Player implements KeyListener, Displayable {
     }
 
     public void update(boolean needFlip, Vec2 gravity, Rectangle bounds) {
-        velocity.x += gravity.x;
-        velocity.y += gravity.y;
+        velocity.addX(gravity.getX());
+        velocity.addY(gravity.getY());
 
-        body.x += velocity.x;
-        body.y += velocity.y;
+        body.x += velocity.getX();
+        body.y += velocity.getY();
 
         body.x = Math.min(Math.max(bounds.x, body.x), bounds.x + bounds.width - body.width);
         body.y = Math.min(Math.max(bounds.y, body.y), bounds.y + bounds.height - body.height);
