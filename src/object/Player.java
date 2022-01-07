@@ -1,24 +1,23 @@
 package object;
 
+import mvc.Display;
+import object.Command.KeyCode;
+import object.Images.ImageKey;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Objects;
-
-import mvc.Display;
-import object.Command.KeyCode;
-import object.ImagePlayer.ImageKey;
 
 public class Player implements KeyListener, Displayable {
 
     private final String name;
+    private final int numPlayer;
     private final Rectangle body;
     private final Statistic statistic;
     private final Element element;
     private final Command command;
-    private final ImagePlayer images;
     private boolean isFlipped;
 
     private boolean jump = false;
@@ -28,15 +27,14 @@ public class Player implements KeyListener, Displayable {
     private final Vec2 velocity = new Vec2(0, 0);
 
 
-    public Player(String name, Rectangle body, Element element, Command command, Path path, boolean isFlipped) throws IOException {
+    public Player(String name, Rectangle body, Element element, Command command, int numPlayer, boolean isFlipped) throws IOException {
         this.name = Objects.requireNonNull(name);
         this.body = Objects.requireNonNull(body);
         this.element = Objects.requireNonNull(element);
         this.command = Objects.requireNonNull(command);
         statistic = new Statistic();
         this.isFlipped = isFlipped;
-
-        images = new ImagePlayer(path);
+        this.numPlayer = numPlayer;
     }
 
     @Override
@@ -79,12 +77,12 @@ public class Player implements KeyListener, Displayable {
     }
 
     @Override
-    public void display(Display d) {
+    public void display(Display d, Images images) {
         var g = d.getGraphics();
         g.setColor(Color.BLACK);
-        var imageKey = (isFlipped) ? ImageKey.IDLE_FLIPPED : ImageKey.IDLE;
+        var imageKey = (isFlipped) ? ImageKey.valueOf("PLAYER_" + numPlayer + "_IDLE_FLIPPED"):
+                ImageKey.valueOf("PLAYER_" + numPlayer + "_IDLE");
         var image = images.get(imageKey);
-
         g.drawImage(image, body.x, body.y, Color.BLACK, null);
     }
 
@@ -92,6 +90,14 @@ public class Player implements KeyListener, Displayable {
         if (needFlip) {
             isFlipped = !isFlipped;
         }
+    }
+
+    public int getWidth(){
+        return body.width;
+    }
+
+    public int getHeight(){
+        return body.height;
     }
 
     public void update(boolean needFlip, Vec2 gravity, Rectangle bounds) {
@@ -112,5 +118,17 @@ public class Player implements KeyListener, Displayable {
 
     public boolean needFlip(Player player) {
         return body.x < player.body.x && isFlipped || player.body.x < body.x && player.isFlipped;
+    }
+
+    public int getNumPlayer(){
+        return numPlayer;
+    }
+
+    public double percentageHpLeft() {
+        return statistic.percentageHpLeft();
+    }
+
+    public double percentageEnergy() {
+        return statistic.percentageEnergy();
     }
 }

@@ -7,20 +7,19 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import object.Images.ImageKey;
 
-public record Field(Image image, Element element, List<Event> events, float minHeight, float floorHeight, Vec2 gravity, Rectangle bounds) {
+public record Field(Element element, List<Event> events, float minHeight, float floorHeight, Vec2 gravity, Rectangle bounds) {
 
     public Field {
-        Objects.requireNonNull(image);
         Objects.requireNonNull(element);
         Objects.requireNonNull(events);
         Objects.requireNonNull(gravity);
         Objects.requireNonNull(bounds);
     }
 
-    public Field(Path path, Element element, List<Event> events, float floorHeight) throws  IOException{
+    public Field(Element element, List<Event> events, float floorHeight) throws  IOException{
         this(
-            Images.resize(Images.loadImage(Objects.requireNonNull(path)), Display.display().getWidth(), Display.display().getHeight()),
             element,
             events,
             Float.MIN_VALUE,
@@ -30,10 +29,10 @@ public record Field(Image image, Element element, List<Event> events, float minH
         );
     }
 
-    public void display(Display d) {
+    public void display(Display d, Images images) {
         var g = d.getGraphics();
 
-        g.drawImage(image, 0, 0, Color.WHITE, null);
+        g.drawImage(images.get(ImageKey.FIELD), 0, 0, Color.WHITE, null);
     }
 
 }

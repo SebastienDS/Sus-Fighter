@@ -19,6 +19,7 @@ public class Game implements Runnable {
     private final static int FPS = 60;
 
     private final Display display;
+    private final Images images;
 
     private Thread thread;
     private boolean running = false;
@@ -41,33 +42,33 @@ public class Game implements Runnable {
                 .addKeyCode(KeyCode.UP, KeyEvent.VK_UP)
                 .addKeyCode(KeyCode.DOWN, KeyEvent.VK_DOWN);
 
-
-        var map = new Field(Path.of("resources","images", "map", "XxXAmongUwUXxX.jpg"),
-                Element.WATER, new ArrayList<>(), 0.95f * display.getHeight());
+        var map = new Field(Element.WATER, new ArrayList<>(), 0.95f * display.getHeight());
 
         var players = List.of(
             new Player("Player 1", new Rectangle(150, 150, 150, 300),
-                    Element.WATER, command1, Path.of("resources", "images", "character", "red"), false),
+                    Element.WATER, command1, 1, false),
             new Player("Player 2",  new Rectangle(600, 150, 150, 300),
-                    Element.FIRE, command2, Path.of("resources", "images", "character", "purple"), true)
+                    Element.FIRE, command2, 2, true)
         );
 
         players.forEach(display::addKeyListener);
+        images = new Images();
+        duel = new Duel(players, map, Optional.empty(), images, Path.of("resources", "images", "map", "UwU.jpg"));
 
-        duel = new Duel(players, map, Optional.empty());
+
     }
 
     private void update() {
         duel.update();
     }
 
-    private void render(Graphics g) {
+    private void render(Graphics g, Images images) {
         var w = display.getWidth();
         var h = display.getHeight();
 
         g.clearRect(0, 0, w, h);
 
-        duel.display(display);
+        duel.display(display, images);
     }
 
     @Override
@@ -87,7 +88,7 @@ public class Game implements Runnable {
             if (delta >= 1) {
                 update();
 
-                render(g);
+                render(g, images);
                 display.render();
 
                 delta--;
