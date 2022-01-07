@@ -85,10 +85,7 @@ public class Game implements Runnable {
             lastTime = now;
             if (delta >= 1) {
                 update();
-                show_menu();
-                render(g, images);
-                display.render();
-
+                show_menu(g);
                 delta--;
             }
         }
@@ -97,7 +94,17 @@ public class Game implements Runnable {
         stop();
     }
 
-    private void show_menu() {
+    private void show_menu(Graphics g) {
+        if(menu == 0){
+
+        }
+        else if(menu == 1){
+
+        }
+        else if(menu == 2){
+            render(g, images);
+            display.render();
+        }
     }
 
     public synchronized void start() {
