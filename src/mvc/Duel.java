@@ -117,7 +117,7 @@ public class Duel implements Displayable {
         drawText(timeString, font, g, x, y, new BasicStroke(2f));
     }
 
-    private void display_bar(List<Player> players, Display d, Images images){
+    private void displayBar(List<Player> players, Display d, Images images){
         Graphics g = d.getGraphics();
         for (int i = 0; i < players.size(); i++) {
             var str = "PLAYER_" + players.get(i).getNumPlayer() + "_HEAD";
@@ -133,6 +133,6 @@ public class Duel implements Displayable {
     public void display(Display d, Images images) {
         map.display(d, images);
         players.forEach(p -> p.display(d, images));
-        display_bar(players, d, images);
+        displayBar(players, d, images);
     }
 }

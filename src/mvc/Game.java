@@ -20,6 +20,7 @@ public class Game implements Runnable {
 
     private final Display display;
     private final Images images;
+    private int menu = 0;
 
     private Thread thread;
     private boolean running = false;
@@ -54,8 +55,6 @@ public class Game implements Runnable {
         players.forEach(display::addKeyListener);
         images = new Images();
         duel = new Duel(players, map, Optional.empty(), images, 90, Path.of("resources", "images", "map", "UwU.jpg"));
-
-
     }
 
     private void update() {
