@@ -3,7 +3,9 @@ package mvc;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
+import java.util.EventListener;
 import java.util.Objects;
 
 public class Display {
@@ -68,6 +70,6 @@ public class Display {
 	}
 
 	public void addKeyListener(KeyListener keyListener) {
-		frame.addKeyListener(keyListener);
+		canvas.addKeyListener(keyListener);
 	}
 }

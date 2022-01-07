@@ -10,7 +10,8 @@ public class Command {
         LEFT,
         RIGHT,
         UP,
-        DOWN
+        DOWN,
+        ATTACK
     }
 
     private final Map<KeyCode, Integer> keyCodes;

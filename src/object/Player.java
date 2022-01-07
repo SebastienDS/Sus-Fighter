@@ -12,6 +12,8 @@ import java.util.Objects;
 
 public class Player implements KeyListener, Displayable {
 
+    private static final int ATTACK_DISTANCE = 100;
+
     private final String name;
     private final int numPlayer;
     private final Rectangle body;
@@ -25,6 +27,10 @@ public class Player implements KeyListener, Displayable {
     private KeyCode xMovement = KeyCode.LEFT;
 
     private final Vec2 velocity = new Vec2(0, 0);
+
+    private final Vec2 attackVelocity = new Vec2(15, 0);
+    private final Vec2 attackPosition = new Vec2(0, 0);
+    private boolean isAttacking = false;
 
 
     public Player(String name, Rectangle body, Element element, Command command, int numPlayer, boolean isFlipped) throws IOException {
@@ -65,6 +71,10 @@ public class Player implements KeyListener, Displayable {
             if (velocity.getY() < 0) velocity.setY(0);
             else velocity.addY(20);
         }
+        else if (key == command.get(KeyCode.ATTACK) && !isAttacking) {
+            isAttacking = true;
+            attackPosition.setX(0);
+        }
     }
 
     @Override
@@ -83,8 +93,25 @@ public class Player implements KeyListener, Displayable {
         var imageKey = (isFlipped) ? ImageKey.valueOf("PLAYER_" + numPlayer + "_IDLE_FLIPPED"):
                 ImageKey.valueOf("PLAYER_" + numPlayer + "_IDLE");
         var image = images.get(imageKey);
-        g.drawImage(image, body.x, body.y, Color.BLACK, null);
+        g.drawImage(image, body.x, body.y, null);
+
+
     }
+    public void displayAttack(Display d, Images images) {
+        if (!isAttacking) return;
+
+        var g = d.getGraphics();
+
+        var fistKey = (isFlipped) ? ImageKey.valueOf("PLAYER_" + numPlayer + "_FIST_FLIPPED"):
+                ImageKey.valueOf("PLAYER_" + numPlayer + "_FIST");
+        var fistImage = images.get(fistKey);
+
+        var flip = isFlipped ? -1: 1;
+        var center = new Vec2(body.x + body.width / 2 - Images.WIDTH_FIST / 2,
+                body.y + body.height / 2 - Images.HEIGHT_FIST / 2);
+        g.drawImage(fistImage, (int)(center.getX() + (attackPosition.getX() + 65) * flip), (int)(center.getY() + attackPosition.getY() + 15), null);
+    }
+
 
     private void manageFlip(boolean needFlip) {
         if (needFlip) {
@@ -104,6 +131,14 @@ public class Player implements KeyListener, Displayable {
         velocity.addX(gravity.getX());
         velocity.addY(gravity.getY());
 
+        if (isAttacking && attackPosition.getX() > ATTACK_DISTANCE) {
+            isAttacking = false;
+        }
+        else if (isAttacking) {
+            attackPosition.addX(attackVelocity.getX());
+            attackPosition.addY(attackVelocity.getY());
+        }
+
         body.x += velocity.getX();
         body.y += velocity.getY();
 
@@ -120,7 +155,7 @@ public class Player implements KeyListener, Displayable {
         return body.x < player.body.x && isFlipped || player.body.x < body.x && player.isFlipped;
     }
 
-    public int getNumPlayer(){
+    public int getNumPlayer() {
         return numPlayer;
     }
 
@@ -131,4 +166,5 @@ public class Player implements KeyListener, Displayable {
     public double percentageEnergy() {
         return statistic.percentageEnergy();
     }
+
 }

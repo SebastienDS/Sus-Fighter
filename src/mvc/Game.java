@@ -20,7 +20,7 @@ public class Game implements Runnable {
 
     private final Display display;
     private final Images images;
-    private int menu = 0;
+    private int menu = 2;
 
     private Thread thread;
     private boolean running = false;
@@ -35,13 +35,15 @@ public class Game implements Runnable {
         command1.addKeyCode(KeyCode.LEFT, KeyEvent.VK_Q)
                 .addKeyCode(KeyCode.RIGHT, KeyEvent.VK_D)
                 .addKeyCode(KeyCode.UP, KeyEvent.VK_Z)
-                .addKeyCode(KeyCode.DOWN, KeyEvent.VK_S);
+                .addKeyCode(KeyCode.DOWN, KeyEvent.VK_S)
+                .addKeyCode(KeyCode.ATTACK, KeyEvent.VK_T);
 
         var command2 = new Command();
         command2.addKeyCode(KeyCode.LEFT, KeyEvent.VK_LEFT)
                 .addKeyCode(KeyCode.RIGHT, KeyEvent.VK_RIGHT)
                 .addKeyCode(KeyCode.UP, KeyEvent.VK_UP)
-                .addKeyCode(KeyCode.DOWN, KeyEvent.VK_DOWN);
+                .addKeyCode(KeyCode.DOWN, KeyEvent.VK_DOWN)
+                .addKeyCode(KeyCode.ATTACK, KeyEvent.VK_NUMPAD1);
 
         var map = new Field(Element.WATER, new ArrayList<>(), 0.95f * display.getHeight());
 

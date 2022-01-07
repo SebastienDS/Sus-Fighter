@@ -133,6 +133,7 @@ public class Duel implements Displayable {
     public void display(Display d, Images images) {
         map.display(d, images);
         players.forEach(p -> p.display(d, images));
+        players.forEach(p -> p.displayAttack(d, images));
         displayBar(players, d, images);
     }
 }

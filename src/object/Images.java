@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class Images {
 
@@ -31,6 +29,8 @@ public class Images {
 
     public static final int WIDTH_HEAD = 100;
     public static final int HEIGHT_HEAD = 100;
+    public static final int WIDTH_FIST = 80;
+    public static final int HEIGHT_FIST = 80;
 
     private final HashMap<ImageKey, Image> images;
 
@@ -50,15 +50,14 @@ public class Images {
     }
 
     public void loadImagePlayer(Path path, String player, int width, int height, boolean headFlipped) throws IOException {
-        var paths = Files.walk(path, 1)
-                .filter(Files::isRegularFile)
-                .collect(Collectors.toList());
-        for (var path_ : paths) {
-            var name = path_.getFileName().toString();
-            name = name.substring(0, name.lastIndexOf('.'));
-            loadImage(path_, ImageKey.valueOf(player + "_" + name), width, height,false);
-            loadImage(path_, ImageKey.valueOf(player + "_" + name + "_FLIPPED"), width, height, true);
-        }
+        var temp = path.resolve(Path.of( "IDLE.png"));
+        loadImage(temp, ImageKey.valueOf(player + "_IDLE"), width, height,false);
+        loadImage(temp, ImageKey.valueOf(player + "_IDLE_FLIPPED"), width, height, true);
+
+        temp = path.resolve(Path.of( "FIST.png"));
+        loadImage(temp, ImageKey.valueOf(player + "_FIST"), WIDTH_FIST, HEIGHT_FIST,false);
+        loadImage(temp, ImageKey.valueOf(player + "_FIST_FLIPPED"), WIDTH_FIST, HEIGHT_FIST, true);
+
         loadHead(path, player, headFlipped);
 
     }
