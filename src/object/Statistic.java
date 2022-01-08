@@ -23,7 +23,7 @@ public class Statistic {
     }
 
     public Statistic() {
-        this(100, 0, 0, 0, 0, 0);
+        this(100, 0, 0, 10, 0, 0);
     }
 
     public double percentageHpLeft(){
@@ -32,5 +32,18 @@ public class Statistic {
 
     public double percentageEnergy() {
         return (double)energy / maxEnergy;
+    }
+
+    public void loseHP(int hp) {
+        if (hp >= 0) throw new IllegalArgumentException("Can't give HP :(");
+        this.hp += hp;
+    }
+
+    public boolean isDead() {
+        return hp <= 0;
+    }
+
+    public int damage() {
+        return damage;
     }
 }

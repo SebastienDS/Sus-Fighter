@@ -70,6 +70,12 @@ public class Display {
 	}
 
 	public void addKeyListener(KeyListener keyListener) {
+		frame.addKeyListener(keyListener);
 		canvas.addKeyListener(keyListener);
+	}
+
+	public void dispose() {
+		bs.dispose();
+		frame.dispose();
 	}
 }

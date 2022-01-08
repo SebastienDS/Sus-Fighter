@@ -42,13 +42,18 @@ public class Duel implements Displayable {
         return endTime - ((System.currentTimeMillis() - startTime) / 1000);
     }
 
-    public void update() {
+    public boolean update() {
         var player1 = players.get(0);
         var player2 = players.get(1);
         var needFlip = player1.needFlip(player2);
 
         player1.update(needFlip, map.gravity(), map.bounds());
         player2.update(needFlip, map.gravity(), map.bounds());
+
+        player1.checkAttack(player2);
+        player2.checkAttack(player1);
+
+        return player1.isDead() || player2.isDead();
     }
 
     private  void drawImageWithOutline(Image image, int x, int y, int length, int height, int outline, Color color, Graphics g){

@@ -31,6 +31,7 @@ public class Player implements KeyListener, Displayable {
     private final Vec2 attackVelocity = new Vec2(15, 0);
     private final Vec2 attackPosition = new Vec2(0, 0);
     private boolean isAttacking = false;
+    private boolean hasAlreadyHit = false;
 
 
     public Player(String name, Rectangle body, Element element, Command command, int numPlayer, boolean isFlipped) throws IOException {
@@ -73,6 +74,7 @@ public class Player implements KeyListener, Displayable {
         }
         else if (key == command.get(KeyCode.ATTACK) && !isAttacking) {
             isAttacking = true;
+            hasAlreadyHit = false;
             attackPosition.setX(0);
         }
     }
@@ -97,6 +99,7 @@ public class Player implements KeyListener, Displayable {
 
 
     }
+
     public void displayAttack(Display d, Images images) {
         if (!isAttacking) return;
 
@@ -106,12 +109,10 @@ public class Player implements KeyListener, Displayable {
                 ImageKey.valueOf("PLAYER_" + numPlayer + "_FIST");
         var fistImage = images.get(fistKey);
 
-        var flip = isFlipped ? -1: 1;
-        var center = new Vec2(body.x + body.width / 2 - Images.WIDTH_FIST / 2,
-                body.y + body.height / 2 - Images.HEIGHT_FIST / 2);
-        g.drawImage(fistImage, (int)(center.getX() + (attackPosition.getX() + 65) * flip), (int)(center.getY() + attackPosition.getY() + 15), null);
+        var rect = getAttackHitBox();
+        assert rect != null;
+        g.drawImage(fistImage, rect.x, rect.y, null);
     }
-
 
     private void manageFlip(boolean needFlip) {
         if (needFlip) {
@@ -167,4 +168,35 @@ public class Player implements KeyListener, Displayable {
         return statistic.percentageEnergy();
     }
 
+    private Rectangle getAttackHitBox() {
+        if (!isAttacking) return  null;
+
+        var flip = isFlipped ? -1: 1;
+        var center = new Vec2(body.x + body.width / 2 - Images.WIDTH_FIST / 2,
+                body.y + body.height / 2 - Images.HEIGHT_FIST / 2);
+
+        return new Rectangle(
+                (int)(center.getX() + (attackPosition.getX() + 65) * flip),
+                (int)(center.getY() + attackPosition.getY() + 15),
+                Images.WIDTH_FIST,
+                Images.HEIGHT_FIST
+        );
+    }
+
+    public void checkAttack(Player player2) {
+        if (!isAttacking || hasAlreadyHit) return;
+
+        var rect = getAttackHitBox();
+        if (rect == null) throw new NullPointerException();
+
+        hasAlreadyHit = rect.intersects(player2.body);
+
+        if (hasAlreadyHit) {
+            player2.statistic.loseHP(- statistic.damage());
+        }
+    }
+
+    public boolean isDead() {
+        return statistic.isDead();
+    }
 }

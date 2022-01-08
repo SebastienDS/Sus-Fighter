@@ -59,8 +59,8 @@ public class Game implements Runnable {
         duel = new Duel(players, map, Optional.empty(), images, 90, Path.of("resources", "images", "map", "UwU.jpg"));
     }
 
-    private void update() {
-        duel.update();
+    private boolean update() {
+        return duel.update();
     }
 
     private void render(Graphics g, Images images) {
@@ -80,30 +80,34 @@ public class Game implements Runnable {
         long lastTime = System.nanoTime();
 
         var g = display.getGraphics();
+        var dead = false;
 
-        while (running) {
+        while (running && !dead) {
             now = System.nanoTime();
             delta += (now - lastTime) / tickDuration;
             lastTime = now;
             if (delta >= 1) {
-                update();
+                dead = update();
                 show_menu(g);
+
                 delta--;
             }
         }
 
-        g.dispose();
+        System.out.println("A player is dead");
+
+        display.dispose();
         stop();
     }
 
     private void show_menu(Graphics g) {
-        if(menu == 0){
+        if (menu == 0) {
 
         }
-        else if(menu == 1){
+        else if (menu == 1) {
 
         }
-        else if(menu == 2){
+        else if (menu == 2) {
             render(g, images);
             display.render();
         }
@@ -121,10 +125,7 @@ public class Game implements Runnable {
         if (!running) return;
         running = false;
 
-        try {
-            thread.join();
-        } catch(InterruptedException e) {
-            e.printStackTrace();
-        }
+        thread.interrupt();
+        // TODO: properly stop the thread ? A simple join does not seem to work as desired
     }
 }
