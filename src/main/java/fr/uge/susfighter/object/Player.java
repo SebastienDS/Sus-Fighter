@@ -59,7 +59,7 @@ public class Player {
         }
         else if (key == command.get(Key.DOWN) && jump) {
             if (velocity.getY() < 0) velocity.setY(0);
-            else velocity.addY(20);
+            else velocity.addY(50);
         }
         else if (key == command.get(Key.ATTACK) && !isAttacking) {
             isAttacking = true;
@@ -73,17 +73,6 @@ public class Player {
             velocity.setX(0);
         }
     }
-
-//    public void display(Display d, Images images) {
-//        var g = d.getGraphics();
-//        g.setColor(Color.BLACK);
-//        var imageKey = (isFlipped) ? ImageKey.valueOf("PLAYER_" + numPlayer + "_IDLE_FLIPPED"):
-//                ImageKey.valueOf("PLAYER_" + numPlayer + "_IDLE");
-//        var image = images.get(imageKey);
-//        g.drawImage(image, body.x, body.y, null);
-//
-//
-//    }
 
 //    public void displayAttack(Display d, Images images) {
 //        if (!isAttacking) return;
@@ -99,7 +88,7 @@ public class Player {
 //        g.drawImage(fistImage, rect.x, rect.y, null);
 //    }
 
-    public void update(boolean needFlip, Vec2 gravity, Rectangle bounds) {
+    public void update(Vec2 gravity, Rectangle bounds) {
         velocity.addX(gravity.getX());
         velocity.addY(gravity.getY());
 
@@ -114,13 +103,8 @@ public class Player {
         body.setX(body.getX() + velocity.getX());
         body.setY(body.getY() + velocity.getY());
 
-        System.out.println("4: " + body.getX() + " " + body);
-
         body.setX(Math.min(Math.max(bounds.getX(), body.getX()), bounds.getX() + bounds.getWidth() - body.getWidth()));
         body.setY(Math.min(Math.max(bounds.getY(), body.getY()), bounds.getY() + bounds.getHeight() - body.getHeight()));
-
-        System.out.println("5: " + body.getY() + " " + bounds);
-
 
         if (body.getY() == bounds.getY() + bounds.getHeight() - body.getHeight()) {
             canJump = true;
@@ -161,16 +145,11 @@ public class Player {
 
     public void checkAttack(Player player2) {
         if (!isAttacking || hasAlreadyHit) return;
-
         var rect = getAttackHitBox();
         if (rect == null) throw new NullPointerException();
-
-//        hasAlreadyHit = rect.intersects(player2.body);
-        // TODO: verif intersects bounds
-        rect.intersects(player2.body.getBoundsInLocal());
-
+        hasAlreadyHit = rect.intersects(player2.body.getBoundsInLocal());
         if (hasAlreadyHit) {
-            player2.statistic.loseHP(- statistic.damage());
+            player2.statistic.loseHP(-statistic.damage());
         }
     }
 
@@ -196,5 +175,21 @@ public class Player {
 
     public boolean isFlipped() {
         return isFlipped;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isAttacking() {
+        return isAttacking;
+    }
+
+    public double getXFist() {
+        return Objects.requireNonNull(getAttackHitBox()).getX();
+    }
+
+    public double getYFist() {
+        return Objects.requireNonNull(getAttackHitBox()).getY();
     }
 }

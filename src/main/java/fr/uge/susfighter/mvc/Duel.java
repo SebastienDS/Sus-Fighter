@@ -3,8 +3,6 @@ package fr.uge.susfighter.mvc;
 import fr.uge.susfighter.object.*;
 import javafx.scene.input.KeyEvent;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,28 +31,22 @@ public class Duel {
         return endTime - ((System.currentTimeMillis() - startTime) / 1000);
     }
 
-    public boolean update(KeyEvent keyEvent) {
+    public boolean update() {
         var player1 = players.get(0);
         var player2 = players.get(1);
-
-        System.out.println("1: " + player1.getX());
-
-        player1.keyPressed(keyEvent.getCode());
-        player2.keyPressed(keyEvent.getCode());
-
-        System.out.println("2: " + player1.getX());
-
         var needFlip = player1.needFlip(player2);
 
-        player1.update(needFlip, map.gravity(), map.bounds());
-        player2.update(needFlip, map.gravity(), map.bounds());
-
-        System.out.println("3: " + player1.getX());
+        player1.update(map.gravity(), map.bounds());
+        player2.update(map.gravity(), map.bounds());
 
         player1.checkAttack(player2);
         player2.checkAttack(player1);
 
         return player1.isDead() || player2.isDead();
+    }
+
+    public void pressed(KeyEvent keyEvent){
+        players.forEach(player -> player.keyPressed(keyEvent.getCode()));
     }
 
     public void release(KeyEvent keyEvent) {

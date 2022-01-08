@@ -20,10 +20,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        StageManager.setStage(stage, 900, 600);
+        var screen = Screen.getPrimary().getBounds();
+
+        StageManager.setStage(stage, (int)(screen.getWidth() * 0.8), (int)(screen.getHeight() * 0.8));
 
         var players = initPlayers();
-        var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 20),
+        var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
                 new Rectangle(0, 0, StageManager.getWidth(), StageManager.getHeight()));
 
         var duel = new Duel(players, map, Optional.empty(), 90);
@@ -57,9 +59,9 @@ public class Main extends Application {
                 .addKeyCode(Command.Key.ATTACK, KeyCode.NUMPAD1);
 
         return List.of(
-                new Player("Player 1", new Rectangle(150, 150, 150, 300),
+                new Player("purple", new Rectangle(150, 150, 150, 250),
                         Element.WATER, command1, 1, false),
-                new Player("Player 2",  new Rectangle(600, 150, 150, 300),
+                new Player("red",  new Rectangle(600, 150, 150, 250),
                         Element.FIRE, command2, 2, true)
         );
     }

@@ -1,11 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import com.gluonhq.charm.glisten.control.ProgressBar?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="anchorpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-image: url('images\map\UwU.jpg');" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.susfighter.mvc.GameController">
+<AnchorPane fx:id="anchorpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-image: images\map\UwU.jpg;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.susfighter.mvc.GameController">
    <children>
       <ImageView fx:id="player1" fitHeight="130.0" fitWidth="119.0" layoutX="41.0" layoutY="86.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="player2" fitHeight="130.0" fitWidth="145.0" layoutX="526.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
+      <HBox fx:id="hBoxBar2" alignment="CENTER_RIGHT" layoutX="564.0" prefHeight="66.0" prefWidth="325.0">
+         <children>
+            <VBox fx:id="vBoxBar2" alignment="CENTER_RIGHT" prefHeight="66.0" prefWidth="318.0">
+               <children>
+                  <ProgressBar fx:id="playerHp2" prefHeight="34.0" prefWidth="322.0" progress="1.0" style="-fx-background-color: black; -fx-border-color: orange; -fx-border-width: 4; -fx-color: red;">
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </ProgressBar>
+                  <ProgressBar fx:id="playerEnergy2" prefHeight="20.0" prefWidth="126.0" progress="0.0" style="-fx-background-color: black; -fx-color: blue; -fx-border-color: orange; -fx-border-width: 2;">
+                     <padding>
+                        <Insets right="2.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets right="2.0" />
+                     </VBox.margin></ProgressBar>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox fx:id="hBoxBar1" prefHeight="66.0" prefWidth="457.0">
+         <children>
+            <VBox fx:id="vBoxBar1" alignment="CENTER_LEFT" prefHeight="66.0" prefWidth="359.0">
+               <children>
+                  <ProgressBar fx:id="playerHp1" prefHeight="34.0" prefWidth="313.0" progress="1.0" style="-fx-background-color: black; -fx-border-color: orange; -fx-border-width: 4; -fx-color: red;">
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </ProgressBar>
+                  <ProgressBar fx:id="playerEnergy1" prefHeight="20.0" prefWidth="126.0" progress="0.0" style="-fx-background-color: black; -fx-color: blue; -fx-border-color: orange; -fx-border-width: 2;">
+                     <VBox.margin>
+                        <Insets left="2.0" />
+                     </VBox.margin></ProgressBar>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <VBox fx:id="vBoxProfile2" layoutX="468.0" prefHeight="66.0" prefWidth="62.0" style="-fx-background-color: black; -fx-border-width: 4; -fx-border-color: orange;">
+         <children>
+            <ImageView fx:id="profile2" fitHeight="75.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true" style="-fx-background-color: black;">
+               <image>
+                  <Image url="@images/character/red/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="vBoxProfile1" layoutX="428.0" prefHeight="66.0" prefWidth="62.0" style="-fx-background-color: black; -fx-border-width: 4; -fx-border-color: orange;">
+         <children>
+            <ImageView fx:id="profile1" fitHeight="75.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true" style="-fx-background-color: black;">
+               <image>
+                  <Image url="@images/character/red/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <Label fx:id="time" alignment="CENTER" layoutX="335.0" layoutY="185.0" prefHeight="65.0" prefWidth="100.0" style="-fx-font-size: 40; -fx-text-fill: white;" styleClass="outline" stylesheets="@style.css" text="90" />
+      <Label fx:id="name1" layoutX="229.0" layoutY="79.0" prefHeight="26.0" prefWidth="83.0" style="-fx-font-size: 20;" styleClass="outline" stylesheets="@style.css" text="Label" />
+      <Label fx:id="name2" layoutX="443.0" layoutY="80.0" prefHeight="24.0" prefWidth="83.0" style="-fx-font-size: 20;" styleClass="outline" stylesheets="@style.css" text="Label" />
+      <ImageView fx:id="fist1" fitHeight="130.0" fitWidth="119.0" layoutX="60.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="fist2" fitHeight="130.0" fitWidth="119.0" layoutX="110.0" layoutY="209.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>

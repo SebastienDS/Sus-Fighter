@@ -49,8 +49,7 @@ public class StageManager {
     public static void setScene(StageEnum stageEnum) throws IOException {
         var loader = new FXMLLoader(StageManager.class.getResource(stageEnum.getName()));
         AnchorPane container = loader.load();
-        var scene = new Scene(container);
-        System.out.println("SCENE" + scene);
+        var scene = new Scene(container, WIDTH, HEIGHT);
         STAGE_SAVE.setScene(scene);
     }
 

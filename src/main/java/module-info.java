@@ -1,6 +1,7 @@
 module fr.uge.susfighter {
     requires javafx.controls;
     requires javafx.fxml;
+    requires com.gluonhq.charm.glisten;
 
 
     opens fr.uge.susfighter to javafx.fxml;
