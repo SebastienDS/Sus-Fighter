@@ -28,12 +28,12 @@ public class Main extends Application {
         var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
                 new Rectangle(0, 0, StageManager.getWidth(), StageManager.getHeight()));
 
-        var duel = new Duel(players, map, Optional.empty(), 90);
+        var duel = new Duel(players, map, Optional.empty(), 999);
         DuelManager.setDuel(duel);
 
         stage.setTitle("Sus-Fighter");
 
-        StageManager.setScene(StageManager.StageEnum.GAME);
+        StageManager.setScene(StageManager.StageEnum.MENU);
         stage.show();
 
         GameController.startGame();

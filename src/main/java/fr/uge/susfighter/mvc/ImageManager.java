@@ -24,17 +24,17 @@ public class ImageManager {
     private static final Map<ImageKey, Image> images = new HashMap<>();
 
     public static void loadImage(ImageKey key, String name, int width, int height) {
-        URL imageURL = ImageManager.class.getResource(name);
+        var imageURL = ImageManager.class.getResource(name);
         assert imageURL != null;
-        Image image = new Image(imageURL.toExternalForm(), width, height, false, false);
+        var image = new Image(imageURL.toExternalForm(), width, height, false, false);
 
         images.put(key, image);
     }
 
     public static void loadImage(ImageKey key, String name) {
-        URL imageURL = ImageManager.class.getResource(name);
+        var imageURL = ImageManager.class.getResource(name);
         assert imageURL != null;
-        Image image = new Image(imageURL.toExternalForm());
+        var image = new Image(imageURL.toExternalForm());
 
         images.put(key, image);
     }

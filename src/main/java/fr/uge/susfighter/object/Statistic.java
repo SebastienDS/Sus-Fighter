@@ -24,7 +24,7 @@ public class Statistic {
     }
 
     public Statistic() {
-        this(100, 0, 0, 10, 0, 0);
+        this(1000, 0, 0, 10, 0, 0);
     }
 
     public double percentageHpLeft(){
