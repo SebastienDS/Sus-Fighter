@@ -195,6 +195,7 @@ public class GameController {
         }
         var scaleX = p.isFlipped() ? -1 : 1;
         player.setScaleX(scaleX);
+        fist.setRotate(p.getAttackRotate());
     }
 
     private void attack(Player p, Player p2, ImageView fist, ProgressBar p2Hp) {

@@ -29,6 +29,7 @@ public class Player {
     private final Vec2 attackPosition = new Vec2(0, 0);
     private boolean isAttacking = false;
     private boolean hasAlreadyHit = false;
+    private double attackRotation = 0;
 
     private int combo = 0;
     private long lastHit;
@@ -95,6 +96,7 @@ public class Player {
             if(!hasAlreadyHit || combo == 2) combo = 0;
             else combo++;
             isAttacking = false;
+            attackRotation = 0;
         }
         else if (isAttacking) {
             var attack = getAttack();
@@ -228,11 +230,20 @@ public class Player {
     }
 
     private Vec2 getAttack() {
-        System.out.println(combo);
         return switch (combo) {
-            case 1 -> new Vec2(attackVelocity.getX(), attackVelocity.getX() * 0.5);
-            case 2 -> new Vec2(attackVelocity.getX(), attackVelocity.getX() * -1.5);
+            case 1 -> {
+                attackRotation += 5;
+                yield new Vec2(attackVelocity.getX(), attackVelocity.getX() * 0.5);
+            }
+            case 2 -> {
+                attackRotation -= 5;
+                yield new Vec2(attackVelocity.getX(), attackVelocity.getX() * -1.5);
+            }
             default -> attackVelocity;
         };
+    }
+
+    public double getAttackRotate() {
+        return attackRotation;
     }
 }
