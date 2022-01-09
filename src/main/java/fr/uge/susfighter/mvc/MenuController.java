@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -24,7 +25,11 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class MenuController {
@@ -65,10 +70,12 @@ public class MenuController {
         private int rotate;
         private final ImageView imageView;
 
-        public Astronaut(String name, ImageKey imageKey){
+        public Astronaut(){
             imageView = new ImageView();
-            ImageManager.loadImage(imageKey, name, widthPlayer, heightPlayer);
-            imageView.setImage(ImageManager.getImage(imageKey));
+            var image = images.remove(random.nextInt(images.size()));
+            imageView.setFitWidth(image.getWidth());
+            imageView.setFitHeight(image.getHeight());
+            imageView.setImage(image);
             putInAnchorPane(imageView);
             changeSpeed(5);
         }
@@ -110,6 +117,11 @@ public class MenuController {
                     || AnchorPane.getTopAnchor(imageView) < - heightPlayer) {
                 changeSpeed(5);
                 randomPlacement(imageView);
+                images.add(imageView.getImage());
+                var image = images.remove(random.nextInt(images.size()));
+                imageView.setFitWidth(image.getWidth());
+                imageView.setFitHeight(image.getHeight());
+                imageView.setImage(image);
             }
         }
 
@@ -242,10 +254,16 @@ public class MenuController {
     private VBox quentin;
 
     @FXML
+    private VBox yoan;
+
+    @FXML
     private Label nameSeb;
 
     @FXML
     private Label nameQuentin;
+
+    @FXML
+    private Label nameYoyo;
 
     private Rectangle rectangle1;
 
@@ -271,6 +289,8 @@ public class MenuController {
 
     private Rectangle confirmRectangle2;
 
+    private List<Image> images;
+
     private final int widthPlayer = 150;
     private final int heightPlayer = 250;
 
@@ -287,7 +307,7 @@ public class MenuController {
 
 
     @FXML
-    void initialize(){
+    void initialize() throws IOException, URISyntaxException {
         showTitle();
         initPlacement();
         initFont();
@@ -305,9 +325,11 @@ public class MenuController {
         creditsTitle.setFont(font);
         AnchorPane.setLeftAnchor(creditsTitle, StageManager.getWidth() / 2. - creditsTitle.getPrefWidth() / 2);
         AnchorPane.setTopAnchor(creditsTitle, StageManager.getHeight() / 20.);
-        double spacingX = (StageManager.getWidth() - sebastien.getPrefWidth() - quentin.getPrefWidth()) / 3;
+        double spacingX = (StageManager.getWidth() - sebastien.getPrefWidth() - quentin.getPrefWidth() - yoan.getPrefHeight()) / 4;
         initAvatar(sebastien, nameSeb, spacingX, StageManager.getHeight() /2. - quentin.getPrefHeight(), font2);
         initAvatar(quentin, nameQuentin, 2 * spacingX + sebastien.getPrefWidth(),
+                StageManager.getHeight() / 2. - quentin.getPrefHeight() , font2);
+        initAvatar(yoan, nameYoyo, 3 * spacingX + sebastien.getPrefWidth() * 2,
                 StageManager.getHeight() / 2. - quentin.getPrefHeight() , font2);
     }
 
@@ -451,16 +473,46 @@ public class MenuController {
         AnchorPane.setTopAnchor(map, y);
     }
 
-    private void initAstronauts() {
+    private void initAstronauts() throws IOException, URISyntaxException {
+        loadAllAvatar();
         astronauts = new ArrayList<>();
-        astronauts.add(new Astronaut("images/character/purple/IDLE.png", ImageKey.PURPLE));
-        astronauts.add(new Astronaut("images/character/red/IDLE.png", ImageKey.RED));
-        astronauts.add(new Astronaut("images/character/black/IDLE.png", ImageKey.BLACK));
-        astronauts.add(new Astronaut("images/character/green/IDLE.png", ImageKey.GREEN));
-        astronauts.add(new Astronaut("images/character/yellow/IDLE.png", ImageKey.YELLOW));
-        astronauts.add(new Astronaut("images/character/white/IDLE.png", ImageKey.WHITE));
-        astronauts.add(new Astronaut("images/character/pink/IDLE.png", ImageKey.PINK));
+        astronauts.add(new Astronaut());
+        astronauts.add(new Astronaut());
+        astronauts.add(new Astronaut());
+        astronauts.add(new Astronaut());
+        astronauts.add(new Astronaut());
+        astronauts.add(new Astronaut());
+        astronauts.add(new Astronaut());
         astronauts.forEach(astronaut -> GameController.toBack(astronaut.imageView, anchorPane));
+    }
+
+    private void loadAllAvatar() throws IOException, URISyntaxException {
+        images = new ArrayList<>();
+        var paths = Files.walk(Path.of(Objects.requireNonNull(this.getClass()
+                .getResource("images/Avatar")).toURI()), 1)
+                .filter(Files::isRegularFile)
+                .collect(Collectors.toList());
+        for (var path : paths) {
+            images.add(ImageManager.loadImage("file:///" + path.toString()));
+        }
+        loadColored();
+        images.add(ImageManager.getImage(ImageKey.RED));
+        images.add(ImageManager.getImage(ImageKey.BLACK));
+        images.add(ImageManager.getImage(ImageKey.WHITE));
+        images.add(ImageManager.getImage(ImageKey.YELLOW));
+        images.add(ImageManager.getImage(ImageKey.PINK));
+        images.add(ImageManager.getImage(ImageKey.GREEN));
+        images.add(ImageManager.getImage(ImageKey.PURPLE));
+    }
+
+    private void loadColored() {
+        ImageManager.loadImage(ImageKey.RED, "images/character/red/IDLE.png", widthPlayer, heightPlayer);
+        ImageManager.loadImage(ImageKey.PURPLE, "images/character/purple/IDLE.png", widthPlayer, heightPlayer);
+        ImageManager.loadImage(ImageKey.BLACK, "images/character/black/IDLE.png", widthPlayer, heightPlayer);
+        ImageManager.loadImage(ImageKey.WHITE, "images/character/white/IDLE.png", widthPlayer, heightPlayer);
+        ImageManager.loadImage(ImageKey.YELLOW, "images/character/yellow/IDLE.png", widthPlayer, heightPlayer);
+        ImageManager.loadImage(ImageKey.PINK, "images/character/pink/IDLE.png", widthPlayer, heightPlayer);
+        ImageManager.loadImage(ImageKey.GREEN, "images/character/green/IDLE.png", widthPlayer, heightPlayer);
     }
 
     private void initStars() {
@@ -472,7 +524,7 @@ public class MenuController {
     }
 
     private void initFont() {
-        var font = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 45);
+        var font = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 45);
         campaign.setFont(font);
         duel.setFont(font);
         credits.setFont(font);
@@ -702,6 +754,7 @@ public class MenuController {
         creditsTitle.setVisible(b);
         quentin.setVisible(b);
         sebastien.setVisible(b);
+        yoan.setVisible(b);
     }
 
     private void playerMenuVisible(boolean b) {

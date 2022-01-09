@@ -4,6 +4,7 @@ import fr.uge.susfighter.object.Player;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,10 @@ public class ImageManager {
         var image = new Image(imageURL.toExternalForm(), width, height, false, false);
 
         images.put(key, image);
+    }
+
+    public static Image loadImage(String path){
+        return new Image(path);
     }
 
     public static void loadImage(ImageKey key, String name) {
