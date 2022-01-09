@@ -100,8 +100,7 @@ public class GameController {
     }
 
     private void setBackGround() {
-        ImageManager.loadImage(ImageKey.FIELD, "images/map/UwU.jpg");
-        ImageView imageView = new ImageView(ImageManager.getImage(ImageKey.FIELD));
+        var imageView = new ImageView(ImageManager.getImage(ImageKey.FIELD));
         imageView.setFitWidth(StageManager.getWidth());
         imageView.setFitHeight(StageManager.getHeight());
         anchorpane.getChildren().add(imageView);
@@ -163,13 +162,7 @@ public class GameController {
     }
 
     private Paint getColorFromName(String name){
-        if(name.equals("purple")){
-            return Color.PURPLE;
-        }
-        if(name.equals("red")){
-            return Color.RED;
-        }
-        return Color.WHITE;
+        return Color.valueOf(name.toUpperCase(Locale.ROOT));
     }
 
     private void initTimeline() {
