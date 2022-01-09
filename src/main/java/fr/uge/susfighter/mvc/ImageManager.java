@@ -18,7 +18,15 @@ public class ImageManager {
         PLAYER_2_FIST,
         PLAYER_2_HEAD,
 
-        FIELD;
+        FIELD,
+        PURPLE,
+        RED,
+        GREEN,
+        YELLOW,
+        PINK,
+        BLACK,
+        WHITE,
+        STAR;
     }
 
     private static final Map<ImageKey, Image> images = new HashMap<>();

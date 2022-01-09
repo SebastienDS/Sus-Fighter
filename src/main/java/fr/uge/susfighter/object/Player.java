@@ -132,14 +132,14 @@ public class Player {
         if (!isAttacking) return  null;
 
         var flip = isFlipped ? -1: 1;
-        var center = new Vec2(body.getX() + body.getWidth() / 2 - Images.WIDTH_FIST / 2,
-                body.getY() + body.getHeight() / 2 - Images.HEIGHT_FIST / 2);
+        var center = new Vec2(body.getX() + body.getWidth() / 2 - 80 / 2,
+                body.getY() + body.getHeight() / 2 - 80 / 2);
 
         return new Rectangle(
                 (int)(center.getX() + (attackPosition.getX() + 65) * flip),
                 (int)(center.getY() + attackPosition.getY() + 15),
-                Images.WIDTH_FIST,
-                Images.HEIGHT_FIST
+                80,
+                80
         );
     }
 

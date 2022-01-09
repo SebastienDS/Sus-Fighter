@@ -1,11 +1,8 @@
 package fr.uge.susfighter.object;
 
 
-import fr.uge.susfighter.mvc.StageManager;
 import javafx.scene.shape.Rectangle;
-import fr.uge.susfighter.object.Images.ImageKey;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 

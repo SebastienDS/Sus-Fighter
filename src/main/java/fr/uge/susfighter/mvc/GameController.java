@@ -1,7 +1,7 @@
 package fr.uge.susfighter.mvc;
 
+import com.gluonhq.charm.glisten.control.ProgressBar;
 import fr.uge.susfighter.mvc.ImageManager.ImageKey;
-import fr.uge.susfighter.object.Images;
 import fr.uge.susfighter.object.Player;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -16,7 +16,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
-import com.gluonhq.charm.glisten.control.ProgressBar;
 
 import java.util.Locale;
 
@@ -158,8 +157,8 @@ public class GameController {
         name.setText(p.getName().toUpperCase(Locale.ROOT));
         AnchorPane.setLeftAnchor(name, (p.getNumPlayer() - 1) * (StageManager.getWidth() - name.getPrefWidth()));
         fist.setImage(ImageManager.getImage(ImageKey.valueOf(player + "_FIST")));
-        fist.setFitWidth(Images.WIDTH_FIST);
-        fist.setFitHeight(Images.HEIGHT_FIST);
+        fist.setFitWidth(80);
+        fist.setFitHeight(80);
         fist.setVisible(false);
     }
 
