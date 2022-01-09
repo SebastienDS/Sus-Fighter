@@ -25,7 +25,7 @@ public class Player {
     private final Vec2 velocity = new Vec2(0, 0);
     private final Vec2 projectionVelocity = new Vec2(0, 0);
 
-    private final Vec2 attackVelocity = new Vec2(15, 0);
+    private final Vec2 attackVelocity = new Vec2(10, 0);
     private final Vec2 attackPosition = new Vec2(0, 0);
     private boolean isAttacking = false;
     private boolean hasAlreadyHit = false;
@@ -79,27 +79,21 @@ public class Player {
         }
     }
 
-//    public void displayAttack(Display d, Images images) {
-//        if (!isAttacking) return;
-//
-//        var g = d.getGraphics();
-//
-//        var fistKey = (isFlipped) ? ImageKey.valueOf("PLAYER_" + numPlayer + "_FIST_FLIPPED"):
-//                ImageKey.valueOf("PLAYER_" + numPlayer + "_FIST");
-//        var fistImage = images.get(fistKey);
-//
-//        var rect = getAttackHitBox();
-//        assert rect != null;
-//        g.drawImage(fistImage, rect.x, rect.y, null);
-//    }
-
     public void update(Vec2 gravity, Rectangle bounds) {
         projectionVelocity.setY(convergeTo0(projectionVelocity.getY(), gravity.getY()));
 
         velocity.addX(gravity.getX());
         velocity.addY(gravity.getY());
 
+        manageAttack();
+        managePosition(bounds);
+        manageJump(bounds);
+    }
+
+    private void manageAttack() {
         if (isAttacking && attackPosition.getX() > ATTACK_DISTANCE) {
+            if(!hasAlreadyHit || combo == 2) combo = 0;
+            else combo++;
             isAttacking = false;
         }
         else if (isAttacking) {
@@ -107,13 +101,17 @@ public class Player {
             attackPosition.addX(attack.getX());
             attackPosition.addY(attack.getY());
         }
+    }
 
+    private void managePosition(Rectangle bounds) {
         body.setX(body.getX() + velocity.getX() + projectionVelocity.getX());
         body.setY(body.getY() + velocity.getY() + projectionVelocity.getY());
 
         body.setX(Math.min(Math.max(bounds.getX(), body.getX()), bounds.getX() + bounds.getWidth() - body.getWidth()));
         body.setY(Math.min(Math.max(bounds.getY(), body.getY()), bounds.getY() + bounds.getHeight() - body.getHeight()));
+    }
 
+    private void manageJump(Rectangle bounds) {
         if (body.getY() == bounds.getY() + bounds.getHeight() - body.getHeight()) {
             canJump = true;
             jump = false;
@@ -166,8 +164,6 @@ public class Player {
             player2.statistic.loseHP(-statistic.damage());
 
             applyCombo(flip, player2);
-        } else {
-            combo = 0;
         }
     }
 
@@ -213,17 +209,15 @@ public class Player {
 
     private void applyCombo(int flip, Player player2) {
         var timeBetweenLastHit = System.currentTimeMillis() - lastHit;
-        if (timeBetweenLastHit < 1000) {
-            combo++;
-
-            if (combo >= 3) {
-                player2.projectionVelocity.addX(15 * flip);
-                player2.projectionVelocity.setY(-30);
-            }
-        } else {
+        lastHit = System.currentTimeMillis();
+        if (timeBetweenLastHit < 1000 && combo >= 2) {
+            player2.projectionVelocity.addX(15 * flip);
+            player2.projectionVelocity.setY(-30);
+            return;
+        }
+        if(timeBetweenLastHit > 1000) {
             combo = 0;
         }
-        lastHit = System.currentTimeMillis();
     }
 
     private static double convergeTo0(double value, double decrementValue) {
@@ -236,7 +230,7 @@ public class Player {
     private Vec2 getAttack() {
         System.out.println(combo);
         return switch (combo) {
-            case 1 -> new Vec2(attackVelocity.getX(), attackVelocity.getX() * 1.5);
+            case 1 -> new Vec2(attackVelocity.getX(), attackVelocity.getX() * 0.5);
             case 2 -> new Vec2(attackVelocity.getX(), attackVelocity.getX() * -1.5);
             default -> attackVelocity;
         };
