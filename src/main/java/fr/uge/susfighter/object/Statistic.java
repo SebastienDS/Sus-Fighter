@@ -51,9 +51,7 @@ public class Statistic {
     }
 
     public void gainEnergy() {
-        System.out.println("UWU "+ energy);
         energy = Math.min(energy + ENERGY_PER_ATTACK, maxEnergy);
-        System.out.println(energy);
     }
 
     public boolean isFullEnergy() {

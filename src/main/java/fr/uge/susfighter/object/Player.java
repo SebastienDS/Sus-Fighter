@@ -34,7 +34,7 @@ public class Player {
     private final Vec2 ultimateVelocity = new Vec2(10, 0);
     private final Rectangle ultimate = new Rectangle(2000, 2000, ATTACK_SIZE * ULTIMATE_MULTIPLICATOR, ATTACK_SIZE * ULTIMATE_MULTIPLICATOR);
     private boolean hasAlreadyHit = false;
-    private boolean hasAlreadyHitUltimate = false;
+    private boolean hasAlreadyHitUltimate = true;
     private double attackRotation = 0;
 
     private int combo = 0;
@@ -85,7 +85,6 @@ public class Player {
 
             ultimate.setX(center.getX() + body.getWidth() / 2 * flip);
             ultimate.setY(center.getY());
-            System.out.println("2:" + ultimate);
 
             ultimateVelocity.setX(Math.abs(ultimateVelocity.getX()) * flip);
             statistic.consumeEnergy();
