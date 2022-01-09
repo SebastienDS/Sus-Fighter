@@ -42,7 +42,6 @@ public class Player {
     private final Rectangle ultimate = new Rectangle(2000, 2000, ATTACK_SIZE * ULTIMATE_MULTIPLICATOR, ATTACK_SIZE * ULTIMATE_MULTIPLICATOR);
     private boolean hasAlreadyHit = false;
     private boolean hasAlreadyHitUltimate = true;
-    private double attackRotation = 0;
 
     private int combo = 0;
     private long lastHit;
@@ -127,7 +126,7 @@ public class Player {
             else combo++;
 
             action = Action.IDLE;
-            attackRotation = 0;
+            attack.setRotate(0);
         }
         else if (action == Action.ATTACK) {
             var comboAttack = getAttack();
@@ -300,11 +299,11 @@ public class Player {
     private Vec2 getAttack() {
         return switch (combo) {
             case 1 -> {
-                attackRotation += 5;
+                attack.setRotate(attack.getRotate() + 5);
                 yield new Vec2(attackVelocity.getX(), attackVelocity.getX() * 0.5);
             }
             case 2 -> {
-                attackRotation -= 5;
+                attack.setRotate(attack.getRotate() - 5);
                 yield new Vec2(attackVelocity.getX(), attackVelocity.getX() * -1.5);
             }
             default -> attackVelocity;
@@ -312,7 +311,7 @@ public class Player {
     }
 
     public double getAttackRotate() {
-        return attackRotation;
+        return attack.getRotate();
     }
 
     public double getAttackWidth() {
