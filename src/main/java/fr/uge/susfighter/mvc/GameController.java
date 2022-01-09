@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.Locale;
@@ -195,7 +196,6 @@ public class GameController {
         var p = duel.getPlayer(0);
         var p2 = duel.getPlayer(1);
         updatePlayer(p, p2, player1, fist1, ultimate1, playerHp1, playerEnergy1);
-
         updatePlayer(p2, p, player2, fist2, ultimate2, playerHp2, playerEnergy2);
     }
 
@@ -204,12 +204,17 @@ public class GameController {
         AnchorPane.setLeftAnchor(player, (double) p.getX());
         AnchorPane.setTopAnchor(player, (double) p.getY());
         fist.setVisible(false);
-        if (p.isAttacking()){
+        var flip = p.isFlipped() ? -1 : 1;
+
+        if (p.isAttacking()) {
+            fist.setRotate(p.getAttackRotate() * flip);
             attack(p, p2, fist);
         }
-        var flip = p.isFlipped() ? -1 : 1;
+        else if (p.isBlocking()) {
+            block(p, fist);
+        }
+
         player.setScaleX(flip);
-        fist.setRotate(p.getAttackRotate() * flip);
 
         pHp.setProgress(p.percentageHpLeft());
         pEnergy.setProgress(p.percentageEnergy());
@@ -217,6 +222,18 @@ public class GameController {
         AnchorPane.setLeftAnchor(ultimate, p.getUltimateX());
         AnchorPane.setTopAnchor(ultimate, p.getUltimateY());
         ultimate.setScaleX(p.getUltimateFlip());
+    }
+
+    private void block(Player p, ImageView fist) {
+        var flip = p.isFlipped() ? -1 : 1;
+        fist.setVisible(true);
+        fist.setScaleX(flip);
+
+        var blockRect = p.getBlockHitBox();
+        AnchorPane.setLeftAnchor(fist, blockRect.getX());
+        AnchorPane.setTopAnchor(fist, blockRect.getY());
+
+        fist.setRotate(blockRect.getRotate());
     }
 
     private void attack(Player p, Player p2, ImageView fist) {

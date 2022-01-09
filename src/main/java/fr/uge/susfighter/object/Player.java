@@ -8,6 +8,12 @@ import java.util.Objects;
 
 public class Player {
 
+    private enum Action {
+        IDLE,
+        ATTACK,
+        BLOCK
+    }
+
     private static final int ATTACK_DISTANCE = 100;
     private static final int ATTACK_SIZE = 80;
     private static final int ULTIMATE_MULTIPLICATOR = 10;
@@ -25,12 +31,13 @@ public class Player {
     private boolean canJump = true;
     private Key xMovement = Key.LEFT;
 
+    private Action action = Action.IDLE;
+
     private final Vec2 velocity = new Vec2(0, 0);
     private final Vec2 projectionVelocity = new Vec2(0, 0);
 
     private final Vec2 attackVelocity = new Vec2(10, 0);
     private final Rectangle attack = new Rectangle(0, 0, ATTACK_SIZE, ATTACK_SIZE);
-    private boolean isAttacking = false;
     private final Vec2 ultimateVelocity = new Vec2(10, 0);
     private final Rectangle ultimate = new Rectangle(2000, 2000, ATTACK_SIZE * ULTIMATE_MULTIPLICATOR, ATTACK_SIZE * ULTIMATE_MULTIPLICATOR);
     private boolean hasAlreadyHit = false;
@@ -72,8 +79,8 @@ public class Player {
             if (velocity.getY() < 0) velocity.setY(0);
             else velocity.addY(50);
         }
-        else if (key == command.get(Key.ATTACK) && !isAttacking) {
-            isAttacking = true;
+        else if (key == command.get(Key.ATTACK) && action == Action.IDLE) {
+            action = Action.ATTACK;
             hasAlreadyHit = false;
             attack.setX(0);
             attack.setY(0);
@@ -89,11 +96,16 @@ public class Player {
             ultimateVelocity.setX(Math.abs(ultimateVelocity.getX()) * flip);
             statistic.consumeEnergy();
         }
+        else if (key == command.get(Key.BLOCK) && action == Action.IDLE) {
+            action = Action.BLOCK;
+        }
     }
 
     public void keyReleased(KeyCode key) {
         if ((key == command.get(Key.LEFT) || key == command.get(Key.RIGHT)) && key == command.get(xMovement)) {
             velocity.setX(0);
+        } else if (key == command.get(Key.BLOCK)) {
+            action = Action.IDLE;
         }
     }
 
@@ -103,21 +115,21 @@ public class Player {
         velocity.addX(gravity.getX());
         velocity.addY(gravity.getY());
 
-        manageAttack();
-        manageUltimate();
         managePosition(bounds);
         manageJump(bounds);
+        manageAttack();
+        manageUltimate();
     }
 
     private void manageAttack() {
-        if (isAttacking && attack.getX() > ATTACK_DISTANCE) {
+        if (action == Action.ATTACK && attack.getX() > ATTACK_DISTANCE) {
             if(!hasAlreadyHit || combo == 2) combo = 0;
             else combo++;
 
-            isAttacking = false;
+            action = Action.IDLE;
             attackRotation = 0;
         }
-        else if (isAttacking) {
+        else if (action == Action.ATTACK) {
             var comboAttack = getAttack();
             attack.setX(attack.getX() + comboAttack.getX());
             attack.setY(attack.getY() + comboAttack.getY());
@@ -162,17 +174,34 @@ public class Player {
     }
 
     private Rectangle getAttackHitBox() {
-        if (!isAttacking) return null;
+        if (action != Action.ATTACK) return null;
 
         var flip = isFlipped ? -1: 1;
         var center = getPlayerCenter(attack);
 
         return new Rectangle(
-                (int)(center.getX() + (attack.getX() + 65) * flip),
-                (int)(center.getY() + attack.getY() + 15),
+                center.getX() + (attack.getX() + 65) * flip,
+                center.getY() + attack.getY() + 15,
                 attack.getWidth(),
                 attack.getHeight()
         );
+    }
+
+    public Rectangle getBlockHitBox() {
+        if (action != Action.BLOCK) return null;
+
+        var flip = isFlipped ? -1: 1;
+        var center = getPlayerCenter(attack);
+
+        var rect = new Rectangle(
+                center.getX() + (getAttackHeight() + 20) * flip,
+                center.getY(),
+                attack.getWidth(),
+                attack.getHeight()
+        );
+        var fistRotation = isFlipped ? 180 : 0;
+        rect.setRotate(-90 + fistRotation);
+        return rect;
     }
 
     public void checkAttack(Player player2) {
@@ -188,10 +217,11 @@ public class Player {
     }
 
     private void checkBasicAttack(Player player2) {
-        if (!isAttacking || hasAlreadyHit) return;
+        if (action != Action.ATTACK || hasAlreadyHit) return;
 
         var rect = getAttackHitBox();
         if (rect == null) throw new NullPointerException();
+
         hasAlreadyHit = rect.intersects(player2.body.getBoundsInLocal());
 
         if (hasAlreadyHit) {
@@ -232,7 +262,11 @@ public class Player {
     }
 
     public boolean isAttacking() {
-        return isAttacking;
+        return action == Action.ATTACK;
+    }
+
+    public boolean isBlocking() {
+        return action == Action.BLOCK;
     }
 
     public double getXFist() {
@@ -289,7 +323,7 @@ public class Player {
         return attack.getHeight();
     }
 
-    private Vec2 getPlayerCenter(Rectangle attack) {
+    public Vec2 getPlayerCenter(Rectangle attack) {
         return new Vec2(body.getX() + body.getWidth() / 2 - attack.getWidth() / 2,
                 body.getY() + body.getHeight() / 2 - attack.getHeight() / 2);
     }

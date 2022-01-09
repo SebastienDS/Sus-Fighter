@@ -14,7 +14,8 @@ public class Command {
         UP,
         DOWN,
         ATTACK,
-        ULTIMATE_ATTACK
+        ULTIMATE_ATTACK,
+        BLOCK,
     }
 
     private final Map<Key, KeyCode> keyCodes;
@@ -41,7 +42,8 @@ public class Command {
                 .addKeyCode(Key.UP, KeyCode.Z)
                 .addKeyCode(Key.DOWN, KeyCode.S)
                 .addKeyCode(Key.ATTACK, KeyCode.T)
-                .addKeyCode(Key.ULTIMATE_ATTACK, KeyCode.Y);
+                .addKeyCode(Key.ULTIMATE_ATTACK, KeyCode.Y)
+                .addKeyCode(Key.BLOCK, KeyCode.U);
         return command;
     }
 
@@ -52,7 +54,8 @@ public class Command {
                 .addKeyCode(Key.UP, KeyCode.UP)
                 .addKeyCode(Key.DOWN, KeyCode.DOWN)
                 .addKeyCode(Key.ATTACK, KeyCode.NUMPAD1)
-                .addKeyCode(Key.ULTIMATE_ATTACK, KeyCode.NUMPAD2);
+                .addKeyCode(Key.ULTIMATE_ATTACK, KeyCode.NUMPAD2)
+                .addKeyCode(Key.BLOCK, KeyCode.NUMPAD3);
         return command;
     }
 }
