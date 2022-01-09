@@ -10,7 +10,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -19,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
@@ -228,6 +228,24 @@ public class MenuController {
 
     @FXML
     private Label ready2;
+    
+    @FXML
+    private Polygon back;
+
+    @FXML
+    private Label creditsTitle;
+
+    @FXML
+    private VBox sebastien;
+
+    @FXML
+    private VBox quentin;
+
+    @FXML
+    private Label nameSeb;
+
+    @FXML
+    private Label nameQuentin;
 
     private Rectangle rectangle1;
 
@@ -259,7 +277,10 @@ public class MenuController {
     private enum Menu{
         CLICK,
         MODE,
-        DUEL
+        MAP,
+        CHARACTER,
+        CREDITS,
+        CAMPAIGN
     }
 
     private Menu menu = Menu.CLICK;
@@ -267,6 +288,7 @@ public class MenuController {
 
     @FXML
     void initialize(){
+        showTitle();
         initPlacement();
         initFont();
         initStars();
@@ -274,6 +296,25 @@ public class MenuController {
         initTimeline();
         initMaps();
         initCharacterMenu();
+        initCredits();
+    }
+
+    private void initCredits() {
+        var font = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 150);
+        var font2 = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 35);
+        creditsTitle.setFont(font);
+        AnchorPane.setLeftAnchor(creditsTitle, StageManager.getWidth() / 2. - creditsTitle.getPrefWidth() / 2);
+        AnchorPane.setTopAnchor(creditsTitle, StageManager.getHeight() / 20.);
+        double spacingX = (StageManager.getWidth() - sebastien.getPrefWidth() - quentin.getPrefWidth()) / 3;
+        initAvatar(sebastien, nameSeb, spacingX, StageManager.getHeight() /2. - quentin.getPrefHeight(), font2);
+        initAvatar(quentin, nameQuentin, 2 * spacingX + sebastien.getPrefWidth(),
+                StageManager.getHeight() / 2. - quentin.getPrefHeight() , font2);
+    }
+
+    private void initAvatar(VBox vBox, Label name, double x, double y, Font font) {
+        AnchorPane.setLeftAnchor(vBox, x);
+        AnchorPane.setBottomAnchor(vBox, y);
+        name.setFont(font);
     }
 
     private void initCharacterMenu() {
@@ -289,7 +330,6 @@ public class MenuController {
         addDisable(List.of(black2, white1));
         setRectangles();
         initButtonsAndConfirm();
-        playerMenuToFront();
     }
 
     private void initLine() {
@@ -302,14 +342,14 @@ public class MenuController {
     }
 
     private void initButtonsAndConfirm() {
-        var font = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 50);
-        var font2 = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 30);
+        var font = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 50);
+        var font2 = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 30);
         var spacingX = (StageManager.getWidth() / 2.0 - (white1.getPrefWidth() * 3)) / 4;
         var spacingY = (StageManager.getHeight() / 2.0 - (white1.getPrefHeight() * 3)) / 4;
-        initButton(confirmPlayer1, 0, font2, spacingX, spacingY, black1.getPrefWidth(), black1.getPrefHeight());
-        initButton(confirmPlayer2, StageManager.getWidth() / 2, font2, spacingX, spacingY, black1.getPrefWidth(), black1.getPrefHeight());
         confirmRectangle1 = initConfirm(0, line.getStrokeWidth(), ready1, font);
         confirmRectangle2 = initConfirm(StageManager.getWidth() / 2., -line.getStrokeWidth(), ready2, font);
+        initButton(confirmPlayer1, 0, font2, spacingX, spacingY, black1.getPrefWidth(), black1.getPrefHeight());
+        initButton(confirmPlayer2, StageManager.getWidth() / 2, font2, spacingX, spacingY, black1.getPrefWidth(), black1.getPrefHeight());
     }
 
     private Rectangle initConfirm(double x, double stroke, Label ready, Font font) {
@@ -322,6 +362,7 @@ public class MenuController {
         AnchorPane.setLeftAnchor(ready, x + StageManager.getWidth() / 4 - ready.getPrefWidth() / 2);
         AnchorPane.setTopAnchor(ready, StageManager.getHeight() / 2 - ready.getPrefHeight() / 2);
         ready.setFont(font);
+        toFront(ready, anchorPane);
         return rectangle;
     }
 
@@ -332,6 +373,7 @@ public class MenuController {
         AnchorPane.setTopAnchor(button, StageManager.getHeight() / 2 + spacingY * 3 + height * 2);
         button.setPrefWidth(width);
         button.setPrefHeight(height);
+        toFront(button, anchorPane);
     }
 
     private void setRectangles() {
@@ -385,6 +427,11 @@ public class MenuController {
         AnchorPane.setTopAnchor(vBox, y);
     }
 
+    private static void toFront(Node node, AnchorPane pane){
+        for (int i = 0; i < pane.getChildren().size(); i++) {
+            node.toFront();
+        }
+    }
 
     private void initMaps() {
         var font = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 50);
@@ -413,6 +460,7 @@ public class MenuController {
         astronauts.add(new Astronaut("images/character/yellow/IDLE.png", ImageKey.YELLOW));
         astronauts.add(new Astronaut("images/character/white/IDLE.png", ImageKey.WHITE));
         astronauts.add(new Astronaut("images/character/pink/IDLE.png", ImageKey.PINK));
+        astronauts.forEach(astronaut -> GameController.toBack(astronaut.imageView, anchorPane));
     }
 
     private void initStars() {
@@ -420,6 +468,7 @@ public class MenuController {
         for (int i = 0; i < 75; i++) {
             starsView.add(new Star(anchorPane));
         }
+        starsView.forEach(star -> GameController.toBack(star.star, anchorPane));
     }
 
     private void initFont() {
@@ -471,16 +520,18 @@ public class MenuController {
 
     @FXML
     void creditsMenu() {
-
+        menu = Menu.CREDITS;
+        creditsVisible(true);
+        back.setVisible(true);
+        buttonsMenuVisible(false);
     }
 
     @FXML
     void duelMenu() {
-        menu = Menu.DUEL;
-        title.setVisible(false);
+        menu = Menu.MAP;
         buttonsMenuVisible(false);
         buttonMapVisible(true);
-        buttonsMapToFront();
+        back.setVisible(true);
     }
 
     @FXML
@@ -516,7 +567,6 @@ public class MenuController {
     }
 
     private void initBackground() {
-        showTitle();
         anchorPane.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
         stars.play();
         starsView.forEach(star -> star.setVisible(true));
@@ -533,6 +583,7 @@ public class MenuController {
         title.setStyle("-fx-stroke-width: 1px;");
         title.setFont(font);
         title.alignmentProperty().set(Pos.CENTER);
+        title.setVisible(false);
         anchorPane.getChildren().add(title);
     }
 
@@ -546,31 +597,61 @@ public class MenuController {
         mapChosen = ((Node)mouseEvent.getSource()).getParent().getParent().getId();
         buttonMapVisible(false);
         playerMenuVisible(true);
+        menu = Menu.CHARACTER;
     }
 
     @FXML
     void openMenu(){
         if(menu == Menu.CLICK){
-            buttonsMenuToFront();
             buttonsMenuVisible(true);
             click.setVisible(false);
             timeline.stop();
             menu = Menu.MODE;
             initBackground();
-
+            toFront(back, anchorPane);
         }
     }
 
     @FXML
     void chosePlayer(MouseEvent event){
         var name = ((Node)event.getSource()).getId();
-        if(name.endsWith("1")) nameSelect1 = changePlayer(select1, nameSelect1, name, ((Node) event.getSource()),
+        if(name.endsWith("1")) nameSelect1 = changePlayer(select1, nameSelect1, name,
                 2, rectangle1, 0);
-        if(name.endsWith("2")) nameSelect2 = changePlayer(select2, nameSelect2, name, ((Node) event.getSource()),
+        if(name.endsWith("2")) nameSelect2 = changePlayer(select2, nameSelect2, name,
                 1, rectangle2, StageManager.getWidth() / 2);
     }
 
-    private String changePlayer(VBox select, String nameSelect, String name, Node node,
+    @FXML
+    void backMenu(){
+         if(menu ==  Menu.MAP){
+             buttonMapVisible(false);
+             buttonsMenuVisible(true);
+             menu = Menu.MODE;
+             back.setVisible(false);
+         }
+        if(menu ==  Menu.CHARACTER){
+            reinitializeCharacter();
+            playerMenuVisible(false);
+            buttonMapVisible(true);
+            menu = Menu.MAP;
+        }
+        if(menu == Menu.CREDITS){
+            creditsVisible(false);
+            back.setVisible(false);
+            buttonsMenuVisible(true);
+        }
+    }
+
+    private void reinitializeCharacter() {
+        nameSelect1 = changePlayer(select1, nameSelect1, "black1", 2, rectangle1, 0);
+        nameSelect2 = changePlayer(select2, nameSelect2, "white2",1, rectangle2, StageManager.getWidth() / 2);
+        confirmRectangle1.setVisible(false);
+        confirmRectangle2.setVisible(false);
+        ready1.setVisible(false);
+        ready2.setVisible(false);
+    }
+
+    private String changePlayer(VBox select, String nameSelect, String name,
                                 int otherPlayer, Rectangle rectangle, int x_start) {
         var toDisableNode = StageManager.getScene().lookup("#" + name.substring(0, name.length() - 1) + otherPlayer);
         toDisableNode.setDisable(true);
@@ -602,17 +683,8 @@ public class MenuController {
         AnchorPane.setTopAnchor(rectangle, y);
     }
 
-    private void buttonsMenuToFront() {
-        var size = anchorPane.getChildren().size();
-        for (int i = 0; i < size; i++) {
-            exit.toFront();
-            credits.toFront();
-            duel.toFront();
-            campaign.toFront();
-        }
-    }
-
     private void buttonsMenuVisible(boolean bool){
+        title.setVisible(bool);
         campaign.setVisible(bool);
         duel.setVisible(bool);
         credits.setVisible(bool);
@@ -626,16 +698,11 @@ public class MenuController {
         map4.setVisible(b);
     }
 
-    private void buttonsMapToFront() {
-        var size = anchorPane.getChildren().size();
-        for (int i = 0; i < size; i++) {
-            map1.toFront();
-            map2.toFront();
-            map3.toFront();
-            map4.toFront();
-        }
+    private void creditsVisible(boolean b){
+        creditsTitle.setVisible(b);
+        quentin.setVisible(b);
+        sebastien.setVisible(b);
     }
-
 
     private void playerMenuVisible(boolean b) {
         yellow2.setVisible(b);
@@ -659,36 +726,6 @@ public class MenuController {
         rectangle2.setVisible(b);
         confirmPlayer1.setVisible(b);
         confirmPlayer2.setVisible(b);
-    }
-
-    private void playerMenuToFront() {
-        for (int i = 0; i < anchorPane.getChildren().size(); i++) {
-            yellow2.toFront();
-            green2.toFront();
-            red2.toFront();
-            purple2.toFront();
-            pink2.toFront();
-            white2.toFront();
-            black2.toFront();
-            yellow1.toFront();
-            green1.toFront();
-            red1.toFront();
-            purple1.toFront();
-            pink1.toFront();
-            white1.toFront();
-            black1.toFront();
-            line.toFront();
-            select2.toFront();
-            select1.toFront();
-            rectangle2.toFront();
-            rectangle1.toFront();
-            confirmRectangle1.toFront();
-            confirmRectangle2.toFront();
-            confirmPlayer1.toFront();
-            confirmPlayer2.toFront();
-            ready1.toFront();
-            ready2.toFront();
-        }
     }
 
     private List<Player> initPlayers() {

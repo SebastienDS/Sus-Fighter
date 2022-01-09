@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#openMenu" prefHeight="600.0" prefWidth="900.0" styleClass="anchor" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.susfighter.mvc.MenuController">
@@ -236,5 +237,27 @@
             <String fx:value="character" />
          </styleClass>
       </Label>
+      <Polygon fx:id="back" fill="WHITE" layoutX="64.0" layoutY="74.0" onMouseClicked="#backMenu" points="8.799995422363281, -7.600006103515625, -39.20000457763672, -25.999996185302734, 8.799995422363281, -46.79999923706055" stroke="BLACK" strokeType="INSIDE" visible="false" />
+      <Label fx:id="creditsTitle" alignment="CENTER" layoutX="5.0" prefHeight="85.0" prefWidth="900.0" styleClass="outline2" text="Credits" textFill="WHITE" visible="false" />
+      <VBox fx:id="sebastien" alignment="CENTER" layoutX="124.0" layoutY="199.0" prefHeight="266.0" prefWidth="261.0" visible="false">
+         <children>
+            <ImageView fitHeight="250.0" fitWidth="150.0" pickOnBounds="true">
+               <image>
+                  <Image url="@images/Avatar/garen.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="nameSeb" alignment="CENTER" prefHeight="120.0" prefWidth="335.0" styleClass="outline2" text="Sebastien Dos Santos" textFill="WHITE" />
+         </children>
+      </VBox>
+      <VBox fx:id="quentin" alignment="CENTER" layoutX="464.0" layoutY="199.0" prefHeight="266.0" prefWidth="261.0" visible="false">
+         <children>
+            <ImageView fitHeight="250.0" fitWidth="150.0" pickOnBounds="true">
+               <image>
+                  <Image url="@images/Avatar/neeko.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="nameQuentin" alignment="CENTER" prefHeight="120.0" prefWidth="335.0" styleClass="outline2" text="Quentin Boulet" textFill="WHITE" />
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

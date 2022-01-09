@@ -244,7 +244,7 @@ public class GameController {
         p.checkAttack(p2);
     }
 
-    private static void toBack(Node node, AnchorPane pane) {
+    public static void toBack(Node node, AnchorPane pane) {
         for (var i = 0; i < pane.getChildren().size(); i++) {
             node.toBack();
         }
