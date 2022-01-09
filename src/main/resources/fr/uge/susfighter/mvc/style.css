@@ -1,0 +1,37 @@
+.outline.label .text {
+    -fx-stroke: black;
+    -fx-stroke-width: 1px;
+    -fx-font-weight: bold;
+}
+
+.anchor {
+    -fx-background-image:url('images/background/background.png');
+    -fx-background-size: 100% 100%;
+}
+
+.button {
+    -fx-border-color: white;
+    -fx-border-width: 4;
+    -fx-border-radius: 10;
+    -fx-background-radius: 20;
+    -fx-background-color: black;
+    -fx-text-fill: #fff;
+}
+
+.outline2.label .text {
+    -fx-stroke: black;
+    -fx-stroke-width: 0.5px;
+}
+
+.character{
+    -fx-padding: 5px;
+    -fx-border-color: white;
+    -fx-border-width: 5px;
+    -fx-border-radius: 5px;
+    -fx-background-color: black;
+    -fx-background-radius: 8px;
+}
+
+.character:disabled{
+    -fx-opacity: 0.4;
+}
