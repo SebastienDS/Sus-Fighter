@@ -22,3 +22,16 @@
     -fx-stroke: black;
     -fx-stroke-width: 0.5px;
 }
+
+.character{
+    -fx-padding: 5px;
+    -fx-border-color: white;
+    -fx-border-width: 5px;
+    -fx-border-radius: 5px;
+    -fx-background-color: black;
+    -fx-background-radius: 8px;
+}
+
+.character:disabled{
+    -fx-opacity: 0.4;
+}

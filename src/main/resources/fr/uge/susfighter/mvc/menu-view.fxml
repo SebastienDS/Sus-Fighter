@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
-
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#openMenu" prefHeight="600.0" prefWidth="900.0" styleClass="anchor" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.susfighter.mvc.MenuController">
    <children>
@@ -22,43 +23,218 @@
       </Label>
       <VBox fx:id="map1" layoutX="128.0" layoutY="100.0" prefHeight="162.0" prefWidth="200.0" visible="false">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" onMouseClicked="#choseMap" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/map/UwU.jpg" />
-               </image>
-            </ImageView>
+            <VBox prefHeight="114.0" prefWidth="200.0" style="-fx-padding: 5; -fx-background-color: white; -fx-background-radius: 5;">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" onMouseClicked="#choseMap" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/map/map1.jpg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
             <Label fx:id="name1" alignment="CENTER" prefHeight="51.0" prefWidth="200.0" styleClass="outline2" stylesheets="@style.css" text="Label" textFill="WHITE" />
          </children>
       </VBox>
-      <VBox fx:id="map2" layoutX="476.0" layoutY="88.0" prefHeight="162.0" prefWidth="200.0" visible="false">
+      <VBox fx:id="map2" layoutX="567.0" layoutY="219.0" prefHeight="162.0" prefWidth="200.0" visible="false">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" onMouseClicked="#choseMap" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/map/map2.jpg" />
-               </image>
-            </ImageView>
+            <VBox prefHeight="114.0" prefWidth="200.0" style="-fx-padding: 5; -fx-background-color: white; -fx-background-radius: 5;">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" onMouseClicked="#choseMap" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/map/map2.jpg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
             <Label fx:id="name2" alignment="CENTER" prefHeight="51.0" prefWidth="200.0" styleClass="outline2" text="Label" textFill="WHITE" />
          </children>
       </VBox>
       <VBox fx:id="map4" layoutX="476.0" layoutY="300.0" prefHeight="162.0" prefWidth="200.0" visible="false">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" onMouseClicked="#choseMap" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/map/glacier.png" />
-               </image>
-            </ImageView>
+            <VBox prefHeight="114.0" prefWidth="200.0" style="-fx-padding: 5; -fx-background-color: white; -fx-background-radius: 5;">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" onMouseClicked="#choseMap" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/map/map4.jpg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
             <Label fx:id="name4" alignment="CENTER" prefHeight="50.0" prefWidth="200.0" styleClass="outline2" stylesheets="@style.css" text="Label" textFill="WHITE" />
          </children>
       </VBox>
       <VBox fx:id="map3" layoutX="128.0" layoutY="262.0" prefHeight="162.0" prefWidth="200.0" visible="false">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" onMouseClicked="#choseMap" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/map/volcano.jpg" />
-               </image>
-            </ImageView>
+            <VBox prefHeight="114.0" prefWidth="200.0" style="-fx-padding: 5; -fx-background-color: white; -fx-background-radius: 5;">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" onMouseClicked="#choseMap" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/map/map3.jpg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
             <Label fx:id="name3" alignment="CENTER" prefHeight="51.0" prefWidth="200.0" styleClass="outline2" stylesheets="@style.css" text="Label" textFill="WHITE" />
          </children>
       </VBox>
+      <Line fx:id="line" endX="-136.39999389648438" endY="-128.0" layoutX="245.0" layoutY="311.0" startX="-136.39999389648438" startY="-173.40000915527344" stroke="WHITE" strokeWidth="10.0" visible="false" />
+      <VBox fx:id="black1" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/character/black/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="black2" layoutX="791.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" scaleX="-1.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/character/black/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="green1" layoutY="181.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/character/green/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="pink1" layoutX="114.0" layoutY="184.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/character/pink/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="purple1" layoutX="233.0" layoutY="184.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/character/purple/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="red1" layoutX="352.0" layoutY="184.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/character/red/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="white1" layoutX="476.0" layoutY="184.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/character/white/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="yellow1" layoutX="595.0" layoutY="184.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/character/yellow/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="green2" layoutY="295.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0">
+               <image>
+                  <Image url="@images/character/green/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="pink2" layoutX="114.0" layoutY="295.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0">
+               <image>
+                  <Image url="@images/character/pink/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="purple2" layoutX="233.0" layoutY="295.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0">
+               <image>
+                  <Image url="@images/character/purple/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="red2" layoutX="352.0" layoutY="295.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0">
+               <image>
+                  <Image url="@images/character/red/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="white2" layoutX="476.0" layoutY="295.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0">
+               <image>
+                  <Image url="@images/character/white/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="yellow2" layoutX="595.0" layoutY="295.0" onMouseClicked="#chosePlayer" prefHeight="89.0" prefWidth="102.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="78.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0">
+               <image>
+                  <Image url="@images/character/yellow/HEAD.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="select1" layoutX="109.0" layoutY="81.0" prefHeight="266.0" prefWidth="163.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="265.0" fitWidth="215.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/character/black/IDLE.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <VBox fx:id="select2" layoutX="547.0" layoutY="81.0" prefHeight="266.0" prefWidth="163.0" styleClass="character" stylesheets="@style.css" visible="false">
+         <children>
+            <ImageView fitHeight="265.0" fitWidth="215.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0">
+               <image>
+                  <Image url="@images/character/white/IDLE.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <Button fx:id="confirmPlayer1" layoutX="137.0" layoutY="229.0" mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="74.0" prefWidth="236.0" text="Confirmer" visible="false" />
+      <Button fx:id="confirmPlayer2" layoutX="429.0" layoutY="229.0" mnemonicParsing="false" onMouseClicked="#startGame" prefHeight="74.0" prefWidth="236.0" text="Confirmer" visible="false" />
+      <Label fx:id="ready1" alignment="CENTER" layoutX="92.0" layoutY="128.0" prefHeight="64.0" prefWidth="130.0" style="-fx-text-fill: white;" text="PRET" visible="false">
+         <styleClass>
+            <String fx:value="outline2" />
+            <String fx:value="character" />
+         </styleClass>
+      </Label>
+      <Label fx:id="ready2" alignment="CENTER" layoutX="100.0" layoutY="192.0" prefHeight="64.0" prefWidth="130.0" style="-fx-text-fill: white;" text="PRET" visible="false">
+         <styleClass>
+            <String fx:value="outline2" />
+            <String fx:value="character" />
+         </styleClass>
+      </Label>
    </children>
 </AnchorPane>

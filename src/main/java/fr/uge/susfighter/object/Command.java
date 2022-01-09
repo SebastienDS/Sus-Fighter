@@ -32,4 +32,24 @@ public class Command {
         Objects.requireNonNull(key);
         return keyCodes.get(key);
     }
+
+    public static Command getDefaultP1(){
+        var command = new Command();
+        command.addKeyCode(Command.Key.LEFT, KeyCode.Q)
+                .addKeyCode(Command.Key.RIGHT, KeyCode.D)
+                .addKeyCode(Command.Key.UP, KeyCode.Z)
+                .addKeyCode(Command.Key.DOWN, KeyCode.S)
+                .addKeyCode(Command.Key.ATTACK, KeyCode.T);
+        return command;
+    }
+
+    public static Command getDefaultP2(){
+        var command = new Command();
+        command.addKeyCode(Command.Key.LEFT, KeyCode.LEFT)
+                .addKeyCode(Command.Key.RIGHT, KeyCode.RIGHT)
+                .addKeyCode(Command.Key.UP, KeyCode.UP)
+                .addKeyCode(Command.Key.DOWN, KeyCode.DOWN)
+                .addKeyCode(Command.Key.ATTACK, KeyCode.NUMPAD1);
+        return command;
+    }
 }
