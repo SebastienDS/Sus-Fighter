@@ -287,8 +287,8 @@ public class MenuController {
 
     @FXML
     void duelMenu() throws IOException {
-        //StageManager.setScene(StageManager.StageEnum.GAME);
-        //GameController.startGame();
+        StageManager.setScene(StageManager.StageEnum.GAME);
+        GameController.startGame();
         menu = Menu.DUEL;
         title.setVisible(false);
         buttonsMenuVisible(false);

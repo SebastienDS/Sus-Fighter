@@ -9,6 +9,14 @@ public class Vec2 {
         this.y = y;
     }
 
+    @Override
+    public String toString() {
+        return "Vec2{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
     public void setX(double x) {
         this.x = x;
     }
