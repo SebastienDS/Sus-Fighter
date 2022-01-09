@@ -81,6 +81,12 @@ public class GameController {
     @FXML
     private ImageView fist2;
 
+    @FXML
+    private ImageView ultimate1;
+
+    @FXML
+    private ImageView ultimate2;
+
     private static double SPACING_BAR = 50;
     private static double outline = 4;
 
@@ -113,13 +119,13 @@ public class GameController {
         var p = duel.getPlayer(0);
         AnchorPane.setLeftAnchor(player1, (double) p.getX());
         AnchorPane.setTopAnchor(player1, (double) p.getY());
-        setPlayer(player1, fist1, name1, p);
+        setPlayer(player1, fist1, ultimate1, name1, p);
         setBarPlayer(hBoxBar1, vBoxProfile1, vBoxBar1, playerHp1, playerEnergy1, profile1, p, 0);
 
         p = duel.getPlayer(1);
         AnchorPane.setLeftAnchor(player2, (double) p.getX());
         AnchorPane.setTopAnchor(player2, (double) p.getY());
-        setPlayer(player2, fist2, name2, p);
+        setPlayer(player2, fist2, ultimate2, name2, p);
         setBarPlayer(hBoxBar2, vBoxProfile2, vBoxBar2, playerHp2, playerEnergy2, profile2, p, 1);
         flip(playerHp2, playerEnergy2, profile2, player2);
     }
@@ -146,7 +152,7 @@ public class GameController {
         energyBar.setProgress(p.percentageEnergy());
     }
 
-    private void setPlayer(ImageView imageView, ImageView fist, Label name, Player p) {
+    private void setPlayer(ImageView imageView, ImageView fist, ImageView ultimate, Label name, Player p) {
         ImageManager.loadImagePlayer(p);
         var player = "PLAYER_" + p.getNumPlayer();
         imageView.setImage(ImageManager.getImage(ImageKey.valueOf(player + "_IDLE")));
@@ -155,9 +161,16 @@ public class GameController {
         name.setTextFill(getColorFromName(p.getName()));
         name.setText(p.getName().toUpperCase(Locale.ROOT));
         AnchorPane.setLeftAnchor(name, (p.getNumPlayer() - 1) * (StageManager.getWidth() - name.getPrefWidth()));
+
+        setFist(fist, player, p.getAttackWidth(), p.getAttackHeight());
+        setFist(ultimate, player, p.getUltimateWidth(), p.getUltimateHeight());
+        ultimate.setVisible(true);
+    }
+
+    private void setFist(ImageView fist, String player, double width, double height) {
         fist.setImage(ImageManager.getImage(ImageKey.valueOf(player + "_FIST")));
-        fist.setFitWidth(80);
-        fist.setFitHeight(80);
+        fist.setFitWidth(width);
+        fist.setFitHeight(height);
         fist.setVisible(false);
     }
 
@@ -181,31 +194,38 @@ public class GameController {
         duel.update();
         var p = duel.getPlayer(0);
         var p2 = duel.getPlayer(1);
-        updatePlayer(p, p2, player1, fist1, playerHp2);
+        updatePlayer(p, p2, player1, fist1, ultimate1, playerHp1, playerEnergy1);
 
-        updatePlayer(p2, p, player2, fist2, playerHp1);
+        updatePlayer(p2, p, player2, fist2, ultimate2, playerHp2, playerEnergy2);
     }
 
-    private void updatePlayer(Player p, Player p2, ImageView player, ImageView fist, ProgressBar p2Hp) {
+    private void updatePlayer(Player p, Player p2, ImageView player, ImageView fist, ImageView ultimate,
+                              ProgressBar pHp, ProgressBar pEnergy) {
         AnchorPane.setLeftAnchor(player, (double) p.getX());
         AnchorPane.setTopAnchor(player, (double) p.getY());
         fist.setVisible(false);
-        if(p.isAttacking()){
-            attack(p, p2, fist, p2Hp);
+        if (p.isAttacking()){
+            attack(p, p2, fist);
         }
-        var scaleX = p.isFlipped() ? -1 : 1;
-        player.setScaleX(scaleX);
-        fist.setRotate(p.getAttackRotate());
+        var flip = p.isFlipped() ? -1 : 1;
+        player.setScaleX(flip);
+        fist.setRotate(p.getAttackRotate() * flip);
+
+        pHp.setProgress(p.percentageHpLeft());
+        pEnergy.setProgress(p.percentageEnergy());
+
+        AnchorPane.setLeftAnchor(ultimate, p.getUltimateX());
+        AnchorPane.setTopAnchor(ultimate, p.getUltimateY());
+        ultimate.setScaleX(p.getUltimateFlip());
     }
 
-    private void attack(Player p, Player p2, ImageView fist, ProgressBar p2Hp) {
+    private void attack(Player p, Player p2, ImageView fist) {
         fist.setVisible(true);
         fist.setScaleX(1);
         if(p.isFlipped()) fist.setScaleX(-1);
         AnchorPane.setLeftAnchor(fist, p.getXFist());
         AnchorPane.setTopAnchor(fist, p.getYFist());
         p.checkAttack(p2);
-        p2Hp.setProgress(p2.percentageHpLeft());
     }
 
     private static void toBack(Node node, AnchorPane pane) {

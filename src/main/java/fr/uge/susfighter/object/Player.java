@@ -9,6 +9,9 @@ import java.util.Objects;
 public class Player {
 
     private static final int ATTACK_DISTANCE = 100;
+    private static final int ATTACK_SIZE = 80;
+    private static final int ULTIMATE_MULTIPLICATOR = 10;
+
 
     private final String name;
     private final int numPlayer;
@@ -26,9 +29,12 @@ public class Player {
     private final Vec2 projectionVelocity = new Vec2(0, 0);
 
     private final Vec2 attackVelocity = new Vec2(10, 0);
-    private final Vec2 attackPosition = new Vec2(0, 0);
+    private final Rectangle attack = new Rectangle(0, 0, ATTACK_SIZE, ATTACK_SIZE);
     private boolean isAttacking = false;
+    private final Vec2 ultimateVelocity = new Vec2(10, 0);
+    private final Rectangle ultimate = new Rectangle(2000, 2000, ATTACK_SIZE * ULTIMATE_MULTIPLICATOR, ATTACK_SIZE * ULTIMATE_MULTIPLICATOR);
     private boolean hasAlreadyHit = false;
+    private boolean hasAlreadyHitUltimate = false;
     private double attackRotation = 0;
 
     private int combo = 0;
@@ -69,8 +75,20 @@ public class Player {
         else if (key == command.get(Key.ATTACK) && !isAttacking) {
             isAttacking = true;
             hasAlreadyHit = false;
-            attackPosition.setX(0);
-            attackPosition.setY(0);
+            attack.setX(0);
+            attack.setY(0);
+        }
+        else if (key == command.get(Key.ULTIMATE_ATTACK) && statistic.isFullEnergy()) {
+            hasAlreadyHitUltimate = false;
+            var flip = isFlipped ? -1: 1;
+            var center = getPlayerCenter(ultimate);
+
+            ultimate.setX(center.getX() + body.getWidth() / 2 * flip);
+            ultimate.setY(center.getY());
+            System.out.println("2:" + ultimate);
+
+            ultimateVelocity.setX(Math.abs(ultimateVelocity.getX()) * flip);
+            statistic.consumeEnergy();
         }
     }
 
@@ -87,22 +105,28 @@ public class Player {
         velocity.addY(gravity.getY());
 
         manageAttack();
+        manageUltimate();
         managePosition(bounds);
         manageJump(bounds);
     }
 
     private void manageAttack() {
-        if (isAttacking && attackPosition.getX() > ATTACK_DISTANCE) {
+        if (isAttacking && attack.getX() > ATTACK_DISTANCE) {
             if(!hasAlreadyHit || combo == 2) combo = 0;
             else combo++;
+
             isAttacking = false;
             attackRotation = 0;
         }
         else if (isAttacking) {
-            var attack = getAttack();
-            attackPosition.addX(attack.getX());
-            attackPosition.addY(attack.getY());
+            var comboAttack = getAttack();
+            attack.setX(attack.getX() + comboAttack.getX());
+            attack.setY(attack.getY() + comboAttack.getY());
         }
+    }
+
+    private void manageUltimate() {
+        ultimate.setX(ultimate.getX() + ultimateVelocity.getX());
     }
 
     private void managePosition(Rectangle bounds) {
@@ -139,21 +163,32 @@ public class Player {
     }
 
     private Rectangle getAttackHitBox() {
-        if (!isAttacking) return  null;
+        if (!isAttacking) return null;
 
         var flip = isFlipped ? -1: 1;
-        var center = new Vec2(body.getX() + body.getWidth() / 2 - 80 / 2,
-                body.getY() + body.getHeight() / 2 - 80 / 2);
+        var center = getPlayerCenter(attack);
 
         return new Rectangle(
-                (int)(center.getX() + (attackPosition.getX() + 65) * flip),
-                (int)(center.getY() + attackPosition.getY() + 15),
-                80,
-                80
+                (int)(center.getX() + (attack.getX() + 65) * flip),
+                (int)(center.getY() + attack.getY() + 15),
+                attack.getWidth(),
+                attack.getHeight()
         );
     }
 
     public void checkAttack(Player player2) {
+        checkUltimate(player2);
+        checkBasicAttack(player2);
+    }
+
+    private void checkUltimate(Player player2) {
+        if (hasAlreadyHitUltimate) return;
+
+        hasAlreadyHitUltimate = ultimate.intersects(player2.body.getBoundsInLocal());
+        if (hasAlreadyHitUltimate) player2.statistic.loseHP(-statistic.damage() * ULTIMATE_MULTIPLICATOR);
+    }
+
+    private void checkBasicAttack(Player player2) {
         if (!isAttacking || hasAlreadyHit) return;
 
         var rect = getAttackHitBox();
@@ -164,7 +199,7 @@ public class Player {
             var flip = isFlipped ? -1: 1;
 
             player2.statistic.loseHP(-statistic.damage());
-
+            statistic.gainEnergy();
             applyCombo(flip, player2);
         }
     }
@@ -217,7 +252,7 @@ public class Player {
             player2.projectionVelocity.setY(-30);
             return;
         }
-        if(timeBetweenLastHit > 1000) {
+        if (timeBetweenLastHit > 1000) {
             combo = 0;
         }
     }
@@ -245,5 +280,39 @@ public class Player {
 
     public double getAttackRotate() {
         return attackRotation;
+    }
+
+    public double getAttackWidth() {
+        return attack.getWidth();
+    }
+
+    public double getAttackHeight() {
+        return attack.getHeight();
+    }
+
+    private Vec2 getPlayerCenter(Rectangle attack) {
+        return new Vec2(body.getX() + body.getWidth() / 2 - attack.getWidth() / 2,
+                body.getY() + body.getHeight() / 2 - attack.getHeight() / 2);
+    }
+
+    public double getUltimateWidth() {
+        return ultimate.getWidth();
+    }
+
+    public double getUltimateHeight() {
+        return ultimate.getHeight();
+    }
+
+    public double getUltimateX() {
+        return ultimate.getX();
+    }
+
+    public double getUltimateY() {
+        return ultimate.getY();
+    }
+
+    public int getUltimateFlip() {
+        assert ultimateVelocity.getX() != 0;
+        return (int) (ultimateVelocity.getX() / Math.abs(ultimateVelocity.getX()));
     }
 }

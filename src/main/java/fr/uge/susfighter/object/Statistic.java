@@ -3,6 +3,8 @@ package fr.uge.susfighter.object;
 
 public class Statistic {
 
+    private static final int ENERGY_PER_ATTACK = 5;
+
     private int maxHp;
     private int hp;
     private int shield;
@@ -46,5 +48,19 @@ public class Statistic {
 
     public int damage() {
         return damage;
+    }
+
+    public void gainEnergy() {
+        System.out.println("UWU "+ energy);
+        energy = Math.min(energy + ENERGY_PER_ATTACK, maxEnergy);
+        System.out.println(energy);
+    }
+
+    public boolean isFullEnergy() {
+        return energy == maxEnergy;
+    }
+
+    public void consumeEnergy() {
+        energy = 0;
     }
 }

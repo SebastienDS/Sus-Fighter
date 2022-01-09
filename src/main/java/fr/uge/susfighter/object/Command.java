@@ -13,7 +13,8 @@ public class Command {
         RIGHT,
         UP,
         DOWN,
-        ATTACK
+        ATTACK,
+        ULTIMATE_ATTACK
     }
 
     private final Map<Key, KeyCode> keyCodes;
@@ -35,21 +36,23 @@ public class Command {
 
     public static Command getDefaultP1(){
         var command = new Command();
-        command.addKeyCode(Command.Key.LEFT, KeyCode.Q)
-                .addKeyCode(Command.Key.RIGHT, KeyCode.D)
-                .addKeyCode(Command.Key.UP, KeyCode.Z)
-                .addKeyCode(Command.Key.DOWN, KeyCode.S)
-                .addKeyCode(Command.Key.ATTACK, KeyCode.T);
+        command.addKeyCode(Key.LEFT, KeyCode.Q)
+                .addKeyCode(Key.RIGHT, KeyCode.D)
+                .addKeyCode(Key.UP, KeyCode.Z)
+                .addKeyCode(Key.DOWN, KeyCode.S)
+                .addKeyCode(Key.ATTACK, KeyCode.T)
+                .addKeyCode(Key.ULTIMATE_ATTACK, KeyCode.Y);
         return command;
     }
 
     public static Command getDefaultP2(){
         var command = new Command();
-        command.addKeyCode(Command.Key.LEFT, KeyCode.LEFT)
-                .addKeyCode(Command.Key.RIGHT, KeyCode.RIGHT)
-                .addKeyCode(Command.Key.UP, KeyCode.UP)
-                .addKeyCode(Command.Key.DOWN, KeyCode.DOWN)
-                .addKeyCode(Command.Key.ATTACK, KeyCode.NUMPAD1);
+        command.addKeyCode(Key.LEFT, KeyCode.LEFT)
+                .addKeyCode(Key.RIGHT, KeyCode.RIGHT)
+                .addKeyCode(Key.UP, KeyCode.UP)
+                .addKeyCode(Key.DOWN, KeyCode.DOWN)
+                .addKeyCode(Key.ATTACK, KeyCode.NUMPAD1)
+                .addKeyCode(Key.ULTIMATE_ATTACK, KeyCode.NUMPAD2);
         return command;
     }
 }

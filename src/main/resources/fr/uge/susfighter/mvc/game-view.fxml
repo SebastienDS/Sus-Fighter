@@ -79,5 +79,7 @@
       <Label fx:id="name2" layoutX="443.0" layoutY="80.0" prefHeight="24.0" prefWidth="83.0" style="-fx-font-size: 20;" styleClass="outline" stylesheets="@style.css" text="Label" />
       <ImageView fx:id="fist1" fitHeight="130.0" fitWidth="119.0" layoutX="60.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="fist2" fitHeight="130.0" fitWidth="119.0" layoutX="110.0" layoutY="209.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="ultimate1" fitHeight="130.0" fitWidth="119.0" layoutX="60.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="ultimate2" fitHeight="130.0" fitWidth="119.0" layoutX="110.0" layoutY="209.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>
