@@ -216,7 +216,7 @@ public class Player {
                 player2.hitBox.getHeight()
         );
         hasAlreadyHitUltimate = ultimate.intersects(box.getBoundsInLocal());
-        if (hasAlreadyHitUltimate) player2.statistic.loseHP(-statistic.damageUltimate());
+        if (hasAlreadyHitUltimate) player2.statistic.loseHP(-(int)(statistic.damageUltimate() * element.getElementMultiplicator(player2.element)));
     }
 
     private void checkBasicAttack(Player player2) {
@@ -236,7 +236,7 @@ public class Player {
         if (hasAlreadyHit) {
             var flip = isFlipped ? -1: 1;
 
-            player2.statistic.loseHP(-statistic.damage());
+            player2.statistic.loseHP(-(int)(statistic.damage() * element.getElementMultiplicator(player2.element)));
             statistic.gainEnergy();
             applyCombo(flip, player2);
         }

@@ -837,7 +837,7 @@ public class MenuController {
 
     private Player initPlayer(String nameSelect, int x, int y, Command command,
                               int numPlayer, boolean isFlipped) throws URISyntaxException, IOException {
-        var name = nameSelect.substring(0, nameSelect.length() - 1);
+        var name = nameSelect.substring(0, nameSelect.length() - 2);
 
         var data = getPlayerStatistics(name);
         var stat = new Statistic(data.hp, 0, data.energyPerAttack, data.maxEnergy, data.damage, data.damageUltimate,
