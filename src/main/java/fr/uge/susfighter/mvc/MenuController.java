@@ -609,7 +609,7 @@ public class MenuController {
     private void initDataDuel() throws URISyntaxException, IOException {
         var players = initPlayers();
         var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
-                new Rectangle(0, 0, StageManager.getWidth(), StageManager.getHeight()));
+                new Rectangle(0, 0, StageManager.getWidth(), StageManager.getHeight() * 0.95));
         var duel = new Duel(players, map, Optional.empty(), 99);
         DuelManager.setDuel(duel);
         ImageManager.loadImage(ImageKey.FIELD, getNameMap());
