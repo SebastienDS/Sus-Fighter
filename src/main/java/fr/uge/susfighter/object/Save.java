@@ -30,6 +30,13 @@ public class Save {
                 Files.walk(path, 2)
                         .filter(Files::isDirectory)
                         .forEach(f -> characterUnlock.add(f.getFileName().toString()));
+
+
+                // TODO: remove me :(
+                path = Path.of(Objects.requireNonNull(GameController.class.getResource("images/character/extension")).toURI());
+                Files.walk(path, 2)
+                        .filter(Files::isDirectory)
+                        .forEach(f -> characterUnlock.add(f.getFileName().toString()));
             }
             catch (IOException | URISyntaxException e) {
                 e.printStackTrace();

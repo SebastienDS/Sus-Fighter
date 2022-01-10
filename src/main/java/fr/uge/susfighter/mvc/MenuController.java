@@ -371,6 +371,8 @@ public class MenuController {
         addDisable(List.of(black2, white1));
         setRectangles();
         initButtonsAndConfirm();
+
+        manageUnlockCharacter();
     }
 
     private void initLine() {
@@ -610,6 +612,7 @@ public class MenuController {
     void startGame(MouseEvent event) throws IOException, URISyntaxException {
         var num = ((Button) event.getSource()).getId();
         num = num.substring(num.length() - 1);
+
         if (num.equals("1")) {
             confirmRectangle1.setVisible(!confirmRectangle1.isVisible());
             ready1.setVisible(!ready1.isVisible());
@@ -617,6 +620,7 @@ public class MenuController {
             confirmRectangle2.setVisible(!confirmRectangle2.isVisible());
             ready2.setVisible(!ready2.isVisible());
         }
+
         if (confirmRectangle1.isVisible() && confirmRectangle2.isVisible()) {
             initDataDuel();
             StageManager.setScene(StageManager.StageEnum.GAME);
@@ -669,6 +673,8 @@ public class MenuController {
         buttonMapVisible(false);
         playerMenuVisible(true);
         menu = Menu.CHARACTER;
+
+        manageUnlockCharacter();
     }
 
     @FXML
@@ -688,10 +694,24 @@ public class MenuController {
         var name = ((Node) event.getSource()).getId();
         var num = name.substring(name.length() - 1);
         name = name.substring(0, name.length() - 1);
+
         if (name.endsWith("1")) nameSelect1 = changePlayer(select1, nameSelect1, name,
                 2, rectangle1, 0, Integer.parseInt(num), page1);
         if (name.endsWith("2")) nameSelect2 = changePlayer(select2, nameSelect2, name,
                 1, rectangle2, StageManager.getWidth() / 2, Integer.parseInt(num), page2);
+
+        manageUnlockCharacter();
+    }
+
+    private void manageUnlockCharacter() {
+        manageUnlockCharacter(nameSelect1, confirmPlayer1);
+        manageUnlockCharacter(nameSelect2, confirmPlayer2);
+    }
+
+    private static void manageUnlockCharacter(String nameSelect, Button confirmPlayer) {
+        var character = nameSelect.substring(0, nameSelect.length() - 2);
+
+        confirmPlayer.setDisable(!Save.isCharacterUnlock(character));
     }
 
     @FXML
@@ -729,6 +749,8 @@ public class MenuController {
             page2 = (page2 <= ((heads.size() - 1) / NUMBER_CASE)) ? page2 : 0;
             nameSelect2 = pageModification(page2, heads2, nameSelect2, nameSelect1, select2, 1, rectangle2);
         }
+
+        manageUnlockCharacter();
     }
 
     private String pageModification(int page, List<VBox> vBox, String nameSelect1, String nameSelect2,
@@ -789,6 +811,8 @@ public class MenuController {
         confirmRectangle2.setVisible(false);
         ready1.setVisible(false);
         ready2.setVisible(false);
+
+        manageUnlockCharacter();
     }
 
     private String changePlayer(VBox select, String nameSelect, String name,
