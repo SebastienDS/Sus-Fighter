@@ -787,7 +787,6 @@ public class MenuController {
         list.add(initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP1(), 1, false));
         list.add(initPlayer(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP2(), 2, true));
         return list;
-
     }
 
     private Player initPlayer(String nameSelect, int x, int y, Command command,
@@ -819,7 +818,6 @@ public class MenuController {
             }
         }
 
-        String name;
         Element type;
         int damage;
         int damageUltimate;
@@ -833,7 +831,6 @@ public class MenuController {
         @Override
         public String toString() {
             return "Statistics{" +
-                    "name='" + name + '\'' +
                     ", type=" + type +
                     ", damage=" + damage +
                     ", damageUltimate=" + damageUltimate +
