@@ -158,7 +158,7 @@ public class GameController {
         imageView.setImage(ImageManager.getImage(ImageKey.valueOf(player + "_IDLE")));
         imageView.setFitWidth(p.getWidth());
         imageView.setFitHeight(p.getHeight());
-        name.setTextFill(getColorFromName(p.getName()));
+        name.setTextFill(Color.ORANGE);
         name.setText(p.getName().toUpperCase(Locale.ROOT));
         AnchorPane.setLeftAnchor(name, (p.getNumPlayer() - 1) * (StageManager.getWidth() - name.getPrefWidth()));
 
@@ -172,10 +172,6 @@ public class GameController {
         fist.setFitWidth(width);
         fist.setFitHeight(height);
         fist.setVisible(false);
-    }
-
-    private Paint getColorFromName(String name){
-        return Color.valueOf(name.toUpperCase(Locale.ROOT));
     }
 
     private void initTimeline() {

@@ -23,9 +23,6 @@
                      </VBox.margin>
                   </ProgressBar>
                   <ProgressBar fx:id="playerEnergy2" prefHeight="20.0" prefWidth="126.0" progress="0.0" style="-fx-background-color: black; -fx-color: blue; -fx-border-color: orange; -fx-border-width: 2;">
-                     <padding>
-                        <Insets right="2.0" />
-                     </padding>
                      <VBox.margin>
                         <Insets right="2.0" />
                      </VBox.margin></ProgressBar>
@@ -75,8 +72,8 @@
          </children>
       </VBox>
       <Label fx:id="time" alignment="CENTER" layoutX="335.0" layoutY="185.0" prefHeight="65.0" prefWidth="100.0" style="-fx-font-size: 40; -fx-text-fill: white;" styleClass="outline" stylesheets="@style.css" text="90" />
-      <Label fx:id="name1" layoutX="229.0" layoutY="79.0" prefHeight="26.0" prefWidth="83.0" style="-fx-font-size: 20;" styleClass="outline" stylesheets="@style.css" text="Label" />
-      <Label fx:id="name2" layoutX="443.0" layoutY="80.0" prefHeight="24.0" prefWidth="83.0" style="-fx-font-size: 20;" styleClass="outline" stylesheets="@style.css" text="Label" />
+      <Label fx:id="name1" layoutX="-1.0" layoutY="79.0" prefHeight="26.0" prefWidth="900.0" style="-fx-font-size: 20;" styleClass="outline" stylesheets="@style.css" text="Label" />
+      <Label fx:id="name2" alignment="CENTER_RIGHT" layoutX="-1.0" layoutY="80.0" prefHeight="24.0" prefWidth="900.0" style="-fx-font-size: 20;" styleClass="outline" stylesheets="@style.css" text="Label" />
       <ImageView fx:id="fist1" fitHeight="130.0" fitWidth="119.0" layoutX="60.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="fist2" fitHeight="130.0" fitWidth="119.0" layoutX="110.0" layoutY="209.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="ultimate1" fitHeight="130.0" fitWidth="119.0" layoutX="60.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true" />

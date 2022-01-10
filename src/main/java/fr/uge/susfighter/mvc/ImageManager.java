@@ -45,7 +45,7 @@ public class ImageManager {
     }
 
     public static void loadImagePlayer(Player p) {
-        var path = "images/character/default/" + p.getName() + "/";
+        var path = "images/character/" + p.getType() + "/" + p.getName() + "/";
         var player = "PLAYER_" + p.getNumPlayer();
         ImageManager.loadImage(ImageKey.valueOf(player + "_IDLE"), path + "IDLE.png", p.getWidth(), p.getHeight());
         ImageManager.loadImage(ImageKey.valueOf(player + "_FIST"), path + "FIST.png");

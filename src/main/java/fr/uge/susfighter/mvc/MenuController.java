@@ -1,7 +1,6 @@
 package fr.uge.susfighter.mvc;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import fr.uge.susfighter.mvc.ImageManager.ImageKey;
 import fr.uge.susfighter.object.*;
 import javafx.animation.KeyFrame;
@@ -26,7 +25,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -721,23 +719,63 @@ public class MenuController {
     void addPage(MouseEvent event) {
         var id = ((Node) (event.getSource())).getId();
         var num = id.substring(id.length() - 1);
-        if (num.equals("1")) page1 = pageModification(page1, heads1);
-        if (num.equals("2")) page2 = pageModification(page2, heads2);
+        if (num.equals("1")){
+            page1++;
+            page1 = (page1 <= ((heads.size() - 1) / NUMBER_CASE)) ? page1 : 0;
+            nameSelect1 = pageModification(page1, heads1, nameSelect1, nameSelect2, select1, 2, rectangle1);
+        }
+        if (num.equals("2")){
+            page2++;
+            page2 = (page2 <= ((heads.size() - 1) / NUMBER_CASE)) ? page2 : 0;
+            nameSelect2 = pageModification(page2, heads2, nameSelect2, nameSelect1, select2, 1, rectangle2);
+        }
     }
 
-    private int pageModification(int page, List<VBox> vBox) {
-        page++;
-        page = (page <= ((heads.size() - 1) / NUMBER_CASE)) ? page : 0;
-        System.out.println(page + " " + heads.size() / NUMBER_CASE);
+    private String pageModification(int page, List<VBox> vBox, String nameSelect1, String nameSelect2,
+                                 VBox select, int otherPlayer, Rectangle rectangle) {
+        var haveChanged = false;
+        var name = nameSelect1;
         for (int i = 0; i < NUMBER_CASE; i++) {
             if (page * NUMBER_CASE + i >= heads.size()) {
                 vBox.get(i).setVisible(false);
                 continue;
             }
-            vBox.get(i).setVisible(true);
-            ((ImageView) (vBox.get(i).getChildren().get(0))).setImage(heads.get(page * NUMBER_CASE + i));
+            var vbox = vBox.get(i);
+            var image = heads.get(page * NUMBER_CASE + i);
+            initVBox(vbox, image);
+            var id = vbox.getId();
+            if(getNameCharacter(id).equals(getNameCharacter(nameSelect2))) vbox.setDisable(true);
+            ((ImageView) (vBox.get(i).getChildren().get(0))).setImage(image);
+            if(!haveChanged && !(getNameCharacter(id).equals(getNameCharacter(nameSelect2)))){
+                name = changeChoice(select, nameSelect1, id, otherPlayer, rectangle, page);
+                haveChanged = true;
+            }
         }
-        return page;
+        return name;
+    }
+
+    private String getNameCharacter(String id) {
+        return id.substring(0, id.length() - 2);
+    }
+
+    private String changeChoice(VBox select, String nameSelect, String name, int otherPlayer, Rectangle rectangle, int page) {
+        var num = name.substring(name.length() - 1);
+        name = name.substring(0, name.length() - 1);
+        return changePlayer(select, nameSelect, name, otherPlayer, rectangle,
+                (otherPlayer==2)? 0: StageManager.getWidth() / 2, Integer.parseInt(num), page);
+    }
+
+    private void initVBox(VBox vBox, Image image) {
+        vBox.setVisible(true);
+        vBox.setDisable(false);
+        vBox.setId(getId(vBox, image));
+    }
+
+    private String getId(VBox vBox, Image image) {
+        var oldId = vBox.getId();
+        var splitURL = image.getUrl().split("/");
+        var name = splitURL[splitURL.length - 2];
+        return name + oldId.substring(oldId.length() - 2);
     }
 
     private void reinitializeCharacter() {
@@ -756,11 +794,11 @@ public class MenuController {
     private String changePlayer(VBox select, String nameSelect, String name,
                                 int otherPlayer, Rectangle rectangle, int x_start, int num, int page) {
         var toDisableNode = StageManager.getScene().lookup("#" + name.substring(0, name.length() - 1) + otherPlayer + num);
-        toDisableNode.setDisable(true);
+        if(toDisableNode != null) toDisableNode.setDisable(true);
         var numBefore = nameSelect.substring(nameSelect.length() - 1);
         var disabledNode2 = StageManager.getScene().
                 lookup("#" + nameSelect.substring(0, nameSelect.length() - 2) + otherPlayer + numBefore);
-        disabledNode2.setDisable(false);
+        if(disabledNode2 != null) disabledNode2.setDisable(false);
         ((ImageView) select.getChildren().get(0)).setImage(images.get(((num == 7) ? 6 : num) + page * NUMBER_CASE));
         placeRectangle(num, rectangle, x_start);
         return name + num;
@@ -830,20 +868,28 @@ public class MenuController {
 
     private List<Player> initPlayers() throws URISyntaxException, IOException {
         var list = new ArrayList<Player>();
-        list.add(initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP1(), 1, false));
-        list.add(initPlayer(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP2(), 2, true));
+        list.add(initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+                Command.getDefaultP1(), select1, 1, false, getDirectory(select1)));
+        list.add(initPlayer(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+                Command.getDefaultP2(), select2, 2, true, getDirectory(select2)));
         return list;
     }
 
-    private Player initPlayer(String nameSelect, int x, int y, Command command,
-                              int numPlayer, boolean isFlipped) throws URISyntaxException, IOException {
-        var name = nameSelect.substring(0, nameSelect.length() - 2);
+    private String getDirectory(VBox select2) {
+        var splitURL = ((ImageView)(select2.getChildren().get(0))).getImage().getUrl().split("/");
+        return splitURL[splitURL.length - 3];
+    }
 
+    private Player initPlayer(String nameSelect, int x, int y, Command command, VBox select,
+                              int numPlayer, boolean isFlipped, String type) throws URISyntaxException, IOException {
+        var name = nameSelect.substring(0, nameSelect.length() - 2);
+        var image = ((ImageView)(select.getChildren().get(0))).getImage();
         var data = getPlayerStatistics(name);
         var stat = new Statistic(data.hp, 0, data.energyPerAttack, data.maxEnergy, data.damage, data.damageUltimate,
                 0, 0, data.speed, data.attackSpeed);
         var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
-        return new Player(name, new Rectangle(x, y, 150, 250), hitBox, data.type, stat, command, numPlayer, isFlipped);
+        return new Player(name, new Rectangle(x, y, image.getWidth(), image.getHeight()), hitBox, data.type,
+                stat, command, numPlayer, isFlipped, type);
     }
 
     private static class Statistics {

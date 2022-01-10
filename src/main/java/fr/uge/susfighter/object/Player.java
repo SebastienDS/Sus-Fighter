@@ -43,12 +43,14 @@ public class Player {
     private final Rectangle ultimate = new Rectangle(2000, 2000, ATTACK_SIZE * ULTIMATE_MULTIPLICATOR, ATTACK_SIZE * ULTIMATE_MULTIPLICATOR);
     private boolean hasAlreadyHit = false;
     private boolean hasAlreadyHitUltimate = true;
+    private final String type;
 
     private int combo = 0;
     private long lastHit;
 
 
-    public Player(String name, Rectangle body, Rectangle hitBox, Element element, Statistic stat, Command command, int numPlayer, boolean isFlipped) {
+    public Player(String name, Rectangle body, Rectangle hitBox, Element element, Statistic stat,
+                  Command command, int numPlayer, boolean isFlipped, String type) {
         this.name = Objects.requireNonNull(name);
         this.body = Objects.requireNonNull(body);
         this.hitBox = Objects.requireNonNull(hitBox);
@@ -57,6 +59,7 @@ public class Player {
         statistic = Objects.requireNonNull(stat);
         this.isFlipped = isFlipped;
         this.numPlayer = numPlayer;
+        this.type = type;
     }
 
     public void keyPressed(KeyCode key) {
@@ -85,6 +88,11 @@ public class Player {
             hasAlreadyHit = false;
             attack.setX(0);
             attack.setY(0);
+            var timeBetweenLastHit = System.currentTimeMillis() - lastHit;
+            lastHit = System.currentTimeMillis();
+            if (timeBetweenLastHit > 1000) {
+                combo = 0;
+            }
         }
         else if (key == command.get(Key.ULTIMATE_ATTACK) && statistic.isFullEnergy()) {
             hasAlreadyHitUltimate = false;
@@ -287,15 +295,10 @@ public class Player {
     }
 
     private void applyCombo(int flip, Player player2) {
-        var timeBetweenLastHit = System.currentTimeMillis() - lastHit;
-        lastHit = System.currentTimeMillis();
-        if (timeBetweenLastHit < 1000 && combo >= 2) {
+        if ( combo >= 2) {
             player2.projectionVelocity.addX(15 * flip);
             player2.projectionVelocity.setY(-30);
             return;
-        }
-        if (timeBetweenLastHit > 1000) {
-            combo = 0;
         }
     }
 
@@ -356,5 +359,10 @@ public class Player {
     public int getUltimateFlip() {
         assert ultimateVelocity.getX() != 0;
         return (int) (ultimateVelocity.getX() / Math.abs(ultimateVelocity.getX()));
+    }
+
+
+    public String getType() {
+        return type;
     }
 }
