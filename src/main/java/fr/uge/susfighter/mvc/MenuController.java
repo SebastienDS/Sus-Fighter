@@ -811,7 +811,15 @@ public class MenuController {
         confirmRectangle2.setVisible(false);
         ready1.setVisible(false);
         ready2.setVisible(false);
+        reinitializeHead(heads1);
+        reinitializeHead(heads2);
+    }
 
+    private void reinitializeHead(List<VBox> vBox) {
+        for (int i = 0; i < NUMBER_CASE; i++) {
+            var image = heads.get(i);
+            ((ImageView)(vBox.get(i).getChildren().get(0))).setImage(image);
+        }
         manageUnlockCharacter();
     }
 

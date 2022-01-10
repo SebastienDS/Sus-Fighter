@@ -1,16 +1,16 @@
 {
   "type": "DARK",
-  "damage": 25,
-  "damageUltimate": 100,
-  "hp": 1000,
+  "damage": 35,
+  "damageUltimate": 200,
+  "hp": 1750,
   "speed": 10,
-  "maxEnergy": 100,
-  "energyPerAttack": 5,
-  "attackSpeed": 1,
+  "maxEnergy": 7,
+  "energyPerAttack": 1,
+  "attackSpeed": 0.8,
   "hitBox": {
-    "x": 10,
-    "y": 10,
-    "width": 149,
-    "height": 206
+    "x": 30,
+    "y": 53,
+    "width": 86,
+    "height": 147
   }
 }

@@ -1,16 +1,16 @@
 {
   "type": "WIND",
-  "damage": 25,
-  "damageUltimate": 100,
+  "damage": 30,
+  "damageUltimate": 750,
   "hp": 1000,
-  "speed": 10,
-  "maxEnergy": 100,
-  "energyPerAttack": 5,
+  "speed": 15,
+  "maxEnergy": 20,
+  "energyPerAttack": 1,
   "attackSpeed": 1,
   "hitBox": {
-    "x": 10,
-    "y": 10,
-    "width": 198,
-    "height": 220
+    "x": 38,
+    "y": 27,
+    "width": 107,
+    "height": 186
   }
 }

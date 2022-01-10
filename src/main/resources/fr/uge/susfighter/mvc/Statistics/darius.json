@@ -1,16 +1,16 @@
 {
   "type": "EARTH",
-  "damage": 25,
+  "damage": 10,
   "damageUltimate": 100,
-  "hp": 1000,
+  "hp": 1500,
   "speed": 10,
-  "maxEnergy": 100,
-  "energyPerAttack": 5,
-  "attackSpeed": 1,
+  "maxEnergy": 10,
+  "energyPerAttack": 1,
+  "attackSpeed": 0.7,
   "hitBox": {
-    "x": 10,
-    "y": 10,
-    "width": 183,
-    "height": 221
+    "x": 62,
+    "y": 59,
+    "width": 106,
+    "height": 162
   }
 }

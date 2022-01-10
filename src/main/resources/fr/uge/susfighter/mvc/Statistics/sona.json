@@ -1,16 +1,16 @@
 {
   "type": "WATER",
-  "damage": 25,
-  "damageUltimate": 100,
-  "hp": 1000,
-  "speed": 10,
-  "maxEnergy": 100,
-  "energyPerAttack": 5,
+  "damage": 20,
+  "damageUltimate": 500,
+  "hp": 750,
+  "speed": 30,
+  "maxEnergy": 10,
+  "energyPerAttack": 1,
   "attackSpeed": 1,
   "hitBox": {
-    "x": 10,
-    "y": 10,
-    "width": 214,
-    "height": 197
+    "x": 69,
+    "y": 15,
+    "width": 106,
+    "height": 182
   }
 }

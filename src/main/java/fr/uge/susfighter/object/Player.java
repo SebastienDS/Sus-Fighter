@@ -362,8 +362,12 @@ public class Player {
         return (int) (ultimateVelocity.getX() / Math.abs(ultimateVelocity.getX()));
     }
 
-
     public String getType() {
         return type;
     }
+
+    public Element getElement() {
+        return element;
+    }
+
 }

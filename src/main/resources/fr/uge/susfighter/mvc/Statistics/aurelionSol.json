@@ -1,16 +1,16 @@
 {
   "type": "FIRE",
-  "damage": 25,
+  "damage": 5,
   "damageUltimate": 100,
   "hp": 1000,
-  "speed": 10,
-  "maxEnergy": 100,
-  "energyPerAttack": 5,
-  "attackSpeed": 1,
+  "speed": 60,
+  "maxEnergy": 40,
+  "energyPerAttack": 1,
+  "attackSpeed": 0.5,
   "hitBox": {
-    "x": 0,
-    "y": 0,
-    "width": 210,
-    "height": 234
+    "x": 82,
+    "y": 73,
+    "width": 107,
+    "height": 158
   }
 }
