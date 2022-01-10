@@ -1,5 +1,7 @@
 package fr.uge.susfighter.mvc;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import fr.uge.susfighter.mvc.ImageManager.ImageKey;
 import fr.uge.susfighter.object.*;
 import javafx.animation.KeyFrame;
@@ -24,6 +26,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -456,7 +459,7 @@ public class MenuController {
     }
 
     private void initMaps() {
-        var font = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 50);
+        var font = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 50);
         var width = StageManager.getWidth();
         var height = StageManager.getHeight();
         var spacing = (width - map1.getPrefWidth() * 2) / 3;
@@ -529,7 +532,7 @@ public class MenuController {
         duel.setFont(font);
         credits.setFont(font);
         exit.setFont(font);
-        font = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 35);
+        font = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 35);
         click.setFont(font);
     }
 
@@ -549,9 +552,7 @@ public class MenuController {
 
     private void initTimeline() {
         timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), e -> {
-                    click.setVisible(!click.isVisible());
-                })
+                new KeyFrame(Duration.seconds(1), e -> click.setVisible(!click.isVisible()))
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
@@ -587,7 +588,7 @@ public class MenuController {
     }
 
     @FXML
-    void startGame(MouseEvent event) throws IOException {
+    void startGame(MouseEvent event) throws IOException, URISyntaxException {
         var num = ((Button)event.getSource()).getId();
         num = num.substring(num.length() - 1);
         if(num.equals("1")) {
@@ -605,7 +606,7 @@ public class MenuController {
         }
     }
 
-    private void initDataDuel() {
+    private void initDataDuel() throws URISyntaxException, IOException {
         var players = initPlayers();
         var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
                 new Rectangle(0, 0, StageManager.getWidth(), StageManager.getHeight()));
@@ -781,20 +782,76 @@ public class MenuController {
         confirmPlayer2.setVisible(b);
     }
 
-    private List<Player> initPlayers() {
+    private List<Player> initPlayers() throws URISyntaxException, IOException {
         var list = new ArrayList<Player>();
-        list.add(initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP1(),
-                Element.WATER, 1, false));
-        list.add(initPlayer(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP2(),
-                Element.FIRE, 2, true));
+        list.add(initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP1(), 1, false));
+        list.add(initPlayer(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP2(), 2, true));
         return list;
 
     }
 
     private Player initPlayer(String nameSelect, int x, int y, Command command,
-                            Element element, int numPlayer, boolean isFlipped) {
+                            int numPlayer, boolean isFlipped) throws URISyntaxException, IOException {
         var name = nameSelect.substring(0, nameSelect.length() - 1);
-        return new Player(name, new Rectangle(x, y, 150, 250), element, command, numPlayer, isFlipped);
 
+        var data = getPlayerStatistics(name);
+        var stat = new Statistic(data.hp, 0, data.energyPerAttack, data.maxEnergy, data.damage, data.damageUltimate,
+                0, 0, data.speed, data.attackSpeed);
+        var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
+        return new Player(name, new Rectangle(x, y, 150, 250), hitBox, data.type, stat, command, numPlayer, isFlipped);
+    }
+
+    private static class Statistics {
+        private static class HitBox {
+            int x;
+            int y;
+            int width;
+            int height;
+
+            @Override
+            public String toString() {
+                return "HitBox{" +
+                        "x=" + x +
+                        ", y=" + y +
+                        ", width=" + width +
+                        ", height=" + height +
+                        '}';
+            }
+        }
+
+        String name;
+        Element type;
+        int damage;
+        int damageUltimate;
+        int hp;
+        int speed;
+        int maxEnergy;
+        int energyPerAttack;
+        int attackSpeed;
+        HitBox hitBox;
+
+        @Override
+        public String toString() {
+            return "Statistics{" +
+                    "name='" + name + '\'' +
+                    ", type=" + type +
+                    ", damage=" + damage +
+                    ", damageUltimate=" + damageUltimate +
+                    ", hp=" + hp +
+                    ", speed=" + speed +
+                    ", maxEnergy=" + maxEnergy +
+                    ", energyPerAttack=" + energyPerAttack +
+                    ", attackSpeed=" + attackSpeed +
+                    ", hitBox=" + hitBox +
+                    '}';
+        }
+    }
+
+    private Statistics getPlayerStatistics(String name) throws URISyntaxException, IOException {
+        var path = Path.of(Objects.requireNonNull(this.getClass().getResource("Statistics/"+ name +".json")).toURI());
+        try (var reader = Files.newBufferedReader(path)) {
+            var gson = new Gson();
+            return gson.fromJson(reader, Statistics.class);
+        }
     }
 }

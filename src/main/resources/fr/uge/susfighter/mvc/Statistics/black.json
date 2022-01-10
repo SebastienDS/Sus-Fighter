@@ -1,0 +1,17 @@
+{
+  "name": "Black",
+  "type": "WATER",
+  "damage": 25,
+  "damageUltimate": 100,
+  "hp": 1000,
+  "speed": 10,
+  "maxEnergy": 100,
+  "energyPerAttack": 5,
+  "attackSpeed": 1,
+  "hitBox": {
+    "x": 0,
+    "y": 0,
+    "width": 197,
+    "height": 250
+  }
+}

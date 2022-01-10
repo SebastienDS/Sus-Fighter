@@ -22,6 +22,7 @@ public class Player {
     private final String name;
     private final int numPlayer;
     private final Rectangle body;
+    private final Rectangle hitBox;
     private final Statistic statistic;
     private final Element element;
     private final Command command;
@@ -47,12 +48,13 @@ public class Player {
     private long lastHit;
 
 
-    public Player(String name, Rectangle body, Element element, Command command, int numPlayer, boolean isFlipped) {
+    public Player(String name, Rectangle body, Rectangle hitBox, Element element, Statistic stat, Command command, int numPlayer, boolean isFlipped) {
         this.name = Objects.requireNonNull(name);
         this.body = Objects.requireNonNull(body);
+        this.hitBox = Objects.requireNonNull(hitBox);
         this.element = Objects.requireNonNull(element);
         this.command = Objects.requireNonNull(command);
-        statistic = new Statistic();
+        statistic = Objects.requireNonNull(stat);
         this.isFlipped = isFlipped;
         this.numPlayer = numPlayer;
     }
@@ -89,7 +91,7 @@ public class Player {
             var flip = isFlipped ? -1: 1;
             var center = getPlayerCenter(ultimate);
 
-            ultimate.setX(center.getX() + body.getWidth() / 2 * flip);
+            ultimate.setX(center.getX() + hitBox.getWidth() / 2 * flip);
             ultimate.setY(center.getY());
 
             ultimateVelocity.setX(Math.abs(ultimateVelocity.getX()) * flip);
@@ -122,7 +124,7 @@ public class Player {
 
     private void manageAttack() {
         if (action == Action.ATTACK && attack.getX() > ATTACK_DISTANCE) {
-            if(!hasAlreadyHit || combo == 2) combo = 0;
+            if (!hasAlreadyHit || combo == 2) combo = 0;
             else combo++;
 
             action = Action.IDLE;
@@ -148,16 +150,12 @@ public class Player {
     }
 
     private void manageJump(Rectangle bounds) {
-        if (body.getY() == bounds.getY() + bounds.getHeight() - body.getHeight()) {
+        if (body.getY() + hitBox.getY() >= bounds.getY() + bounds.getHeight() - hitBox.getHeight()) {
             canJump = true;
             jump = false;
             velocity.setY(0);
             projectionVelocity.setX(convergeTo0(projectionVelocity.getX(), 1));
         }
-    }
-
-    public boolean needFlip(Player player) {
-        return body.getX() < player.body.getX() && isFlipped || player.body.getX() < body.getX() && player.isFlipped;
     }
 
     public int getNumPlayer() {
@@ -211,7 +209,13 @@ public class Player {
     private void checkUltimate(Player player2) {
         if (hasAlreadyHitUltimate) return;
 
-        hasAlreadyHitUltimate = ultimate.intersects(player2.body.getBoundsInLocal());
+        var box = new Rectangle(
+                player2.body.getX() + player2.hitBox.getX(),
+                player2.body.getY() + player2.hitBox.getY(),
+                player2.hitBox.getWidth(),
+                player2.hitBox.getHeight()
+        );
+        hasAlreadyHitUltimate = ultimate.intersects(box.getBoundsInLocal());
         if (hasAlreadyHitUltimate) player2.statistic.loseHP(-statistic.damage() * ULTIMATE_MULTIPLICATOR);
     }
 
@@ -221,7 +225,13 @@ public class Player {
         var rect = getAttackHitBox();
         if (rect == null) throw new NullPointerException();
 
-        hasAlreadyHit = rect.intersects(player2.body.getBoundsInLocal());
+        var box = new Rectangle(
+                player2.body.getX() + player2.hitBox.getX(),
+                player2.body.getY() + player2.hitBox.getY(),
+                player2.hitBox.getWidth(),
+                player2.hitBox.getHeight()
+        );
+        hasAlreadyHit = rect.intersects(box.getBoundsInLocal());
 
         if (hasAlreadyHit) {
             var flip = isFlipped ? -1: 1;
@@ -237,19 +247,19 @@ public class Player {
     }
 
     public int getX() {
-        return (int)body.getX();
+        return (int) body.getX();
     }
 
     public int getY() {
-        return (int)body.getY();
+        return (int) body.getY();
     }
 
     public int getWidth() {
-        return (int)body.getWidth();
+        return (int) body.getWidth();
     }
 
     public int getHeight() {
-        return (int)body.getHeight();
+        return (int) body.getHeight();
     }
 
     public boolean isFlipped() {
@@ -323,8 +333,8 @@ public class Player {
     }
 
     public Vec2 getPlayerCenter(Rectangle attack) {
-        return new Vec2(body.getX() + body.getWidth() / 2 - attack.getWidth() / 2,
-                body.getY() + body.getHeight() / 2 - attack.getHeight() / 2);
+        return new Vec2(body.getX() + hitBox.getX() + hitBox.getWidth() / 2 - attack.getWidth() / 2,
+                body.getY() + hitBox.getY() + hitBox.getHeight() / 2 - attack.getHeight() / 2);
     }
 
     public double getUltimateWidth() {
