@@ -18,7 +18,6 @@ public class Player {
     private static final int ATTACK_SIZE = 80;
     private static final int ULTIMATE_MULTIPLICATOR = 10;
 
-
     private final String name;
     private final int numPlayer;
     private final Rectangle body;
@@ -28,8 +27,10 @@ public class Player {
     private final Command command;
     private boolean isFlipped;
 
-    private boolean jump = false;
-    private boolean canJump = true;
+
+    private final int maxJumpCount;
+    private int jumpCount = 0;
+    private boolean isGrounded = true;
     private Key xMovement = Key.LEFT;
 
     private Action action = Action.IDLE;
@@ -60,6 +61,7 @@ public class Player {
         this.isFlipped = isFlipped;
         this.numPlayer = numPlayer;
         this.type = type;
+        maxJumpCount = 2;
     }
 
     public void keyPressed(KeyCode key) {
@@ -74,12 +76,12 @@ public class Player {
             isFlipped = false;
         }
 
-        else if (key == command.get(Key.UP) && canJump) {
+        else if (key == command.get(Key.UP) && (isGrounded || jumpCount < maxJumpCount)) {
             velocity.setY(-25);
-            jump = true;
-            canJump = false;
+            jumpCount++;
+            isGrounded = false;
         }
-        else if (key == command.get(Key.DOWN) && jump) {
+        else if (key == command.get(Key.DOWN) && jumpCount > 0) {
             if (velocity.getY() < 0) velocity.setY(0);
             else velocity.addY(50);
         }
@@ -159,8 +161,8 @@ public class Player {
 
     private void manageJump(Rectangle bounds) {
         if (body.getY() + hitBox.getY() >= bounds.getY() + bounds.getHeight() - hitBox.getHeight()) {
-            canJump = true;
-            jump = false;
+            isGrounded = true;
+            jumpCount = 0;
             velocity.setY(0);
             projectionVelocity.setX(convergeTo0(projectionVelocity.getX(), 1));
         }
@@ -295,10 +297,9 @@ public class Player {
     }
 
     private void applyCombo(int flip, Player player2) {
-        if ( combo >= 2) {
+        if (combo >= 2) {
             player2.projectionVelocity.addX(15 * flip);
             player2.projectionVelocity.setY(-30);
-            return;
         }
     }
 
