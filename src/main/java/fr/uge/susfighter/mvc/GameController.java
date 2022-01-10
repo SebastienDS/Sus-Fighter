@@ -2,6 +2,7 @@ package fr.uge.susfighter.mvc;
 
 import com.gluonhq.charm.glisten.control.ProgressBar;
 import fr.uge.susfighter.mvc.ImageManager.ImageKey;
+import fr.uge.susfighter.object.Element;
 import fr.uge.susfighter.object.Player;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -158,13 +159,23 @@ public class GameController {
         imageView.setImage(ImageManager.getImage(ImageKey.valueOf(player + "_IDLE")));
         imageView.setFitWidth(p.getWidth());
         imageView.setFitHeight(p.getHeight());
-        name.setTextFill(Color.ORANGE);
+        name.setTextFill(getColor(p));
         name.setText(p.getName().toUpperCase(Locale.ROOT));
         AnchorPane.setLeftAnchor(name, (p.getNumPlayer() - 1) * (StageManager.getWidth() - name.getPrefWidth()));
 
         setFist(fist, player, p.getAttackWidth(), p.getAttackHeight());
         setFist(ultimate, player, p.getUltimateWidth(), p.getUltimateHeight());
         ultimate.setVisible(true);
+    }
+
+    private Paint getColor(Player p) {
+        var element = p.getElement();
+        if(element == Element.WATER) return Color.BLUE;
+        if(element == Element.DARK) return Color.PURPLE;
+        if(element == Element.EARTH) return Color.BROWN;
+        if(element == Element.FIRE) return Color.RED;
+        if(element == Element.LIGHT) return Color.YELLOW;
+        return Color.GREEN;
     }
 
     private void setFist(ImageView fist, String player, double width, double height) {
