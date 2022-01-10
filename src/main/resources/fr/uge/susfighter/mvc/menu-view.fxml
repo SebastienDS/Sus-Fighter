@@ -243,7 +243,7 @@
          <children>
             <ImageView fitHeight="226.0" fitWidth="195.0" pickOnBounds="true">
                <image>
-                  <Image url="@images/Avatar/garen.png" />
+                  <Image url="@images/character/extension/garen/IDLE.png" />
                </image>
             </ImageView>
             <Label fx:id="nameSeb" alignment="CENTER" prefHeight="120.0" prefWidth="335.0" styleClass="outline2" text="Sebastien Dos Santos" textFill="WHITE" />
@@ -253,7 +253,7 @@
          <children>
             <ImageView fitHeight="229.0" fitWidth="161.0" pickOnBounds="true">
                <image>
-                  <Image url="@images/Avatar/neeko.png" />
+                  <Image url="@images/character/extension/neeko/IDLE.png" />
                </image>
             </ImageView>
             <Label fx:id="nameQuentin" alignment="CENTER" prefHeight="120.0" prefWidth="335.0" styleClass="outline2" text="Quentin Boulet" textFill="WHITE" />
@@ -263,11 +263,13 @@
          <children>
             <ImageView fitHeight="207.0" fitWidth="185.0" pickOnBounds="true">
                <image>
-                  <Image url="@images/Avatar/ashe.png" />
+                  <Image url="@images/character/extension/ashe/IDLE.png" />
                </image>
             </ImageView>
             <Label fx:id="nameYoyo" alignment="CENTER" prefHeight="120.0" prefWidth="335.0" styleClass="outline2" text="Yohan Astier" textFill="WHITE" />
          </children>
       </VBox>
+      <Button fx:id="addPage1" layoutX="55.0" layoutY="69.0" mnemonicParsing="false" onMouseClicked="#addPage" prefHeight="64.0" prefWidth="109.0" text="+" visible="false" />
+      <Button fx:id="addPage2" layoutX="49.0" layoutY="149.0" mnemonicParsing="false" onMouseClicked="#addPage" prefHeight="64.0" prefWidth="109.0" text="+" visible="false" />
    </children>
 </AnchorPane>

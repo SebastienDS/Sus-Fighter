@@ -72,12 +72,12 @@ public class MenuController {
 
         public Astronaut(){
             imageView = new ImageView();
-            var image = images.remove(random.nextInt(images.size()));
+            var image = astronautsImage.remove(random.nextInt(astronautsImage.size()));
             imageView.setFitWidth(image.getWidth());
             imageView.setFitHeight(image.getHeight());
             imageView.setImage(image);
             putInAnchorPane(imageView);
-            changeSpeed(5);
+            changeSpeed();
         }
 
         private int getSpeed(int max) {
@@ -115,20 +115,20 @@ public class MenuController {
                     || AnchorPane.getLeftAnchor(imageView) < -widthPlayer
                     || AnchorPane.getTopAnchor(imageView) > StageManager.getHeight()
                     || AnchorPane.getTopAnchor(imageView) < - heightPlayer) {
-                changeSpeed(5);
+                changeSpeed();
                 randomPlacement(imageView);
-                images.add(imageView.getImage());
-                var image = images.remove(random.nextInt(images.size()));
+                astronautsImage.add(imageView.getImage());
+                var image = astronautsImage.remove(random.nextInt(astronautsImage.size()));
                 imageView.setFitWidth(image.getWidth());
                 imageView.setFitHeight(image.getHeight());
                 imageView.setImage(image);
             }
         }
 
-        private void changeSpeed(int max) {
-            speedX = getSpeed(max);
-            speedY = getSpeed(max);
-            rotate = getSpeed(max / 2);
+        private void changeSpeed() {
+            speedX = getSpeed(5);
+            speedY = getSpeed(5);
+            rotate = getSpeed(5 / 2);
         }
 
         public void setVisible(boolean b) {
@@ -265,6 +265,14 @@ public class MenuController {
     @FXML
     private Label nameYoyo;
 
+    @FXML
+    private Button addPage1;
+
+    @FXML
+    private Button addPage2;
+
+    private final static int NUMBER_CASE = 7;
+
     private Rectangle rectangle1;
 
     private Rectangle rectangle2;
@@ -289,7 +297,15 @@ public class MenuController {
 
     private Rectangle confirmRectangle2;
 
+    private List<VBox> heads1;
+
+    private List<VBox> heads2;
+
     private List<Image> images;
+    private List<Image> astronautsImage;
+    private List<Image> heads;
+    private int page1 = 0;
+    private int page2 = 0;
 
     private final int widthPlayer = 150;
     private final int heightPlayer = 250;
@@ -320,8 +336,8 @@ public class MenuController {
     }
 
     private void initCredits() {
-        var font = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 150);
-        var font2 = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 35);
+        var font = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 150);
+        var font2 = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 35);
         creditsTitle.setFont(font);
         AnchorPane.setLeftAnchor(creditsTitle, StageManager.getWidth() / 2. - creditsTitle.getPrefWidth() / 2);
         AnchorPane.setTopAnchor(creditsTitle, StageManager.getHeight() / 20.);
@@ -341,12 +357,14 @@ public class MenuController {
 
     private void initCharacterMenu() {
         initSelectPlayer();
-        placeVBoxPlayer(0, black1, white1, pink1, purple1, red1, green1, yellow1);
-        placeVBoxPlayer(StageManager.getWidth() / 2, black2, white2, pink2, purple2, red2, green2, yellow2);
+        placeVBoxPlayer(0, black1, white1, pink1, purple1, red1, green1, yellow1, 1);
+        placeVBoxPlayer(StageManager.getWidth() / 2, black2, white2, pink2, purple2, red2, green2, yellow2, 2);
+        heads1 = List.of(black1, white1, pink1, purple1, red1, green1, yellow1);
+        heads2 = List.of(black2, white2, pink2, purple2, red2, green2, yellow2);
         initLine();
         var y = ((StageManager.getHeight() / 2.) - select1.getPrefHeight()) / 2;
-        placeVBox(select1, StageManager.getWidth() / 4. - select1.getPrefWidth() / 2., y);
-        placeVBox(select2, 3 * StageManager.getWidth() / 4. - select1.getPrefWidth() / 2., y);
+        placeVBox(select1, StageManager.getWidth() / 4. - select1.getPrefWidth() / 2., y, images.get(0), "select1");
+        placeVBox(select2, 3 * StageManager.getWidth() / 4. - select1.getPrefWidth() / 2., y, images.get(1), "select2");
         nameSelect1 = black1.getId();
         nameSelect2 = white2.getId();
         addDisable(List.of(black2, white1));
@@ -372,6 +390,14 @@ public class MenuController {
         confirmRectangle2 = initConfirm(StageManager.getWidth() / 2., -line.getStrokeWidth(), ready2, font);
         initButton(confirmPlayer1, 0, font2, spacingX, spacingY, black1.getPrefWidth(), black1.getPrefHeight());
         initButton(confirmPlayer2, StageManager.getWidth() / 2, font2, spacingX, spacingY, black1.getPrefWidth(), black1.getPrefHeight());
+        initButtonPage(addPage1, font2, 0, spacingX, spacingY);
+        initButtonPage(addPage2, font2, StageManager.getWidth() / 2, spacingX, spacingY);
+    }
+
+    private void initButtonPage(Button addPage, Font font, int x, double spacingX, double spacingY) {
+        addPage.setFont(font);
+        AnchorPane.setLeftAnchor(addPage, x + spacingX);
+        AnchorPane.setTopAnchor(addPage, StageManager.getHeight() / 2 + spacingY * 3 + black1.getPrefHeight() * 2);
     }
 
     private Rectangle initConfirm(double x, double stroke, Label ready, Font font) {
@@ -424,29 +450,33 @@ public class MenuController {
     }
 
     private void initSelectPlayer() {
-        ((ImageView)select1.getChildren().get(0)).setImage(ImageManager.getImage(ImageKey.BLACK));
-        ((ImageView)select2.getChildren().get(0)).setImage(ImageManager.getImage(ImageKey.WHITE));
+        ((ImageView)select1.getChildren().get(0)).setImage(images.get(0));
+        ((ImageView)select2.getChildren().get(0)).setImage(images.get(1));
     }
 
-    private void placeVBoxPlayer(int x, VBox black, VBox white, VBox pink, VBox purple, VBox red, VBox green, VBox yellow) {
+    private void placeVBoxPlayer(int x, VBox black, VBox white, VBox pink, VBox purple, VBox red,
+                                 VBox green, VBox yellow, int numPlayer) {
         var width = StageManager.getWidth();
         var widthVBox = green1.getPrefWidth();
         var heightVBox = green1.getPrefHeight();
         var height = StageManager.getHeight();
         var spacingX = (width / 2.0 - (widthVBox * 3)) / 4;
         var spacingY = (height / 2.0 - (heightVBox * 3)) / 4;
-        placeVBox(black, x + spacingX, height / 2. + spacingY);
-        placeVBox(white, x + spacingX * 2 + widthVBox, height / 2. + spacingY);
-        placeVBox(pink, x + spacingX * 3 + widthVBox * 2, height / 2. + spacingY);
-        placeVBox(purple, x + spacingX, height / 2. + 2 * spacingY + heightVBox);
-        placeVBox(red, x + spacingX * 2 + widthVBox, height / 2. + 2 * spacingY + heightVBox);
-        placeVBox(green, x + spacingX * 3 + widthVBox * 2, height / 2. + 2 * spacingY + heightVBox);
-        placeVBox(yellow, x + spacingX * 2 + widthVBox, height / 2. + 3 * spacingY + 2 * heightVBox);
+        placeVBox(black, x + spacingX, height / 2. + spacingY, heads.get(0), "black" + numPlayer  + 0);
+        placeVBox(white, x + spacingX * 2 + widthVBox, height / 2. + spacingY, heads.get(1), "green" + numPlayer + 1);
+        placeVBox(pink, x + spacingX * 3 + widthVBox * 2, height / 2. + spacingY, heads.get(2), "pink" + numPlayer + 2);
+        placeVBox(purple, x + spacingX, height / 2. + 2 * spacingY + heightVBox, heads.get(3), "purple" + numPlayer + 3);
+        placeVBox(red, x + spacingX * 2 + widthVBox, height / 2. + 2 * spacingY + heightVBox, heads.get(4), "red" + numPlayer + 4);
+        placeVBox(green, x + spacingX * 3 + widthVBox * 2, height / 2. + 2 * spacingY + heightVBox, heads.get(5), "white" + numPlayer + 5);
+        placeVBox(yellow, x + spacingX * 2 + widthVBox, height / 2. + 3 * spacingY + 2 * heightVBox, heads.get(6), "yellow" + numPlayer + 7);
     }
 
-    private void placeVBox(VBox vBox, double x, double y) {
+    private void placeVBox(VBox vBox, double x, double y, Image image, String id) {
         AnchorPane.setLeftAnchor(vBox, x);
         AnchorPane.setTopAnchor(vBox, y);
+        var imageView = (ImageView)(vBox.getChildren().get(0));
+        imageView.setImage(image);
+        vBox.setId(id);
     }
 
     private static void toFront(Node node, AnchorPane pane){
@@ -456,7 +486,8 @@ public class MenuController {
     }
 
     private void initMaps() {
-        var font = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 50);
+        var font = Font.loadFont(Objects.requireNonNull(
+                this.getClass().getResource("font/font.ttf")).toExternalForm(), 50);
         var width = StageManager.getWidth();
         var height = StageManager.getHeight();
         var spacing = (width - map1.getPrefWidth() * 2) / 3;
@@ -488,31 +519,21 @@ public class MenuController {
 
     private void loadAllAvatar() throws IOException, URISyntaxException {
         images = new ArrayList<>();
+        astronautsImage = new ArrayList<>();
+        heads = new ArrayList<>();
         var paths = Files.walk(Path.of(Objects.requireNonNull(this.getClass()
-                .getResource("images/Avatar")).toURI()), 1)
+                .getResource("images/character")).toURI()), 3)
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toList());
         for (var path : paths) {
-            images.add(ImageManager.loadImage("file:///" + path.toString()));
+            if(path.getFileName().toString().equals("IDLE.png")){
+                astronautsImage.add(ImageManager.loadImage("file:///" + path));
+            }
+            if(path.getFileName().toString().equals("HEAD.png")){
+                heads.add(ImageManager.loadImage("file:///" + path));
+            }
         }
-        loadColored();
-        images.add(ImageManager.getImage(ImageKey.RED));
-        images.add(ImageManager.getImage(ImageKey.BLACK));
-        images.add(ImageManager.getImage(ImageKey.WHITE));
-        images.add(ImageManager.getImage(ImageKey.YELLOW));
-        images.add(ImageManager.getImage(ImageKey.PINK));
-        images.add(ImageManager.getImage(ImageKey.GREEN));
-        images.add(ImageManager.getImage(ImageKey.PURPLE));
-    }
-
-    private void loadColored() {
-        ImageManager.loadImage(ImageKey.RED, "images/character/red/IDLE.png", widthPlayer, heightPlayer);
-        ImageManager.loadImage(ImageKey.PURPLE, "images/character/purple/IDLE.png", widthPlayer, heightPlayer);
-        ImageManager.loadImage(ImageKey.BLACK, "images/character/black/IDLE.png", widthPlayer, heightPlayer);
-        ImageManager.loadImage(ImageKey.WHITE, "images/character/white/IDLE.png", widthPlayer, heightPlayer);
-        ImageManager.loadImage(ImageKey.YELLOW, "images/character/yellow/IDLE.png", widthPlayer, heightPlayer);
-        ImageManager.loadImage(ImageKey.PINK, "images/character/pink/IDLE.png", widthPlayer, heightPlayer);
-        ImageManager.loadImage(ImageKey.GREEN, "images/character/green/IDLE.png", widthPlayer, heightPlayer);
+        images = List.copyOf(astronautsImage);
     }
 
     private void initStars() {
@@ -529,7 +550,7 @@ public class MenuController {
         duel.setFont(font);
         credits.setFont(font);
         exit.setFont(font);
-        font = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), 35);
+        font = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 35);
         click.setFont(font);
     }
 
@@ -549,9 +570,7 @@ public class MenuController {
 
     private void initTimeline() {
         timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), e -> {
-                    click.setVisible(!click.isVisible());
-                })
+                new KeyFrame(Duration.seconds(1), e -> click.setVisible(!click.isVisible()))
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
@@ -627,7 +646,7 @@ public class MenuController {
 
     private void showTitle() {
         var fontSize = 150;
-        var font = Font.loadFont(this.getClass().getResource( "font/font.ttf").toExternalForm(), fontSize);
+        var font = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), fontSize);
         title = new Label("SUS FIGHTER");
         title.setPrefWidth(StageManager.getWidth());
         title.setPrefHeight(fontSize);
@@ -667,10 +686,12 @@ public class MenuController {
     @FXML
     void chosePlayer(MouseEvent event){
         var name = ((Node)event.getSource()).getId();
+        var num = name.substring(name.length() - 1);
+        name = name.substring(0, name.length() - 1);
         if(name.endsWith("1")) nameSelect1 = changePlayer(select1, nameSelect1, name,
-                2, rectangle1, 0);
+                2, rectangle1, 0, Integer.parseInt(num), page1);
         if(name.endsWith("2")) nameSelect2 = changePlayer(select2, nameSelect2, name,
-                1, rectangle2, StageManager.getWidth() / 2);
+                1, rectangle2, StageManager.getWidth() / 2, Integer.parseInt(num), page2);
     }
 
     @FXML
@@ -694,9 +715,36 @@ public class MenuController {
         }
     }
 
+    @FXML
+    void addPage(MouseEvent event){
+        var id = ((Node)(event.getSource())).getId();
+        var num = id.substring(id.length() - 1);
+        if(num.equals("1")) page1 = pageModification(page1, heads1);
+        if(num.equals("2")) page2 = pageModification(page2, heads2);
+    }
+
+    private int pageModification(int page, List<VBox> vBox) {
+        page++;
+        page = (page <= ((heads.size() - 1) / NUMBER_CASE))? page : 0;
+        System.out.println(page + " " + heads.size() / NUMBER_CASE);
+        for (int i = 0; i < NUMBER_CASE; i++) {
+            if(page * NUMBER_CASE + i >= heads.size()){
+                vBox.get(i).setVisible(false);
+                continue;
+            }
+            vBox.get(i).setVisible(true);
+            ((ImageView)(vBox.get(i).getChildren().get(0))).setImage(heads.get(page * NUMBER_CASE + i));
+        }
+        return page;
+    }
+
     private void reinitializeCharacter() {
-        nameSelect1 = changePlayer(select1, nameSelect1, "black1", 2, rectangle1, 0);
-        nameSelect2 = changePlayer(select2, nameSelect2, "white2",1, rectangle2, StageManager.getWidth() / 2);
+        page1 = 0;
+        page2 = 0;
+        nameSelect1 = changePlayer(select1, nameSelect1, "black1", 2, rectangle1, 0, 0, page1);
+        nameSelect2 = changePlayer(select2, nameSelect2, "green2",1, rectangle2, StageManager.getWidth() / 2, 1, page2);
+        white1.setDisable(true);
+        black2.setDisable(true);
         confirmRectangle1.setVisible(false);
         confirmRectangle2.setVisible(false);
         ready1.setVisible(false);
@@ -704,33 +752,28 @@ public class MenuController {
     }
 
     private String changePlayer(VBox select, String nameSelect, String name,
-                                int otherPlayer, Rectangle rectangle, int x_start) {
-        var toDisableNode = StageManager.getScene().lookup("#" + name.substring(0, name.length() - 1) + otherPlayer);
+                                int otherPlayer, Rectangle rectangle, int x_start, int num, int page) {
+        var toDisableNode = StageManager.getScene().lookup("#" + name.substring(0, name.length() - 1) + otherPlayer + num);
         toDisableNode.setDisable(true);
-        var disabledNode2 = StageManager.getScene().lookup("#" + nameSelect.substring(0, nameSelect.length() - 1) + otherPlayer);
+        var numBefore = nameSelect.substring(nameSelect.length() - 1);
+        var disabledNode2 = StageManager.getScene().
+                lookup("#" + nameSelect.substring(0, nameSelect.length() - 2) + otherPlayer + numBefore);
         disabledNode2.setDisable(false);
-        ((ImageView)select.getChildren().get(0)).setImage(
-                ImageManager.getImage(ImageKey.valueOf(name.toUpperCase(Locale.ROOT).substring(0, name.length() - 1)))
-        );
-        placeRectangle(name.substring(0, name.length() - 1), rectangle, x_start);
-        return name;
+        ((ImageView)select.getChildren().get(0)).setImage(images.get(((num == 7)? 6: num)  + page * NUMBER_CASE));
+        placeRectangle(num, rectangle, x_start);
+        return name + num;
 
     }
 
-    private void placeRectangle(String name, Rectangle rectangle, int x_start) {
+    private void placeRectangle(int num, Rectangle rectangle, int x_start) {
         var width = StageManager.getWidth();
         var height = StageManager.getHeight();
         var widthVBox = green1.getPrefWidth();
         var heightVBox = green1.getPrefHeight();
         var spacingX = (width / 2.0 - (widthVBox * 3)) / 4;
         var spacingY = (height / 2.0 - (heightVBox * 3)) / 4;
-        var color = name.substring(0, name.length() - 1);
-        var y = (name.equals("white") || name.equals("black") || name.equals("pink"))? height / 2. + spacingY :
-                (name.equals("red") || name.equals("green") || name.equals("purple"))? height / 2. + 2 * spacingY + heightVBox:
-                        height / 2. + spacingY * 3 + heightVBox * 2;
-        var x = (name.equals("black") || name.equals("purple"))? x_start + spacingX :
-                   (name.equals("white") || name.equals("yellow") || name.equals("red"))?x_start + spacingX * 2 + widthVBox :
-                        x_start + spacingX * 3 + widthVBox * 2;
+        var y = height / 2 + ((num / 3) + 1) * spacingY + num / 3 * heightVBox;
+        var x = x_start + (((num % 3) + 1) * spacingX + num % 3 * widthVBox);
         AnchorPane.setLeftAnchor(rectangle, x);
         AnchorPane.setTopAnchor(rectangle, y);
     }
@@ -779,6 +822,8 @@ public class MenuController {
         rectangle2.setVisible(b);
         confirmPlayer1.setVisible(b);
         confirmPlayer2.setVisible(b);
+        addPage1.setVisible(b);
+        addPage2.setVisible(b);
     }
 
     private List<Player> initPlayers() {
@@ -797,4 +842,5 @@ public class MenuController {
         return new Player(name, new Rectangle(x, y, 150, 250), element, command, numPlayer, isFlipped);
 
     }
+
 }

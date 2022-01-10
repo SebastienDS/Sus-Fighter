@@ -20,14 +20,6 @@ public class ImageManager {
         PLAYER_2_HEAD,
 
         FIELD,
-        PURPLE,
-        RED,
-        GREEN,
-        YELLOW,
-        PINK,
-        BLACK,
-        WHITE,
-        STAR;
     }
 
     private static final Map<ImageKey, Image> images = new HashMap<>();
@@ -53,9 +45,8 @@ public class ImageManager {
     }
 
     public static void loadImagePlayer(Player p) {
-        var path = "images/character/" + p.getName() + "/";
+        var path = "images/character/default/" + p.getName() + "/";
         var player = "PLAYER_" + p.getNumPlayer();
-
         ImageManager.loadImage(ImageKey.valueOf(player + "_IDLE"), path + "IDLE.png", p.getWidth(), p.getHeight());
         ImageManager.loadImage(ImageKey.valueOf(player + "_FIST"), path + "FIST.png");
         ImageManager.loadImage(ImageKey.valueOf(player + "_HEAD"), path + "HEAD.png", 75, 75);

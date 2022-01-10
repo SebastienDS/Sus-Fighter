@@ -250,7 +250,7 @@ public class GameController {
         }
     }
 
-    private static void move(KeyEvent keyEvent) {
+    private static void keyPressedHandler(KeyEvent keyEvent) {
         var duel = DuelManager.getDuel();
         duel.pressed(keyEvent);
     }
@@ -262,7 +262,7 @@ public class GameController {
 
     public static void startGame() {
         var scene = StageManager.getScene();
-        scene.setOnKeyPressed(GameController::move);
+        scene.setOnKeyPressed(GameController::keyPressedHandler);
         scene.setOnKeyReleased(GameController::release);
     }
 
