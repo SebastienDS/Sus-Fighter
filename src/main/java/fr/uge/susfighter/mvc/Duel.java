@@ -34,7 +34,6 @@ public class Duel {
     public boolean update() {
         var player1 = players.get(0);
         var player2 = players.get(1);
-        var needFlip = player1.needFlip(player2);
 
         player1.update(map.gravity(), map.bounds());
         player2.update(map.gravity(), map.bounds());

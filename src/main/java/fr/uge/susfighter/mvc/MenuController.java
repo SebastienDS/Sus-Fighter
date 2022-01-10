@@ -1,5 +1,7 @@
 package fr.uge.susfighter.mvc;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import fr.uge.susfighter.mvc.ImageManager.ImageKey;
 import fr.uge.susfighter.object.*;
 import javafx.animation.KeyFrame;
@@ -24,6 +26,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -36,11 +39,11 @@ public class MenuController {
 
     private final Random random = new Random();
 
-    private class Star{
+    private class Star {
         private final int speed;
         private final Circle star;
 
-        public Star(AnchorPane anchorPane){
+        public Star(AnchorPane anchorPane) {
             speed = random.nextInt(10) + 1;
             star = new Circle();
             star.setFill(Color.WHITE);
@@ -51,26 +54,26 @@ public class MenuController {
             star.setVisible(false);
         }
 
-        public void setVisible(boolean bool){
+        public void setVisible(boolean bool) {
             star.setVisible(bool);
         }
 
         public void move() {
             AnchorPane.setLeftAnchor(star, AnchorPane.getLeftAnchor(star) + speed / 75.);
-            if(AnchorPane.getLeftAnchor(star) > StageManager.getWidth()){
+            if (AnchorPane.getLeftAnchor(star) > StageManager.getWidth()) {
                 AnchorPane.setLeftAnchor(star, 0.);
                 AnchorPane.setTopAnchor(star, random.nextDouble() * StageManager.getHeight());
             }
         }
     }
 
-    private class Astronaut{
+    private class Astronaut {
         private int speedX;
         private int speedY;
         private int rotate;
         private final ImageView imageView;
 
-        public Astronaut(){
+        public Astronaut() {
             imageView = new ImageView();
             var image = astronautsImage.remove(random.nextInt(astronautsImage.size()));
             imageView.setFitWidth(image.getWidth());
@@ -82,7 +85,7 @@ public class MenuController {
 
         private int getSpeed(int max) {
             var speed = random.nextInt(max * 2) - max;
-            return  (speed < 2 && speed > - 2)? max : speed;
+            return (speed < 2 && speed > -2) ? max : speed;
         }
 
         private void putInAnchorPane(ImageView image) {
@@ -95,10 +98,10 @@ public class MenuController {
             var totalWidth = StageManager.getWidth();
             var totalHeight = StageManager.getHeight();
             var randomNumber = random.nextInt(2);
-            var x = (randomNumber == 0) ? (speedX < 0)? totalWidth : - widthPlayer :
+            var x = (randomNumber == 0) ? (speedX < 0) ? totalWidth : -widthPlayer :
                     (speedX < 0) ? getPlacement(totalWidth / 2.) : getPlacement(0.);
-            var y = (randomNumber == 1) ? (speedY < 0)? totalHeight : - heightPlayer :
-                    (speedY < 0) ? getPlacement(totalHeight /2.) : getPlacement(0.);
+            var y = (randomNumber == 1) ? (speedY < 0) ? totalHeight : -heightPlayer :
+                    (speedY < 0) ? getPlacement(totalHeight / 2.) : getPlacement(0.);
             AnchorPane.setLeftAnchor(image, x);
             AnchorPane.setTopAnchor(image, y);
         }
@@ -111,10 +114,10 @@ public class MenuController {
             AnchorPane.setLeftAnchor(imageView, AnchorPane.getLeftAnchor(imageView) + speedX / 75.);
             AnchorPane.setTopAnchor(imageView, AnchorPane.getTopAnchor(imageView) + speedY / 75.);
             imageView.setRotate(imageView.getRotate() + rotate / 75.);
-            if(AnchorPane.getLeftAnchor(imageView) > StageManager.getWidth()
+            if (AnchorPane.getLeftAnchor(imageView) > StageManager.getWidth()
                     || AnchorPane.getLeftAnchor(imageView) < -widthPlayer
                     || AnchorPane.getTopAnchor(imageView) > StageManager.getHeight()
-                    || AnchorPane.getTopAnchor(imageView) < - heightPlayer) {
+                    || AnchorPane.getTopAnchor(imageView) < -heightPlayer) {
                 changeSpeed();
                 randomPlacement(imageView);
                 astronautsImage.add(imageView.getImage());
@@ -240,7 +243,7 @@ public class MenuController {
 
     @FXML
     private Label ready2;
-    
+
     @FXML
     private Polygon back;
 
@@ -310,7 +313,7 @@ public class MenuController {
     private final int widthPlayer = 150;
     private final int heightPlayer = 250;
 
-    private enum Menu{
+    private enum Menu {
         CLICK,
         MODE,
         MAP,
@@ -342,11 +345,11 @@ public class MenuController {
         AnchorPane.setLeftAnchor(creditsTitle, StageManager.getWidth() / 2. - creditsTitle.getPrefWidth() / 2);
         AnchorPane.setTopAnchor(creditsTitle, StageManager.getHeight() / 20.);
         double spacingX = (StageManager.getWidth() - sebastien.getPrefWidth() - quentin.getPrefWidth() - yoan.getPrefHeight()) / 4;
-        initAvatar(sebastien, nameSeb, spacingX, StageManager.getHeight() /2. - quentin.getPrefHeight(), font2);
+        initAvatar(sebastien, nameSeb, spacingX, StageManager.getHeight() / 2. - quentin.getPrefHeight(), font2);
         initAvatar(quentin, nameQuentin, 2 * spacingX + sebastien.getPrefWidth(),
-                StageManager.getHeight() / 2. - quentin.getPrefHeight() , font2);
+                StageManager.getHeight() / 2. - quentin.getPrefHeight(), font2);
         initAvatar(yoan, nameYoyo, 3 * spacingX + sebastien.getPrefWidth() * 2,
-                StageManager.getHeight() / 2. - quentin.getPrefHeight() , font2);
+                StageManager.getHeight() / 2. - quentin.getPrefHeight(), font2);
     }
 
     private void initAvatar(VBox vBox, Label name, double x, double y, Font font) {
@@ -450,8 +453,8 @@ public class MenuController {
     }
 
     private void initSelectPlayer() {
-        ((ImageView)select1.getChildren().get(0)).setImage(images.get(0));
-        ((ImageView)select2.getChildren().get(0)).setImage(images.get(1));
+        ((ImageView) select1.getChildren().get(0)).setImage(images.get(0));
+        ((ImageView) select2.getChildren().get(0)).setImage(images.get(1));
     }
 
     private void placeVBoxPlayer(int x, VBox black, VBox white, VBox pink, VBox purple, VBox red,
@@ -462,7 +465,7 @@ public class MenuController {
         var height = StageManager.getHeight();
         var spacingX = (width / 2.0 - (widthVBox * 3)) / 4;
         var spacingY = (height / 2.0 - (heightVBox * 3)) / 4;
-        placeVBox(black, x + spacingX, height / 2. + spacingY, heads.get(0), "black" + numPlayer  + 0);
+        placeVBox(black, x + spacingX, height / 2. + spacingY, heads.get(0), "black" + numPlayer + 0);
         placeVBox(white, x + spacingX * 2 + widthVBox, height / 2. + spacingY, heads.get(1), "green" + numPlayer + 1);
         placeVBox(pink, x + spacingX * 3 + widthVBox * 2, height / 2. + spacingY, heads.get(2), "pink" + numPlayer + 2);
         placeVBox(purple, x + spacingX, height / 2. + 2 * spacingY + heightVBox, heads.get(3), "purple" + numPlayer + 3);
@@ -474,12 +477,12 @@ public class MenuController {
     private void placeVBox(VBox vBox, double x, double y, Image image, String id) {
         AnchorPane.setLeftAnchor(vBox, x);
         AnchorPane.setTopAnchor(vBox, y);
-        var imageView = (ImageView)(vBox.getChildren().get(0));
+        var imageView = (ImageView) (vBox.getChildren().get(0));
         imageView.setImage(image);
         vBox.setId(id);
     }
 
-    private static void toFront(Node node, AnchorPane pane){
+    private static void toFront(Node node, AnchorPane pane) {
         for (int i = 0; i < pane.getChildren().size(); i++) {
             node.toFront();
         }
@@ -522,14 +525,14 @@ public class MenuController {
         astronautsImage = new ArrayList<>();
         heads = new ArrayList<>();
         var paths = Files.walk(Path.of(Objects.requireNonNull(this.getClass()
-                .getResource("images/character")).toURI()), 3)
+                        .getResource("images/character")).toURI()), 3)
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toList());
         for (var path : paths) {
-            if(path.getFileName().toString().equals("IDLE.png")){
+            if (path.getFileName().toString().equals("IDLE.png")) {
                 astronautsImage.add(ImageManager.loadImage("file:///" + path));
             }
-            if(path.getFileName().toString().equals("HEAD.png")){
+            if (path.getFileName().toString().equals("HEAD.png")) {
                 heads.add(ImageManager.loadImage("file:///" + path));
             }
         }
@@ -554,16 +557,16 @@ public class MenuController {
         click.setFont(font);
     }
 
-    private void placeAtCenter(Button button, int y){
+    private void placeAtCenter(Button button, int y) {
         AnchorPane.setLeftAnchor(button, StageManager.getWidth() / 2 - button.getPrefWidth() / 2);
-        AnchorPane.setTopAnchor(button, (double)y);
+        AnchorPane.setTopAnchor(button, (double) y);
     }
 
     private void initPlacement() {
-        placeAtCenter(campaign, StageManager.getHeight() /3);
-        placeAtCenter(duel, StageManager.getHeight() /2);
-        placeAtCenter(credits, 2 * StageManager.getHeight() /3);
-        placeAtCenter(exit, 5 * StageManager.getHeight() /6);
+        placeAtCenter(campaign, StageManager.getHeight() / 3);
+        placeAtCenter(duel, StageManager.getHeight() / 2);
+        placeAtCenter(credits, 2 * StageManager.getHeight() / 3);
+        placeAtCenter(exit, 5 * StageManager.getHeight() / 6);
         AnchorPane.setLeftAnchor(click, StageManager.getWidth() / 2 - click.getPrefWidth() / 2);
         AnchorPane.setTopAnchor(click, StageManager.getHeight() - click.getPrefHeight());
     }
@@ -606,28 +609,27 @@ public class MenuController {
     }
 
     @FXML
-    void startGame(MouseEvent event) throws IOException {
-        var num = ((Button)event.getSource()).getId();
+    void startGame(MouseEvent event) throws IOException, URISyntaxException {
+        var num = ((Button) event.getSource()).getId();
         num = num.substring(num.length() - 1);
-        if(num.equals("1")) {
+        if (num.equals("1")) {
             confirmRectangle1.setVisible(!confirmRectangle1.isVisible());
             ready1.setVisible(!ready1.isVisible());
-        }
-        else if(num.equals("2")){
+        } else if (num.equals("2")) {
             confirmRectangle2.setVisible(!confirmRectangle2.isVisible());
             ready2.setVisible(!ready2.isVisible());
         }
-        if(confirmRectangle1.isVisible() && confirmRectangle2.isVisible()) {
+        if (confirmRectangle1.isVisible() && confirmRectangle2.isVisible()) {
             initDataDuel();
             StageManager.setScene(StageManager.StageEnum.GAME);
             GameController.startGame();
         }
     }
 
-    private void initDataDuel() {
+    private void initDataDuel() throws URISyntaxException, IOException {
         var players = initPlayers();
         var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
-                new Rectangle(0, 0, StageManager.getWidth(), StageManager.getHeight()));
+                new Rectangle(0, 0, StageManager.getWidth(), StageManager.getHeight() * 0.95));
         var duel = new Duel(players, map, Optional.empty(), 99);
         DuelManager.setDuel(duel);
         ImageManager.loadImage(ImageKey.FIELD, getNameMap());
@@ -664,16 +666,16 @@ public class MenuController {
     }
 
     @FXML
-    void choseMap(MouseEvent mouseEvent){
-        mapChosen = ((Node)mouseEvent.getSource()).getParent().getParent().getId();
+    void choseMap(MouseEvent mouseEvent) {
+        mapChosen = ((Node) mouseEvent.getSource()).getParent().getParent().getId();
         buttonMapVisible(false);
         playerMenuVisible(true);
         menu = Menu.CHARACTER;
     }
 
     @FXML
-    void openMenu(){
-        if(menu == Menu.CLICK){
+    void openMenu() {
+        if (menu == Menu.CLICK) {
             buttonsMenuVisible(true);
             click.setVisible(false);
             timeline.stop();
@@ -684,31 +686,31 @@ public class MenuController {
     }
 
     @FXML
-    void chosePlayer(MouseEvent event){
-        var name = ((Node)event.getSource()).getId();
+    void chosePlayer(MouseEvent event) {
+        var name = ((Node) event.getSource()).getId();
         var num = name.substring(name.length() - 1);
         name = name.substring(0, name.length() - 1);
-        if(name.endsWith("1")) nameSelect1 = changePlayer(select1, nameSelect1, name,
+        if (name.endsWith("1")) nameSelect1 = changePlayer(select1, nameSelect1, name,
                 2, rectangle1, 0, Integer.parseInt(num), page1);
-        if(name.endsWith("2")) nameSelect2 = changePlayer(select2, nameSelect2, name,
+        if (name.endsWith("2")) nameSelect2 = changePlayer(select2, nameSelect2, name,
                 1, rectangle2, StageManager.getWidth() / 2, Integer.parseInt(num), page2);
     }
 
     @FXML
-    void backMenu(){
-         if(menu ==  Menu.MAP){
-             buttonMapVisible(false);
-             buttonsMenuVisible(true);
-             menu = Menu.MODE;
-             back.setVisible(false);
-         }
-        if(menu ==  Menu.CHARACTER){
+    void backMenu() {
+        if (menu == Menu.MAP) {
+            buttonMapVisible(false);
+            buttonsMenuVisible(true);
+            menu = Menu.MODE;
+            back.setVisible(false);
+        }
+        if (menu == Menu.CHARACTER) {
             reinitializeCharacter();
             playerMenuVisible(false);
             buttonMapVisible(true);
             menu = Menu.MAP;
         }
-        if(menu == Menu.CREDITS){
+        if (menu == Menu.CREDITS) {
             creditsVisible(false);
             back.setVisible(false);
             buttonsMenuVisible(true);
@@ -716,24 +718,24 @@ public class MenuController {
     }
 
     @FXML
-    void addPage(MouseEvent event){
-        var id = ((Node)(event.getSource())).getId();
+    void addPage(MouseEvent event) {
+        var id = ((Node) (event.getSource())).getId();
         var num = id.substring(id.length() - 1);
-        if(num.equals("1")) page1 = pageModification(page1, heads1);
-        if(num.equals("2")) page2 = pageModification(page2, heads2);
+        if (num.equals("1")) page1 = pageModification(page1, heads1);
+        if (num.equals("2")) page2 = pageModification(page2, heads2);
     }
 
     private int pageModification(int page, List<VBox> vBox) {
         page++;
-        page = (page <= ((heads.size() - 1) / NUMBER_CASE))? page : 0;
+        page = (page <= ((heads.size() - 1) / NUMBER_CASE)) ? page : 0;
         System.out.println(page + " " + heads.size() / NUMBER_CASE);
         for (int i = 0; i < NUMBER_CASE; i++) {
-            if(page * NUMBER_CASE + i >= heads.size()){
+            if (page * NUMBER_CASE + i >= heads.size()) {
                 vBox.get(i).setVisible(false);
                 continue;
             }
             vBox.get(i).setVisible(true);
-            ((ImageView)(vBox.get(i).getChildren().get(0))).setImage(heads.get(page * NUMBER_CASE + i));
+            ((ImageView) (vBox.get(i).getChildren().get(0))).setImage(heads.get(page * NUMBER_CASE + i));
         }
         return page;
     }
@@ -742,7 +744,7 @@ public class MenuController {
         page1 = 0;
         page2 = 0;
         nameSelect1 = changePlayer(select1, nameSelect1, "black1", 2, rectangle1, 0, 0, page1);
-        nameSelect2 = changePlayer(select2, nameSelect2, "green2",1, rectangle2, StageManager.getWidth() / 2, 1, page2);
+        nameSelect2 = changePlayer(select2, nameSelect2, "green2", 1, rectangle2, StageManager.getWidth() / 2, 1, page2);
         white1.setDisable(true);
         black2.setDisable(true);
         confirmRectangle1.setVisible(false);
@@ -759,7 +761,7 @@ public class MenuController {
         var disabledNode2 = StageManager.getScene().
                 lookup("#" + nameSelect.substring(0, nameSelect.length() - 2) + otherPlayer + numBefore);
         disabledNode2.setDisable(false);
-        ((ImageView)select.getChildren().get(0)).setImage(images.get(((num == 7)? 6: num)  + page * NUMBER_CASE));
+        ((ImageView) select.getChildren().get(0)).setImage(images.get(((num == 7) ? 6 : num) + page * NUMBER_CASE));
         placeRectangle(num, rectangle, x_start);
         return name + num;
 
@@ -778,7 +780,7 @@ public class MenuController {
         AnchorPane.setTopAnchor(rectangle, y);
     }
 
-    private void buttonsMenuVisible(boolean bool){
+    private void buttonsMenuVisible(boolean bool) {
         title.setVisible(bool);
         campaign.setVisible(bool);
         duel.setVisible(bool);
@@ -793,7 +795,7 @@ public class MenuController {
         map4.setVisible(b);
     }
 
-    private void creditsVisible(boolean b){
+    private void creditsVisible(boolean b) {
         creditsTitle.setVisible(b);
         quentin.setVisible(b);
         sebastien.setVisible(b);
@@ -826,21 +828,73 @@ public class MenuController {
         addPage2.setVisible(b);
     }
 
-    private List<Player> initPlayers() {
+    private List<Player> initPlayers() throws URISyntaxException, IOException {
         var list = new ArrayList<Player>();
-        list.add(initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP1(),
-                Element.WATER, 1, false));
-        list.add(initPlayer(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP2(),
-                Element.FIRE, 2, true));
+        list.add(initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP1(), 1, false));
+        list.add(initPlayer(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3, Command.getDefaultP2(), 2, true));
         return list;
-
     }
 
     private Player initPlayer(String nameSelect, int x, int y, Command command,
-                            Element element, int numPlayer, boolean isFlipped) {
+                              int numPlayer, boolean isFlipped) throws URISyntaxException, IOException {
         var name = nameSelect.substring(0, nameSelect.length() - 1);
-        return new Player(name, new Rectangle(x, y, 150, 250), element, command, numPlayer, isFlipped);
 
+        var data = getPlayerStatistics(name);
+        var stat = new Statistic(data.hp, 0, data.energyPerAttack, data.maxEnergy, data.damage, data.damageUltimate,
+                0, 0, data.speed, data.attackSpeed);
+        var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
+        return new Player(name, new Rectangle(x, y, 150, 250), hitBox, data.type, stat, command, numPlayer, isFlipped);
     }
 
+    private static class Statistics {
+        private static class HitBox {
+            int x;
+            int y;
+            int width;
+            int height;
+
+            @Override
+            public String toString() {
+                return "HitBox{" +
+                        "x=" + x +
+                        ", y=" + y +
+                        ", width=" + width +
+                        ", height=" + height +
+                        '}';
+            }
+        }
+
+        Element type;
+        int damage;
+        int damageUltimate;
+        int hp;
+        int speed;
+        int maxEnergy;
+        int energyPerAttack;
+        int attackSpeed;
+        HitBox hitBox;
+
+        @Override
+        public String toString() {
+            return "Statistics{" +
+                    ", type=" + type +
+                    ", damage=" + damage +
+                    ", damageUltimate=" + damageUltimate +
+                    ", hp=" + hp +
+                    ", speed=" + speed +
+                    ", maxEnergy=" + maxEnergy +
+                    ", energyPerAttack=" + energyPerAttack +
+                    ", attackSpeed=" + attackSpeed +
+                    ", hitBox=" + hitBox +
+                    '}';
+        }
+    }
+
+    private Statistics getPlayerStatistics(String name) throws URISyntaxException, IOException {
+        var path = Path.of(Objects.requireNonNull(this.getClass().getResource("Statistics/" + name + ".json")).toURI());
+        try (var reader = Files.newBufferedReader(path)) {
+            var gson = new Gson();
+            return gson.fromJson(reader, Statistics.class);
+        }
+    }
 }
