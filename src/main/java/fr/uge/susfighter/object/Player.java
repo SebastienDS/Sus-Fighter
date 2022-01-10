@@ -61,12 +61,12 @@ public class Player {
 
     public void keyPressed(KeyCode key) {
         if (key == command.get(Key.LEFT)) {
-            velocity.setX(-10);
+            velocity.setX(-statistic.speed());
             xMovement = Key.LEFT;
             isFlipped = true;
         }
         else if (key == command.get(Key.RIGHT)) {
-            velocity.setX(10);
+            velocity.setX(statistic.speed());
             xMovement = Key.RIGHT;
             isFlipped = false;
         }
@@ -216,7 +216,7 @@ public class Player {
                 player2.hitBox.getHeight()
         );
         hasAlreadyHitUltimate = ultimate.intersects(box.getBoundsInLocal());
-        if (hasAlreadyHitUltimate) player2.statistic.loseHP(-statistic.damage() * ULTIMATE_MULTIPLICATOR);
+        if (hasAlreadyHitUltimate) player2.statistic.loseHP(-statistic.damageUltimate());
     }
 
     private void checkBasicAttack(Player player2) {

@@ -78,7 +78,7 @@ public class Statistic {
         energy = 0;
     }
 
-    public int getSpeed() {
+    public int speed() {
         return speed;
     }
 }
