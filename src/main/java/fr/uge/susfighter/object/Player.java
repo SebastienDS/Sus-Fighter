@@ -155,12 +155,12 @@ public class Player {
         body.setX(body.getX() + velocity.getX() + projectionVelocity.getX());
         body.setY(body.getY() + velocity.getY() + projectionVelocity.getY());
 
-        body.setX(Math.min(Math.max(bounds.getX(), body.getX()), bounds.getX() + bounds.getWidth() - body.getWidth()));
-        body.setY(Math.min(Math.max(bounds.getY(), body.getY()), bounds.getY() + bounds.getHeight() - body.getHeight()));
+        body.setX(Math.min(Math.max(bounds.getX(), body.getX()), bounds.getX() + bounds.getWidth() - hitBox.getWidth()));
+        body.setY(Math.min(Math.max(bounds.getY(), body.getY()), bounds.getY() + bounds.getHeight() - hitBox.getHeight()));
     }
 
     private void manageJump(Rectangle bounds) {
-        if (body.getY() + hitBox.getY() >= bounds.getY() + bounds.getHeight() - hitBox.getHeight()) {
+        if (body.getY() + hitBox.getY() + hitBox.getHeight() >= bounds.getY() + bounds.getHeight()) {
             isGrounded = true;
             jumpCount = 0;
             velocity.setY(0);
