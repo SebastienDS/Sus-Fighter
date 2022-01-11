@@ -101,7 +101,7 @@ public class Player {
             var flip = isFlipped ? -1: 1;
             var center = getPlayerCenter(ultimate);
 
-            ultimate.setX(center.getX() + hitBox.getWidth() / 2 * flip);
+            ultimate.setX(center.getX() + (ultimate.getWidth() / 2) * flip);
             ultimate.setY(center.getY());
 
             ultimateVelocity.setX(Math.abs(ultimateVelocity.getX()) * flip);
@@ -155,8 +155,11 @@ public class Player {
         body.setX(body.getX() + velocity.getX() + projectionVelocity.getX());
         body.setY(body.getY() + velocity.getY() + projectionVelocity.getY());
 
-        body.setX(Math.min(Math.max(bounds.getX(), body.getX()), bounds.getX() + bounds.getWidth() - hitBox.getWidth()));
-        body.setY(Math.min(Math.max(bounds.getY(), body.getY()), bounds.getY() + bounds.getHeight() - hitBox.getHeight()));
+        var hitBoxX = (isFlipped)? body.getWidth() - (hitBox.getWidth() + hitBox.getX()) : hitBox.getX();
+        body.setX(Math.min(Math.max(bounds.getX() - hitBoxX,
+                body.getX()), bounds.getX() + bounds.getWidth() - hitBox.getWidth() - hitBoxX));
+        body.setY(Math.min(Math.max(bounds.getY() - hitBox.getY(),
+                body.getY()), bounds.getY() + bounds.getHeight() - hitBox.getHeight() - hitBox.getY()));
     }
 
     private void manageJump(Rectangle bounds) {
@@ -187,7 +190,7 @@ public class Player {
         var center = getPlayerCenter(attack);
 
         return new Rectangle(
-                center.getX() + (attack.getX() + 65) * flip,
+                center.getX() + (attack.getWidth() / 2 + attack.getX()) * flip,
                 center.getY() + attack.getY() + 15,
                 attack.getWidth(),
                 attack.getHeight()
@@ -201,7 +204,7 @@ public class Player {
         var center = getPlayerCenter(attack);
 
         var rect = new Rectangle(
-                center.getX() + (getAttackHeight() + 20) * flip,
+                center.getX() + (getAttackHeight()) * flip,
                 center.getY(),
                 attack.getWidth(),
                 attack.getHeight()
@@ -219,8 +222,10 @@ public class Player {
     private void checkUltimate(Player player2) {
         if (hasAlreadyHitUltimate) return;
 
+        var hitBoxX = (isFlipped)? body.getWidth() - (hitBox.getWidth() + hitBox.getX()) : hitBox.getX();
+
         var box = new Rectangle(
-                player2.body.getX() + player2.hitBox.getX(),
+                player2.body.getX() + hitBoxX,
                 player2.body.getY() + player2.hitBox.getY(),
                 player2.hitBox.getWidth(),
                 player2.hitBox.getHeight()
@@ -235,8 +240,10 @@ public class Player {
         var rect = getAttackHitBox();
         if (rect == null) throw new NullPointerException();
 
+        var hitBoxX = (isFlipped)? body.getWidth() - (hitBox.getWidth() + hitBox.getX()) : hitBox.getX();
+
         var box = new Rectangle(
-                player2.body.getX() + player2.hitBox.getX(),
+                player2.body.getX() + hitBoxX,
                 player2.body.getY() + player2.hitBox.getY(),
                 player2.hitBox.getWidth(),
                 player2.hitBox.getHeight()
@@ -337,7 +344,9 @@ public class Player {
     }
 
     public Vec2 getPlayerCenter(Rectangle attack) {
-        return new Vec2(body.getX() + hitBox.getX() + hitBox.getWidth() / 2 - attack.getWidth() / 2,
+        var hitBoxX = (isFlipped)? body.getWidth() - (hitBox.getWidth() + hitBox.getX()) : hitBox.getX();
+
+        return new Vec2(body.getX() + hitBoxX + hitBox.getWidth() / 2 - attack.getWidth() / 2,
                 body.getY() + hitBox.getY() + hitBox.getHeight() / 2 - attack.getHeight() / 2);
     }
 
