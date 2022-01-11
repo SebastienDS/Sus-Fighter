@@ -949,7 +949,7 @@ public class MenuController {
         int speed;
         int maxEnergy;
         int energyPerAttack;
-        int attackSpeed;
+        double attackSpeed;
         HitBox hitBox;
 
         @Override

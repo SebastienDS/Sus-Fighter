@@ -14,10 +14,10 @@ public class Statistic {
     private final int critical;
     private final int defense;
     private final int speed;
-    private final int attackSpeed;
+    private final double attackSpeed;
 
     public Statistic(int hp, int shield, int energyPerAttack, int maxEnergy, int damage, int damageUltimate,
-                     int critical, int defense, int speed, int attackSpeed) {
+                     int critical, int defense, int speed, double attackSpeed) {
         this.maxHp = hp;
         this.hp = hp;
         this.shield = shield;
