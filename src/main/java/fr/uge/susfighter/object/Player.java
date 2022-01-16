@@ -6,7 +6,7 @@ import fr.uge.susfighter.object.Command.Key;
 
 import java.util.Objects;
 
-public class Player {
+public class Player implements Fighter {
 
     private enum Action {
         IDLE,
@@ -64,62 +64,27 @@ public class Player {
         maxJumpCount = 2;
     }
 
+    @Override
     public void keyPressed(KeyCode key) {
-        if (key == command.get(Key.LEFT)) {
-            velocity.setX(-statistic.speed());
-            xMovement = Key.LEFT;
-            isFlipped = true;
-        }
-        else if (key == command.get(Key.RIGHT)) {
-            velocity.setX(statistic.speed());
-            xMovement = Key.RIGHT;
-            isFlipped = false;
-        }
-
-        else if (key == command.get(Key.UP) && (isGrounded || jumpCount < maxJumpCount)) {
-            velocity.setY(-25);
-            jumpCount++;
-            isGrounded = false;
-        }
-        else if (key == command.get(Key.DOWN) && jumpCount > 0) {
-            if (velocity.getY() < 0) velocity.setY(0);
-            else velocity.addY(50);
-        }
-        else if (key == command.get(Key.ATTACK) && action == Action.IDLE) {
-            action = Action.ATTACK;
-            hasAlreadyHit = false;
-            attack.setX(0);
-            attack.setY(0);
-            var timeBetweenLastHit = System.currentTimeMillis() - lastHit;
-            lastHit = System.currentTimeMillis();
-            if (timeBetweenLastHit > 1000) {
-                combo = 0;
-            }
-        }
-        else if (key == command.get(Key.ULTIMATE_ATTACK) && statistic.isFullEnergy()) {
-            hasAlreadyHitUltimate = false;
-            var flip = isFlipped ? -1: 1;
-            var center = getPlayerCenter(ultimate);
-
-            ultimate.setX(center.getX() + (ultimate.getWidth() / 2) * flip);
-            ultimate.setY(center.getY());
-
-            ultimateVelocity.setX(Math.abs(ultimateVelocity.getX()) * flip);
-            statistic.consumeEnergy();
-        }
-        else if (key == command.get(Key.BLOCK) && action == Action.IDLE) {
-            action = Action.BLOCK;
-        }
+        if (key == command.get(Key.LEFT)) moveLeft();
+        else if (key == command.get(Key.RIGHT)) moveRight();
+        else if (key == command.get(Key.UP) && canJump()) jump();
+        else if (key == command.get(Key.DOWN) && jumpCount > 0) down();
+        else if (key == command.get(Key.ATTACK) && action == Action.IDLE) attack();
+        else if (key == command.get(Key.ULTIMATE_ATTACK) && canUltimate()) ultimateAttack();
+        else if (key == command.get(Key.BLOCK) && action == Action.IDLE) block();
     }
 
+    @Override
     public void keyReleased(KeyCode key) {
         if ((key == command.get(Key.LEFT) || key == command.get(Key.RIGHT)) && key == command.get(xMovement)) {
-            velocity.setX(0);
-        } else if (key == command.get(Key.BLOCK)) {
+            stopMoving();
+        } else if (key == command.get(Key.BLOCK) && action == Action.BLOCK) {
             action = Action.IDLE;
         }
     }
 
+    @Override
     public void update(Vec2 gravity, Rectangle bounds) {
         projectionVelocity.setY(convergeTo0(projectionVelocity.getY(), gravity.getY()));
 
@@ -132,6 +97,193 @@ public class Player {
         manageUltimate();
     }
 
+    @Override
+    public void interact(Fighter player2) {
+        checkUltimate(player2);
+        checkBasicAttack(player2);
+    }
+
+    @Override
+    public boolean isDead() {
+        return statistic.isDead();
+    }
+
+    @Override
+    public Rectangle getBody() {
+        return body;
+    }
+
+    @Override
+    public Rectangle getHitBox() {
+        var hitBoxX = isFlipped ? body.getWidth() - (hitBox.getWidth() + hitBox.getX()) : hitBox.getX();
+        return new Rectangle(
+                body.getX() + hitBoxX,
+                body.getY() + hitBox.getY(),
+                hitBox.getWidth(),
+                hitBox.getHeight()
+        );
+    }
+
+    @Override
+    public Rectangle getBlockHitBox() {
+        var flip = isFlipped ? -1: 1;
+        var center = getPlayerCenter(attack);
+
+        var rect = new Rectangle(
+                center.getX() + attack.getHeight() * flip,
+                center.getY(),
+                attack.getWidth(),
+                attack.getHeight()
+        );
+        var fistRotation = isFlipped ? 180 : 0;
+        rect.setRotate(-90 + fistRotation);
+        return rect;
+    }
+
+    @Override
+    public Rectangle getAttack() {
+        return getAttackHitBox();
+    }
+
+    @Override
+    public Rectangle getUltimate() {
+        return ultimate;
+    }
+
+    @Override
+    public Statistic getStatistic() {
+        return statistic;
+    }
+
+    @Override
+    public Element getElement() {
+        return element;
+    }
+
+    @Override
+    public void project(Vec2 velocity) {
+        projectionVelocity.addX(velocity.getX());
+        projectionVelocity.setY(velocity.getY());
+    }
+
+    @Override
+    public double percentageHpLeft() {
+        return statistic.percentageHpLeft();
+    }
+
+    @Override
+    public double percentageEnergy() {
+        return statistic.percentageEnergy();
+    }
+
+    @Override
+    public int getNumPlayer() {
+        return numPlayer;
+    }
+
+    @Override
+    public boolean isFlipped() {
+        return isFlipped;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public boolean isAttacking() {
+        return action == Action.ATTACK;
+    }
+
+    @Override
+    public boolean isBlocking() {
+        return action == Action.BLOCK;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    public boolean canUltimate() {
+        return statistic.isFullEnergy();
+    }
+
+    public boolean canJump() {
+        return isGrounded || jumpCount < maxJumpCount;
+    }
+
+    public void moveLeft() {
+        velocity.setX(-statistic.speed());
+        xMovement = Key.LEFT;
+        isFlipped = true;
+    }
+
+    public void moveRight() {
+        velocity.setX(statistic.speed());
+        xMovement = Key.RIGHT;
+        isFlipped = false;
+    }
+
+    public void stopMoving() {
+        velocity.setX(0);
+    }
+
+    public void jump() {
+        if (!canJump()) throw new IllegalStateException("Can't jump");
+
+        velocity.setY(-25);
+        jumpCount++;
+        isGrounded = false;
+    }
+
+    public void down() {
+        if (jumpCount <= 0) throw new IllegalStateException("Can't move down");
+
+        if (velocity.getY() < 0) velocity.setY(0);
+        else velocity.addY(50);
+    }
+
+    public void attack() {
+        if (action != Action.IDLE) throw new IllegalStateException("Can't attack while another action is active");
+
+        action = Action.ATTACK;
+        hasAlreadyHit = false;
+        attack.setX(0);
+        attack.setY(0);
+        var timeBetweenLastHit = System.currentTimeMillis() - lastHit;
+        lastHit = System.currentTimeMillis();
+        if (timeBetweenLastHit > 1000) {
+            combo = 0;
+        }
+    }
+
+    public void ultimateAttack() {
+        if (!statistic.isFullEnergy()) throw new IllegalStateException("Can't ultimate, energy is not full");
+
+        hasAlreadyHitUltimate = false;
+        var flip = isFlipped ? -1: 1;
+        var center = getPlayerCenter(ultimate);
+
+        ultimate.setX(center.getX() + (ultimate.getWidth() / 2) * flip);
+        ultimate.setY(center.getY());
+        ultimate.setScaleX((int) (ultimateVelocity.getX() / Math.abs(ultimateVelocity.getX())));
+
+        ultimateVelocity.setX(Math.abs(ultimateVelocity.getX()) * flip);
+        statistic.consumeEnergy();
+    }
+
+    public void block() {
+        if (action != Action.IDLE) throw new IllegalStateException("Can't block while another action is active");
+        action = Action.BLOCK;
+    }
+
+    public void stopBlocking() {
+        if (action != Action.BLOCK) throw new IllegalStateException("Can't stop blocking if player is not blocking");
+        action = Action.IDLE;
+    }
+
     private void manageAttack() {
         if (action == Action.ATTACK && attack.getX() > ATTACK_DISTANCE) {
             if (!hasAlreadyHit || combo == 2) combo = 0;
@@ -141,7 +293,7 @@ public class Player {
             attack.setRotate(0);
         }
         else if (action == Action.ATTACK) {
-            var comboAttack = getAttack();
+            var comboAttack = getComboAttack();
             attack.setX(attack.getX() + comboAttack.getX());
             attack.setY(attack.getY() + comboAttack.getY());
         }
@@ -171,142 +323,54 @@ public class Player {
         }
     }
 
-    public int getNumPlayer() {
-        return numPlayer;
-    }
-
-    public double percentageHpLeft() {
-        return statistic.percentageHpLeft();
-    }
-
-    public double percentageEnergy() {
-        return statistic.percentageEnergy();
-    }
-
     private Rectangle getAttackHitBox() {
-        if (action != Action.ATTACK) return null;
-
         var flip = isFlipped ? -1: 1;
         var center = getPlayerCenter(attack);
 
-        return new Rectangle(
+        var box = new Rectangle(
                 center.getX() + (attack.getWidth() / 2 + attack.getX()) * flip,
                 center.getY() + attack.getY() + 15,
                 attack.getWidth(),
                 attack.getHeight()
         );
+        box.setRotate(attack.getRotate());
+        return box;
     }
 
-    public Rectangle getBlockHitBox() {
-        if (action != Action.BLOCK) return null;
-
-        var flip = isFlipped ? -1: 1;
-        var center = getPlayerCenter(attack);
-
-        var rect = new Rectangle(
-                center.getX() + (getAttackHeight()) * flip,
-                center.getY(),
-                attack.getWidth(),
-                attack.getHeight()
-        );
-        var fistRotation = isFlipped ? 180 : 0;
-        rect.setRotate(-90 + fistRotation);
-        return rect;
-    }
-
-    public void checkAttack(Player player2) {
-        checkUltimate(player2);
-        checkBasicAttack(player2);
-    }
-
-    private void checkUltimate(Player player2) {
+    private void checkUltimate(Fighter player2) {
         if (hasAlreadyHitUltimate) return;
 
-        var hitBoxX = (isFlipped)? body.getWidth() - (hitBox.getWidth() + hitBox.getX()) : hitBox.getX();
-
-        var box = new Rectangle(
-                player2.body.getX() + hitBoxX,
-                player2.body.getY() + player2.hitBox.getY(),
-                player2.hitBox.getWidth(),
-                player2.hitBox.getHeight()
-        );
+        var box = player2.getHitBox();
         hasAlreadyHitUltimate = ultimate.intersects(box.getBoundsInLocal());
-        if (hasAlreadyHitUltimate) player2.statistic.loseHP(-(int)(statistic.damageUltimate() * element.getElementMultiplicator(player2.element)));
+        if (hasAlreadyHitUltimate) player2.getStatistic().loseHP(-(int)(statistic.damageUltimate() * element.getElementMultiplicator(player2.getElement())));
     }
 
-    private void checkBasicAttack(Player player2) {
+    private void checkBasicAttack(Fighter player2) {
         if (action != Action.ATTACK || hasAlreadyHit) return;
 
         var rect = getAttackHitBox();
-        if (rect == null) throw new NullPointerException();
 
-        var hitBoxX = (isFlipped)? body.getWidth() - (hitBox.getWidth() + hitBox.getX()) : hitBox.getX();
+        if (player2.isBlocking()) {
+            var block = player2.getBlockHitBox();
+            hasAlreadyHit = rect.intersects(block.getBoundsInLocal());
+            if (hasAlreadyHit) return;
+        }
 
-        var box = new Rectangle(
-                player2.body.getX() + hitBoxX,
-                player2.body.getY() + player2.hitBox.getY(),
-                player2.hitBox.getWidth(),
-                player2.hitBox.getHeight()
-        );
+        var box = player2.getHitBox();
         hasAlreadyHit = rect.intersects(box.getBoundsInLocal());
 
         if (hasAlreadyHit) {
             var flip = isFlipped ? -1: 1;
 
-            player2.statistic.loseHP(-(int)(statistic.damage() * element.getElementMultiplicator(player2.element)));
+            player2.getStatistic().loseHP(-(int)(statistic.damage() * element.getElementMultiplicator(player2.getElement())));
             statistic.gainEnergy();
             applyCombo(flip, player2);
         }
     }
 
-    public boolean isDead() {
-        return statistic.isDead();
-    }
-
-    public int getX() {
-        return (int) body.getX();
-    }
-
-    public int getY() {
-        return (int) body.getY();
-    }
-
-    public int getWidth() {
-        return (int) body.getWidth();
-    }
-
-    public int getHeight() {
-        return (int) body.getHeight();
-    }
-
-    public boolean isFlipped() {
-        return isFlipped;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isAttacking() {
-        return action == Action.ATTACK;
-    }
-
-    public boolean isBlocking() {
-        return action == Action.BLOCK;
-    }
-
-    public double getXFist() {
-        return Objects.requireNonNull(getAttackHitBox()).getX();
-    }
-
-    public double getYFist() {
-        return Objects.requireNonNull(getAttackHitBox()).getY();
-    }
-
-    private void applyCombo(int flip, Player player2) {
+    private void applyCombo(int flip, Fighter player2) {
         if (combo >= 2) {
-            player2.projectionVelocity.addX(15 * flip);
-            player2.projectionVelocity.setY(-30);
+            player2.project(new Vec2(15 * flip, -30));
         }
     }
 
@@ -317,7 +381,7 @@ public class Player {
         return Math.abs(tmp) <= 1 ? 0 : tmp;
     }
 
-    private Vec2 getAttack() {
+    private Vec2 getComboAttack() {
         return switch (combo) {
             case 1 -> {
                 attack.setRotate(attack.getRotate() + 5);
@@ -331,52 +395,9 @@ public class Player {
         };
     }
 
-    public double getAttackRotate() {
-        return attack.getRotate();
+    private Vec2 getPlayerCenter(Rectangle attack) {
+        var box = getHitBox();
+        return new Vec2(box.getX() + box.getWidth() / 2 - attack.getWidth() / 2,
+                box.getY() + box.getHeight() / 2 - attack.getHeight() / 2);
     }
-
-    public double getAttackWidth() {
-        return attack.getWidth();
-    }
-
-    public double getAttackHeight() {
-        return attack.getHeight();
-    }
-
-    public Vec2 getPlayerCenter(Rectangle attack) {
-        var hitBoxX = (isFlipped)? body.getWidth() - (hitBox.getWidth() + hitBox.getX()) : hitBox.getX();
-
-        return new Vec2(body.getX() + hitBoxX + hitBox.getWidth() / 2 - attack.getWidth() / 2,
-                body.getY() + hitBox.getY() + hitBox.getHeight() / 2 - attack.getHeight() / 2);
-    }
-
-    public double getUltimateWidth() {
-        return ultimate.getWidth();
-    }
-
-    public double getUltimateHeight() {
-        return ultimate.getHeight();
-    }
-
-    public double getUltimateX() {
-        return ultimate.getX();
-    }
-
-    public double getUltimateY() {
-        return ultimate.getY();
-    }
-
-    public int getUltimateFlip() {
-        assert ultimateVelocity.getX() != 0;
-        return (int) (ultimateVelocity.getX() / Math.abs(ultimateVelocity.getX()));
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Element getElement() {
-        return element;
-    }
-
 }

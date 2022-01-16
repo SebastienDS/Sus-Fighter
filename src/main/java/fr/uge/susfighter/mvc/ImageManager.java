@@ -1,5 +1,6 @@
 package fr.uge.susfighter.mvc;
 
+import fr.uge.susfighter.object.Fighter;
 import fr.uge.susfighter.object.Player;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -44,10 +45,10 @@ public class ImageManager {
         images.put(key, image);
     }
 
-    public static void loadImagePlayer(Player p) {
+    public static void loadImagePlayer(Fighter p) {
         var path = "images/character/" + p.getType() + "/" + p.getName() + "/";
         var player = "PLAYER_" + p.getNumPlayer();
-        ImageManager.loadImage(ImageKey.valueOf(player + "_IDLE"), path + "IDLE.png", p.getWidth(), p.getHeight());
+        ImageManager.loadImage(ImageKey.valueOf(player + "_IDLE"), path + "IDLE.png", (int)p.getBody().getWidth(), (int)p.getBody().getHeight());
         ImageManager.loadImage(ImageKey.valueOf(player + "_FIST"), path + "FIST.png");
         ImageManager.loadImage(ImageKey.valueOf(player + "_HEAD"), path + "HEAD.png", 75, 75);
     }

@@ -3,6 +3,7 @@ package fr.uge.susfighter.mvc;
 import com.gluonhq.charm.glisten.control.ProgressBar;
 import fr.uge.susfighter.mvc.ImageManager.ImageKey;
 import fr.uge.susfighter.object.Element;
+import fr.uge.susfighter.object.Fighter;
 import fr.uge.susfighter.object.Player;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -118,14 +119,14 @@ public class GameController {
     private void setPlayers() {
         var duel = DuelManager.getDuel();
         var p = duel.getPlayer(0);
-        AnchorPane.setLeftAnchor(player1, (double) p.getX());
-        AnchorPane.setTopAnchor(player1, (double) p.getY());
+        AnchorPane.setLeftAnchor(player1, p.getBody().getX());
+        AnchorPane.setTopAnchor(player1, p.getBody().getY());
         setPlayer(player1, fist1, ultimate1, name1, p);
         setBarPlayer(hBoxBar1, vBoxProfile1, vBoxBar1, playerHp1, playerEnergy1, profile1, p, 0);
 
         p = duel.getPlayer(1);
-        AnchorPane.setLeftAnchor(player2, (double) p.getX());
-        AnchorPane.setTopAnchor(player2, (double) p.getY());
+        AnchorPane.setLeftAnchor(player2, p.getBody().getX());
+        AnchorPane.setTopAnchor(player2, p.getBody().getY());
         setPlayer(player2, fist2, ultimate2, name2, p);
         setBarPlayer(hBoxBar2, vBoxProfile2, vBoxBar2, playerHp2, playerEnergy2, profile2, p, 1);
         flip(playerHp2, playerEnergy2, profile2, player2);
@@ -139,7 +140,7 @@ public class GameController {
     }
 
     private void setBarPlayer(HBox hBoxBar, VBox vBoxProfile, VBox vBox, ProgressBar hpBar, ProgressBar energyBar,
-                              ImageView profile, Player p, int sens) {
+                              ImageView profile, Fighter p, int sens) {
         var halfWidth = StageManager.getWidth() / 2.0;
         hBoxBar.setPrefWidth(halfWidth - SPACING_BAR);
         AnchorPane.setLeftAnchor(vBoxProfile, sens * (halfWidth * 2 - profile.getFitWidth() - outline * 2));
@@ -153,22 +154,24 @@ public class GameController {
         energyBar.setProgress(p.percentageEnergy());
     }
 
-    private void setPlayer(ImageView imageView, ImageView fist, ImageView ultimate, Label name, Player p) {
+    private void setPlayer(ImageView imageView, ImageView fist, ImageView ultimate, Label name, Fighter p) {
         ImageManager.loadImagePlayer(p);
         var player = "PLAYER_" + p.getNumPlayer();
         imageView.setImage(ImageManager.getImage(ImageKey.valueOf(player + "_IDLE")));
-        imageView.setFitWidth(p.getWidth());
-        imageView.setFitHeight(p.getHeight());
+        imageView.setFitWidth(p.getBody().getWidth());
+        imageView.setFitHeight(p.getBody().getHeight());
         name.setTextFill(getColor(p));
         name.setText(p.getName().toUpperCase(Locale.ROOT));
         AnchorPane.setLeftAnchor(name, (p.getNumPlayer() - 1) * (StageManager.getWidth() - name.getPrefWidth()));
 
-        setFist(fist, player, p.getAttackWidth(), p.getAttackHeight());
-        setFist(ultimate, player, p.getUltimateWidth(), p.getUltimateHeight());
+        var attackRect = p.getAttack();
+        var ultimateRect = p.getUltimate();
+        setFist(fist, player, attackRect.getWidth(), attackRect.getHeight());
+        setFist(ultimate, player, ultimateRect.getWidth(), ultimateRect.getHeight());
         ultimate.setVisible(true);
     }
 
-    private Paint getColor(Player p) {
+    private Paint getColor(Fighter p) {
         var element = p.getElement();
         if(element == Element.WATER) return Color.BLUE;
         if(element == Element.DARK) return Color.PURPLE;
@@ -205,15 +208,15 @@ public class GameController {
         updatePlayer(p2, p, player2, fist2, ultimate2, playerHp2, playerEnergy2);
     }
 
-    private void updatePlayer(Player p, Player p2, ImageView player, ImageView fist, ImageView ultimate,
+    private void updatePlayer(Fighter p, Fighter p2, ImageView player, ImageView fist, ImageView ultimate,
                               ProgressBar pHp, ProgressBar pEnergy) {
-        AnchorPane.setLeftAnchor(player, (double) p.getX());
-        AnchorPane.setTopAnchor(player, (double) p.getY());
+        AnchorPane.setLeftAnchor(player, p.getBody().getX());
+        AnchorPane.setTopAnchor(player, p.getBody().getY());
         fist.setVisible(false);
         var flip = p.isFlipped() ? -1 : 1;
 
         if (p.isAttacking()) {
-            fist.setRotate(p.getAttackRotate() * flip);
+            fist.setRotate(p.getAttack().getRotate() * flip);
             attack(p, p2, fist);
         }
         else if (p.isBlocking()) {
@@ -225,12 +228,13 @@ public class GameController {
         pHp.setProgress(p.percentageHpLeft());
         pEnergy.setProgress(p.percentageEnergy());
 
-        AnchorPane.setLeftAnchor(ultimate, p.getUltimateX());
-        AnchorPane.setTopAnchor(ultimate, p.getUltimateY());
-        ultimate.setScaleX(p.getUltimateFlip());
+        var box = p.getUltimate();
+        AnchorPane.setLeftAnchor(ultimate, box.getX());
+        AnchorPane.setTopAnchor(ultimate, box.getY());
+        ultimate.setScaleX(box.getScaleX());
     }
 
-    private void block(Player p, ImageView fist) {
+    private void block(Fighter p, ImageView fist) {
         var flip = p.isFlipped() ? -1 : 1;
         fist.setVisible(true);
         fist.setScaleX(flip);
@@ -242,13 +246,15 @@ public class GameController {
         fist.setRotate(blockRect.getRotate());
     }
 
-    private void attack(Player p, Player p2, ImageView fist) {
+    private void attack(Fighter p, Fighter p2, ImageView fist) {
         fist.setVisible(true);
         fist.setScaleX(1);
         if(p.isFlipped()) fist.setScaleX(-1);
-        AnchorPane.setLeftAnchor(fist, p.getXFist());
-        AnchorPane.setTopAnchor(fist, p.getYFist());
-        p.checkAttack(p2);
+
+        var attackRect = p.getAttack();
+        AnchorPane.setLeftAnchor(fist, attackRect.getX());
+        AnchorPane.setTopAnchor(fist, attackRect.getY());
+        p.interact(p2);
     }
 
     public static void toBack(Node node, AnchorPane pane) {

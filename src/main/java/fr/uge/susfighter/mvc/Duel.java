@@ -11,14 +11,14 @@ import java.util.Optional;
 
 public class Duel {
 
-    private final List<Player> players;
+    private final List<Fighter> players;
     private final Field map;
     private Optional<Event> currentEvent;
     private final List<WeaponCase> weapons;
     private long startTime;
     private long endTime;
 
-    public Duel(List<Player> players, Field map, Optional<Event> currentEvent, long time) {
+    public Duel(List<Fighter> players, Field map, Optional<Event> currentEvent, long time) {
         this.players = List.copyOf(Objects.requireNonNull(players));
         this.map = map;
         this.currentEvent = Objects.requireNonNull(currentEvent);
@@ -38,8 +38,8 @@ public class Duel {
         player1.update(map.gravity(), map.bounds());
         player2.update(map.gravity(), map.bounds());
 
-        player1.checkAttack(player2);
-        player2.checkAttack(player1);
+        player1.interact(player2);
+        player2.interact(player1);
 
         return player1.isDead() || player2.isDead();
     }
@@ -52,7 +52,7 @@ public class Duel {
         players.forEach(p -> p.keyReleased(keyEvent.getCode()));
     }
 
-    public Player getPlayer(int i) {
+    public Fighter getPlayer(int i) {
         return players.get(i);
     }
 }

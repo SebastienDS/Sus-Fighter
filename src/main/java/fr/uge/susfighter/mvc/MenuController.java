@@ -898,12 +898,14 @@ public class MenuController {
         addPage2.setVisible(b);
     }
 
-    private List<Player> initPlayers() throws URISyntaxException, IOException {
-        var list = new ArrayList<Player>();
-        list.add(initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
-                Command.getDefaultP1(), select1, 1, false, getDirectory(select1)));
-        list.add(initPlayer(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
-                Command.getDefaultP2(), select2, 2, true, getDirectory(select2)));
+    private List<Fighter> initPlayers() throws URISyntaxException, IOException {
+        var list = new ArrayList<Fighter>();
+        var p1 = initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+                Command.getDefaultP1(), select1, 1, false, getDirectory(select1));
+        var p2 = initBot(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+                Command.getDefaultP2(), select2, 2, true, getDirectory(select2), p1);
+        list.add(p1);
+        list.add(p2);
         return list;
     }
 
@@ -922,6 +924,18 @@ public class MenuController {
         var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
         return new Player(name, new Rectangle(x, y, image.getWidth(), image.getHeight()), hitBox, data.type,
                 stat, command, numPlayer, isFlipped, type);
+    }
+
+    private Bot initBot(String nameSelect, int x, int y, Command command, VBox select,
+                        int numPlayer, boolean isFlipped, String type, Player enemy) throws URISyntaxException, IOException {
+        var name = nameSelect.substring(0, nameSelect.length() - 2);
+        var image = ((ImageView)(select.getChildren().get(0))).getImage();
+        var data = getPlayerStatistics(name);
+        var stat = new Statistic(data.hp, 0, data.energyPerAttack, data.maxEnergy, data.damage, data.damageUltimate,
+                0, 0, data.speed, data.attackSpeed);
+        var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
+        return new Bot(name, new Rectangle(x, y, image.getWidth(), image.getHeight()), hitBox, data.type,
+                stat, command, numPlayer, isFlipped, type, enemy);
     }
 
     private static class Statistics {
