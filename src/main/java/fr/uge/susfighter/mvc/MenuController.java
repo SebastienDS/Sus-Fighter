@@ -1,6 +1,7 @@
 package fr.uge.susfighter.mvc;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import fr.uge.susfighter.mvc.ImageManager.ImageKey;
 import fr.uge.susfighter.object.*;
 import javafx.animation.KeyFrame;
@@ -26,6 +27,7 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -588,8 +590,11 @@ public class MenuController {
 
 
     @FXML
-    void campaignMenu() {
-
+    void campaignMenu() throws URISyntaxException, IOException {
+        // TODO
+        initDataCampaign();
+        StageManager.setScene(StageManager.StageEnum.GAME);
+        GameController.startGame();
     }
 
     @FXML
@@ -635,6 +640,28 @@ public class MenuController {
         var duel = new Duel(players, map, Optional.empty(), 99);
         DuelManager.setDuel(duel);
         ImageManager.loadImage(ImageKey.FIELD, getNameMap());
+    }
+
+    private void initDataCampaign() throws IOException, URISyntaxException {
+        List<Step> story = getFromJson("Story/story1.json", new TypeToken<List<Step>>(){}.getType());
+        var step = story.get(2);
+        var enemyType = step.enemy.type == Step.Enemy.Type.BOSS ? "extension" : "default";
+
+        nameSelect1 = "black10";
+        nameSelect2 = step.enemy.name + "20";
+        // TODO: Init player with his size ...
+
+        var p1 = initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+                Command.getDefaultP1(), select1, 1, false, getDirectory(select1));
+        var p2 = initBot(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+                select2, 2, true, enemyType, p1);
+        var players = List.of(p1, p2);
+
+        var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
+                new Rectangle(0, -1000, StageManager.getWidth(), 1000 + StageManager.getHeight() * 0.95));
+        var duel = new Duel(players, map, Optional.empty(), 99);
+        DuelManager.setDuel(duel);
+        ImageManager.loadImage(ImageKey.FIELD, "images/map/" + step.map + ".jpg");
     }
 
     private String getNameMap() {
@@ -899,14 +926,11 @@ public class MenuController {
     }
 
     private List<Fighter> initPlayers() throws URISyntaxException, IOException {
-        var list = new ArrayList<Fighter>();
         var p1 = initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
                 Command.getDefaultP1(), select1, 1, false, getDirectory(select1));
         var p2 = initBot(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
-                Command.getDefaultP2(), select2, 2, true, getDirectory(select2), p1);
-        list.add(p1);
-        list.add(p2);
-        return list;
+                select2, 2, true, getDirectory(select2), p1);
+        return List.of(p1, p2);
     }
 
     private String getDirectory(VBox select2) {
@@ -918,7 +942,7 @@ public class MenuController {
                               int numPlayer, boolean isFlipped, String type) throws URISyntaxException, IOException {
         var name = nameSelect.substring(0, nameSelect.length() - 2);
         var image = ((ImageView)(select.getChildren().get(0))).getImage();
-        var data = getPlayerStatistics(name);
+        Statistics data = getFromJson("Statistics/" + name + ".json", new TypeToken<Statistics>(){}.getType());
         var stat = new Statistic(data.hp, 0, data.energyPerAttack, data.maxEnergy, data.damage, data.damageUltimate,
                 0, 0, data.speed, data.attackSpeed);
         var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
@@ -926,16 +950,16 @@ public class MenuController {
                 stat, command, numPlayer, isFlipped, type);
     }
 
-    private Bot initBot(String nameSelect, int x, int y, Command command, VBox select,
+    private Bot initBot(String nameSelect, int x, int y, VBox select,
                         int numPlayer, boolean isFlipped, String type, Player enemy) throws URISyntaxException, IOException {
         var name = nameSelect.substring(0, nameSelect.length() - 2);
         var image = ((ImageView)(select.getChildren().get(0))).getImage();
-        var data = getPlayerStatistics(name);
+        Statistics data = getFromJson("Statistics/" + name + ".json", new TypeToken<Statistics>(){}.getType());
         var stat = new Statistic(data.hp, 0, data.energyPerAttack, data.maxEnergy, data.damage, data.damageUltimate,
                 0, 0, data.speed, data.attackSpeed);
         var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
         return new Bot(name, new Rectangle(x, y, image.getWidth(), image.getHeight()), hitBox, data.type,
-                stat, command, numPlayer, isFlipped, type, enemy);
+                stat, numPlayer, isFlipped, type, enemy);
     }
 
     private static class Statistics {
@@ -982,11 +1006,27 @@ public class MenuController {
         }
     }
 
-    private Statistics getPlayerStatistics(String name) throws URISyntaxException, IOException {
-        var path = Path.of(Objects.requireNonNull(this.getClass().getResource("Statistics/" + name + ".json")).toURI());
+    private static class Step {
+        private static class Enemy {
+            private enum Type {
+                SBIRE, BOSS
+            }
+
+            Type type;
+            String name;
+            double damageMultiplicator;
+            double healthMultiplicator;
+        }
+
+        Enemy enemy;
+        String map;
+    }
+
+    private static <T> T getFromJson(String jsonPath, Type type) throws IOException, URISyntaxException {
+        var path = Path.of(Objects.requireNonNull(MenuController.class.getResource(jsonPath)).toURI());
         try (var reader = Files.newBufferedReader(path)) {
             var gson = new Gson();
-            return gson.fromJson(reader, Statistics.class);
+            return gson.fromJson(reader, type);
         }
     }
 }

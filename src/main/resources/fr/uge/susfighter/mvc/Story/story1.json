@@ -1,0 +1,29 @@
+[
+  {
+    "enemy": {
+      "type": "SBIRE",
+      "name": "green",
+      "damageMultiplicator": 1,
+      "healthMultiplicator": 1
+    },
+    "map": "map1"
+  },
+  {
+    "enemy": {
+      "type": "SBIRE",
+      "name": "black",
+      "damageMultiplicator": 1.5,
+      "healthMultiplicator": 1.3
+    },
+    "map": "map2"
+  },
+  {
+    "enemy": {
+      "type": "BOSS",
+      "name": "garen",
+      "damageMultiplicator": 2,
+      "healthMultiplicator": 1.5
+    },
+    "map": "map3"
+  }
+]
