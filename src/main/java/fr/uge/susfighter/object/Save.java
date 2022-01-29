@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class Save {
 
-    private static final Path SAVE_PATH = Path.of("src",  "main", "resources", "fr", "uge", "susfighter", "object", "save", "save.txt");
+    private static final Path SAVE_PATH = Path.of("src", "main", "resources", "fr", "uge", "susfighter", "object", "save", "save.txt");
     private static Data DATA;
 
     private static class Data implements Serializable {

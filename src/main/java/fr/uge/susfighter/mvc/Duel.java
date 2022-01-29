@@ -17,14 +17,22 @@ public class Duel {
     private final List<WeaponCase> weapons;
     private long startTime;
     private long endTime;
+    private final int level;
+    private final int step;
 
-    public Duel(List<Fighter> players, Field map, Optional<Event> currentEvent, long time) {
+    public Duel(List<Fighter> players, Field map, Optional<Event> currentEvent, long time, int level, int step) {
         this.players = List.copyOf(Objects.requireNonNull(players));
         this.map = map;
         this.currentEvent = Objects.requireNonNull(currentEvent);
         weapons = new ArrayList<>();
         startTime = System.currentTimeMillis();
         endTime = time;
+        this.level = level;
+        this.step = step;
+    }
+
+    public Duel(List<Fighter> players, Field map, Optional<Event> currentEvent, long time) {
+        this(players, map, currentEvent, time, -1, -1);
     }
 
     public long timeLeft() {
@@ -60,5 +68,13 @@ public class Duel {
         if (player1.isDead()) return player2;
         if (player2.isDead()) return player1;
         return null;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getStep() {
+        return step;
     }
 }

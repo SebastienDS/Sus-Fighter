@@ -221,8 +221,19 @@ public class GameController {
         var winner = duel.getWinner();
         if (winner == null) return false;
 
-        if (winner.equals(p) && !Save.isCharacterUnlock(p2.getName())) {
-            Save.unlockCharacter(p2.getName());
+        if (winner.equals(p)) {
+            var level = duel.getLevel();
+            var step = duel.getStep();
+
+            if (level != -1 && Save.getCampaignLevel() == level && Save.getCampaignStep() == step) {
+                if (step < 2) {
+                    Save.setCampaignStep(step + 1);
+                } else {
+                    Save.setCampaignLevel(level + 1);
+                    Save.setCampaignStep(0);
+                    Save.unlockCharacter(p2.getName());
+                }
+            }
         }
         return true;
     }

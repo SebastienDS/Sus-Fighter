@@ -815,7 +815,7 @@ public class MenuController {
 
         var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
                 new Rectangle(0, -1000, StageManager.getWidth(), 1000 + StageManager.getHeight() * 0.95));
-        var duel = new Duel(players, map, Optional.empty(), 99);
+        var duel = new Duel(players, map, Optional.empty(), 99, Save.getCampaignLevel(), Save.getCampaignStep());
         DuelManager.setDuel(duel);
         ImageManager.loadImage(ImageKey.FIELD, "images/map/" + step.map + ".jpg");
     }
@@ -1108,8 +1108,8 @@ public class MenuController {
     private List<Fighter> initPlayers() throws URISyntaxException, IOException {
         var p1 = initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
                 Command.getDefaultP1(), select1, 1, false, getDirectory(select1));
-        var p2 = initBot(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
-                select2, 2, true, getDirectory(select2), p1);
+        var p2 = initPlayer(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+                Command.getDefaultP2(), select2, 2, true, getDirectory(select2));
         return List.of(p1, p2);
     }
 
