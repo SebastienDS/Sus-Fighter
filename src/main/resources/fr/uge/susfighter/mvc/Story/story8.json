@@ -2,7 +2,7 @@
   {
     "enemy": {
       "type": "SBIRE",
-      "name": "pink"
+      "name": "purple"
     },
     "map": "map1"
   },
@@ -16,7 +16,7 @@
   {
     "enemy": {
       "type": "BOSS",
-      "name": "akali"
+      "name": "ezreal"
     },
     "map": "map2"
   }

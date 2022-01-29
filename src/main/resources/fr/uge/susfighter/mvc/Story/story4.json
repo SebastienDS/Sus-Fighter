@@ -2,22 +2,22 @@
   {
     "enemy": {
       "type": "SBIRE",
-      "name": "pink"
+      "name": "black"
     },
     "map": "map1"
   },
   {
     "enemy": {
       "type": "SBIRE",
-      "name": "yellow"
+      "name": "red"
     },
     "map": "map1"
   },
   {
     "enemy": {
       "type": "BOSS",
-      "name": "akali"
+      "name": "aurelionSol"
     },
-    "map": "map2"
+    "map": "map3"
   }
 ]

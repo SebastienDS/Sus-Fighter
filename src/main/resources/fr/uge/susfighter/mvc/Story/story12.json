@@ -9,14 +9,14 @@
   {
     "enemy": {
       "type": "SBIRE",
-      "name": "yellow"
+      "name": "green"
     },
     "map": "map1"
   },
   {
     "enemy": {
       "type": "BOSS",
-      "name": "akali"
+      "name": "irelia"
     },
     "map": "map2"
   }

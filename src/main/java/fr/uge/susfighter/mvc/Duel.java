@@ -31,7 +31,7 @@ public class Duel {
         return endTime - ((System.currentTimeMillis() - startTime) / 1000);
     }
 
-    public boolean update() {
+    public void update() {
         var player1 = players.get(0);
         var player2 = players.get(1);
 
@@ -40,8 +40,6 @@ public class Duel {
 
         player1.interact(player2);
         player2.interact(player1);
-
-        return player1.isDead() || player2.isDead();
     }
 
     public void pressed(KeyEvent keyEvent){
@@ -54,5 +52,13 @@ public class Duel {
 
     public Fighter getPlayer(int i) {
         return players.get(i);
+    }
+
+    public Fighter getWinner() {
+        var player1 = players.get(0);
+        var player2 = players.get(1);
+        if (player1.isDead()) return player2;
+        if (player2.isDead()) return player1;
+        return null;
     }
 }

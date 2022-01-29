@@ -5,6 +5,7 @@ import fr.uge.susfighter.mvc.ImageManager.ImageKey;
 import fr.uge.susfighter.object.Element;
 import fr.uge.susfighter.object.Fighter;
 import fr.uge.susfighter.object.Player;
+import fr.uge.susfighter.object.Save;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -19,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.Locale;
 
 
@@ -191,14 +193,23 @@ public class GameController {
     private void initTimeline() {
         timeline = new Timeline(
                 new KeyFrame(Duration.seconds(0.01), e -> {
-                    update();
+                    var stop = update();
+
+                    if (stop) {
+                        timeline.stop();
+                        try {
+                            StageManager.setScene(StageManager.StageEnum.WINNER);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
                 })
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
 
-    private void update() {
+    private boolean update() {
         var duel = DuelManager.getDuel();
         time.setText(String.valueOf(duel.timeLeft()));
         duel.update();
@@ -206,6 +217,14 @@ public class GameController {
         var p2 = duel.getPlayer(1);
         updatePlayer(p, p2, player1, fist1, ultimate1, playerHp1, playerEnergy1);
         updatePlayer(p2, p, player2, fist2, ultimate2, playerHp2, playerEnergy2);
+
+        var winner = duel.getWinner();
+        if (winner == null) return false;
+
+        if (winner.equals(p) && !Save.isCharacterUnlock(p2.getName())) {
+            Save.unlockCharacter(p2.getName());
+        }
+        return true;
     }
 
     private void updatePlayer(Fighter p, Fighter p2, ImageView player, ImageView fist, ImageView ultimate,

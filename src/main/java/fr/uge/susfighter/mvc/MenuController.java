@@ -643,7 +643,7 @@ public class MenuController {
     }
 
     private void initDataCampaign() throws IOException, URISyntaxException {
-        List<Step> story = getFromJson("Story/story1.json", new TypeToken<List<Step>>(){}.getType());
+        List<Step> story = getFromJson("Story/story0.json", new TypeToken<List<Step>>(){}.getType());
         var step = story.get(2);
         var enemyType = step.enemy.type == Step.Enemy.Type.BOSS ? "extension" : "default";
 
@@ -799,6 +799,8 @@ public class MenuController {
                 name = changeChoice(select, nameSelect1, id, otherPlayer, rectangle, page);
                 haveChanged = true;
             }
+
+            vbox.setOpacity(Save.isCharacterUnlock(getNameCharacter(id)) ? 1 : 0.5);
         }
         return name;
     }
@@ -1014,8 +1016,6 @@ public class MenuController {
 
             Type type;
             String name;
-            double damageMultiplicator;
-            double healthMultiplicator;
         }
 
         Enemy enemy;

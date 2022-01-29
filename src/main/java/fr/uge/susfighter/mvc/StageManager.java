@@ -3,6 +3,7 @@ package fr.uge.susfighter.mvc;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -11,7 +12,9 @@ import java.util.Objects;
 public class StageManager {
 
     public enum StageEnum {
-        MENU("menu-view.fxml"), GAME("game-view.fxml");
+        MENU("menu-view.fxml"),
+        GAME("game-view.fxml"),
+        WINNER("winner-view.fxml");
 
         private final String name;
 
@@ -48,7 +51,7 @@ public class StageManager {
 
     public static void setScene(StageEnum stageEnum) throws IOException {
         var loader = new FXMLLoader(StageManager.class.getResource(stageEnum.getName()));
-        AnchorPane container = loader.load();
+        Pane container = loader.load();
         var scene = new Scene(container, WIDTH, HEIGHT);
         STAGE_SAVE.setScene(scene);
     }
