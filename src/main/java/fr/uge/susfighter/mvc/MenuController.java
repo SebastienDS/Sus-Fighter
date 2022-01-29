@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 public class MenuController {
 
+    private static final int NUMBER_OF_CAMPAIGN = 32;
     private final Random random = new Random();
 
     private class Star {
@@ -274,6 +275,30 @@ public class MenuController {
     @FXML
     private Button addPage2;
 
+    @FXML
+    private ImageView historySelect1;
+
+    @FXML
+    private ImageView historySelect2;
+
+    @FXML
+    private ImageView historySelect3;
+
+    @FXML
+    private Button duel1;
+
+    @FXML
+    private Button duel2;
+
+    @FXML
+    private Button duel3;
+
+    @FXML
+    private Polygon arrow1;
+
+    @FXML
+    private Polygon arrow2;
+
     private final static int NUMBER_CASE = 7;
 
     private Rectangle rectangle1;
@@ -313,13 +338,17 @@ public class MenuController {
     private final int widthPlayer = 150;
     private final int heightPlayer = 250;
 
+    private int levelChosen;
+    private int stepChosen;
+
     private enum Menu {
         CLICK,
         MODE,
         MAP,
         CHARACTER,
         CREDITS,
-        CAMPAIGN
+        CAMPAIGN,
+        CAMPAIGN_PLAYER;
     }
 
     private Menu menu = Menu.CLICK;
@@ -336,6 +365,66 @@ public class MenuController {
         initMaps();
         initCharacterMenu();
         initCredits();
+        initCampaign();
+    }
+
+    private void initCampaign() throws IOException, URISyntaxException {
+        initButtons();
+        initCampaignImage();
+        initArrow();
+        levelChosen = 0;
+    }
+
+    private void initArrow() {
+        var x = StageManager.getWidth() - arrow1.getBoundsInLocal().getWidth() - 50 - arrow2.getBoundsInLocal().getWidth();
+        var y = StageManager.getHeight() - 10 - arrow1.getBoundsInLocal().getHeight();
+        AnchorPane.setLeftAnchor(arrow1, x);
+        AnchorPane.setTopAnchor(arrow1, y);
+        AnchorPane.setTopAnchor(arrow2, y);
+        AnchorPane.setLeftAnchor(arrow2, x + 25 + arrow1.getBoundsInLocal().getWidth());
+    }
+
+    private void initCampaignImage() throws IOException, URISyntaxException {
+        var width = historySelect1.getFitWidth();
+        var height = StageManager.getHeight() / 4.;
+        List<Step> story = getFromJson("Story/story0.json", new TypeToken<List<Step>>(){}.getType());
+        var first = story.get(0).getPath();
+        var second = story.get(1).getPath();
+        var third = story.get(2).getPath();
+        setImageCampaign(historySelect1, first, StageManager.getWidth() / 4. - width / 2, height);
+        setImageCampaign(historySelect2, second, StageManager.getWidth() / 2. - width / 2,  height);
+        setImageCampaign(historySelect3, third, 3 * StageManager.getWidth() / 4. - width / 2, height);
+
+    }
+
+    private void setImageCampaign(ImageView historySelect, String path, double x, double y) {
+        historySelect.setImage(
+                ImageManager.loadImage(
+                        Objects.requireNonNull(this.getClass().getResource("images/character/"+ path + "/IDLE.png")).toString()
+                )
+        );
+        AnchorPane.setLeftAnchor(historySelect, x);
+        AnchorPane.setTopAnchor(historySelect, y);
+    }
+
+    private void initButtons() {
+        var font = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 35);
+        duel1.setFont(font);
+        duel2.setFont(font);
+        duel3.setFont(font);
+        var width = duel1.getPrefWidth();
+        placeButton(duel1, StageManager.getWidth() / 4. - width  / 2, 2. * StageManager.getHeight() / 3, 0);
+        placeButton(duel2, StageManager.getWidth() / 2. - width / 2, 2. * StageManager.getHeight() / 3, 1);
+        placeButton(duel3, 3 * StageManager.getWidth() / 4. - width / 2, 2. * StageManager.getHeight() / 3, 2);
+    }
+
+    private void placeButton(Button button, double x, double y, int step) {
+        if(Save.getCampaignLevel() == 0 && Save.getCampaignStep() < step){
+            button.setDisable(true);
+            button.setOpacity(0.4);
+        }
+        AnchorPane.setLeftAnchor(button, x);
+        AnchorPane.setTopAnchor(button, y);
     }
 
     private void initCredits() {
@@ -590,11 +679,70 @@ public class MenuController {
 
 
     @FXML
-    void campaignMenu() throws URISyntaxException, IOException {
-        // TODO
-        initDataCampaign();
-        StageManager.setScene(StageManager.StageEnum.GAME);
-        GameController.startGame();
+    void campaignMenu() {
+        buttonsMenuVisible(false);
+        back.setVisible(true);
+        campaignMenuVisible(true);
+        menu = Menu.CAMPAIGN;
+    }
+
+    private void campaignMenuVisible(boolean b) {
+        duel1.setVisible(b);
+        duel2.setVisible(b);
+        duel3.setVisible(b);
+        historySelect1.setVisible(b);
+        historySelect2.setVisible(b);
+        historySelect3.setVisible(b);
+        arrow1.setVisible(b);
+        arrow2.setVisible(b);
+    }
+
+    @FXML
+    void plus() throws IOException, URISyntaxException {
+        levelChosen = (levelChosen + 1) % NUMBER_OF_CAMPAIGN;
+        changeCharacter();
+    }
+
+    @FXML
+    void minus() throws IOException, URISyntaxException {
+        levelChosen = (levelChosen - 1 < 0) ? NUMBER_OF_CAMPAIGN - 1 : levelChosen - 1;
+        changeCharacter();
+    }
+
+    private void changeCharacter() throws IOException, URISyntaxException {
+        var width = historySelect1.getFitWidth();
+        var height = StageManager.getHeight() / 4.;
+        List<Step> story = getFromJson("Story/story" + levelChosen + ".json", new TypeToken<List<Step>>(){}.getType());
+        var first = story.get(0).getPath();
+        var second = story.get(1).getPath();
+        var third = story.get(2).getPath();
+        setImageCampaign(historySelect1, first, StageManager.getWidth() / 4. - width / 2, height);
+        setImageCampaign(historySelect2, second, StageManager.getWidth() / 2. - width / 2,  height);
+        setImageCampaign(historySelect3, third, 3 * StageManager.getWidth() / 4. - width / 2, height);
+        changeDuelButton();
+    }
+
+    private void changeDuelButton() {
+        if(Save.getCampaignLevel() >= levelChosen) changeButton(duel1, 1, false);
+        else changeButton(duel1, 0.4, true);
+        if(Save.getCampaignLevel() >= levelChosen && Save.getCampaignStep() >= stepChosen) changeButton(duel2, 1, false);
+        else changeButton(duel2, 0.4, true);
+        if(Save.getCampaignLevel() >= levelChosen && Save.getCampaignStep() >= stepChosen) changeButton(duel3, 1, false);
+        else changeButton(duel3, 0.4, true);
+    }
+
+    private void changeButton(Button duel1, double opacity, boolean b) {
+        duel1.setDisable(b);
+        duel1.setOpacity(opacity);
+    }
+
+    @FXML
+    void chosePlayerCampaign(MouseEvent event) {
+        menu = Menu.CAMPAIGN_PLAYER;
+        player1MenuVisible(true);
+        campaignMenuVisible(false);
+        var buttonID = ((Button)(event.getSource())).getId();
+        stepChosen = Integer.parseInt(buttonID.substring(buttonID.length() - 1)) -1;
     }
 
     @FXML
@@ -631,6 +779,15 @@ public class MenuController {
             StageManager.setScene(StageManager.StageEnum.GAME);
             GameController.startGame();
         }
+        else if (confirmRectangle1.isVisible() && menu == Menu.CAMPAIGN_PLAYER){
+            List<Step> story = getFromJson("Story/story" + levelChosen +".json", new TypeToken<List<Step>>(){}.getType());
+            var path = story.get(stepChosen).getPath();
+            var pathImage =  Objects.requireNonNull(this.getClass().getResource("images/character/"+ path + "/IDLE.png")).toString();
+            ((ImageView)(select2.getChildren().get(0))).setImage(ImageManager.loadImage(pathImage));
+            initDataCampaign();
+            StageManager.setScene(StageManager.StageEnum.GAME);
+            GameController.startGame();
+        }
     }
 
     private void initDataDuel() throws URISyntaxException, IOException {
@@ -644,10 +801,9 @@ public class MenuController {
 
     private void initDataCampaign() throws IOException, URISyntaxException {
         List<Step> story = getFromJson("Story/story0.json", new TypeToken<List<Step>>(){}.getType());
-        var step = story.get(2);
+        var step = story.get(stepChosen);
         var enemyType = step.enemy.type == Step.Enemy.Type.BOSS ? "extension" : "default";
 
-        nameSelect1 = "black10";
         nameSelect2 = step.enemy.name + "20";
         // TODO: Init player with his size ...
 
@@ -760,6 +916,17 @@ public class MenuController {
             back.setVisible(false);
             buttonsMenuVisible(true);
         }
+        if (menu == Menu.CAMPAIGN) {
+            back.setVisible(false);
+            levelChosen = 0;
+            campaignMenuVisible(false);
+            buttonsMenuVisible(true);
+        }
+        if (menu == Menu.CAMPAIGN_PLAYER){
+            player1MenuVisible(false);
+            campaignMenuVisible(true);
+            reinitializeCharacter();
+        }
     }
 
     @FXML
@@ -834,6 +1001,7 @@ public class MenuController {
         page2 = 0;
         nameSelect1 = changePlayer(select1, nameSelect1, "black1", 2, rectangle1, 0, 0, page1);
         nameSelect2 = changePlayer(select2, nameSelect2, "green2", 1, rectangle2, StageManager.getWidth() / 2, 1, page2);
+        normalOpacity();
         white1.setDisable(true);
         black2.setDisable(true);
         confirmRectangle1.setVisible(false);
@@ -842,6 +1010,11 @@ public class MenuController {
         ready2.setVisible(false);
         reinitializeHead(heads1);
         reinitializeHead(heads2);
+    }
+
+    private void normalOpacity() {
+        heads1.forEach(head -> head.setOpacity(1));
+        heads2.forEach(head -> head.setOpacity(1));
     }
 
     private void reinitializeHead(List<VBox> vBox) {
@@ -909,6 +1082,15 @@ public class MenuController {
         pink2.setVisible(b);
         white2.setVisible(b);
         black2.setVisible(b);
+        line.setVisible(b);
+        select2.setVisible(b);
+        rectangle2.setVisible(b);
+        confirmPlayer2.setVisible(b);
+        addPage2.setVisible(b);
+        player1MenuVisible(b);
+    }
+
+    private void player1MenuVisible(boolean b) {
         yellow1.setVisible(b);
         green1.setVisible(b);
         red1.setVisible(b);
@@ -917,14 +1099,10 @@ public class MenuController {
         white1.setVisible(b);
         black1.setVisible(b);
         line.setVisible(b);
-        select2.setVisible(b);
         select1.setVisible(b);
         rectangle1.setVisible(b);
-        rectangle2.setVisible(b);
         confirmPlayer1.setVisible(b);
-        confirmPlayer2.setVisible(b);
         addPage1.setVisible(b);
-        addPage2.setVisible(b);
     }
 
     private List<Fighter> initPlayers() throws URISyntaxException, IOException {
@@ -1009,6 +1187,7 @@ public class MenuController {
     }
 
     private static class Step {
+
         private static class Enemy {
             private enum Type {
                 SBIRE, BOSS
@@ -1020,6 +1199,14 @@ public class MenuController {
 
         Enemy enemy;
         String map;
+
+        public String getDirectory(){
+            return (enemy.type == Enemy.Type.SBIRE)? "default/" : "extension/";
+        }
+
+        public String getPath() {
+            return getDirectory() + enemy.name;
+        }
     }
 
     private static <T> T getFromJson(String jsonPath, Type type) throws IOException, URISyntaxException {

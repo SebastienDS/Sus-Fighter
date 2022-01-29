@@ -11,8 +11,8 @@
 
 <AnchorPane fx:id="anchorpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-image: images\map\UwU.jpg;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.uge.susfighter.mvc.GameController">
    <children>
-      <ImageView fx:id="player1" fitHeight="130.0" fitWidth="119.0" layoutX="41.0" layoutY="86.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="player2" fitHeight="130.0" fitWidth="145.0" layoutX="526.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="player1" fitHeight="252.0" fitWidth="200.0" layoutX="41.0" layoutY="86.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="player2" fitHeight="252.0" fitWidth="200.0" layoutX="526.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
       <HBox fx:id="hBoxBar2" alignment="CENTER_RIGHT" layoutX="564.0" prefHeight="66.0" prefWidth="325.0">
          <children>
             <VBox fx:id="vBoxBar2" alignment="CENTER_RIGHT" prefHeight="66.0" prefWidth="318.0">
