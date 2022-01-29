@@ -725,9 +725,11 @@ public class MenuController {
     private void changeDuelButton() {
         if(Save.getCampaignLevel() >= levelChosen) changeButton(duel1, 1, false);
         else changeButton(duel1, 0.4, true);
-        if(Save.getCampaignLevel() >= levelChosen && Save.getCampaignStep() >= stepChosen) changeButton(duel2, 1, false);
+        if(Save.getCampaignLevel() > levelChosen || (Save.getCampaignLevel() >= levelChosen && Save.getCampaignStep() >= 1))
+            changeButton(duel2, 1, false);
         else changeButton(duel2, 0.4, true);
-        if(Save.getCampaignLevel() >= levelChosen && Save.getCampaignStep() >= stepChosen) changeButton(duel3, 1, false);
+        if(Save.getCampaignLevel() > levelChosen || (Save.getCampaignLevel() >= levelChosen && Save.getCampaignStep() >= 2))
+            changeButton(duel3, 1, false);
         else changeButton(duel3, 0.4, true);
     }
 
@@ -800,9 +802,8 @@ public class MenuController {
     }
 
     private void initDataCampaign() throws IOException, URISyntaxException {
-        List<Step> story = getFromJson("Story/story0.json", new TypeToken<List<Step>>(){}.getType());
+        List<Step> story = getFromJson("Story/story" + levelChosen + ".json", new TypeToken<List<Step>>(){}.getType());
         var step = story.get(stepChosen);
-        var enemyType = step.enemy.type == Step.Enemy.Type.BOSS ? "extension" : "default";
 
         nameSelect2 = step.enemy.name + "20";
         // TODO: Init player with his size ...
@@ -810,7 +811,7 @@ public class MenuController {
         var p1 = initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
                 Command.getDefaultP1(), select1, 1, false, getDirectory(select1));
         var p2 = initBot(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
-                select2, 2, true, enemyType, p1);
+                select2, 2, true, step.getDirectory(), p1);
         var players = List.of(p1, p2);
 
         var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
@@ -1201,11 +1202,11 @@ public class MenuController {
         String map;
 
         public String getDirectory(){
-            return (enemy.type == Enemy.Type.SBIRE)? "default/" : "extension/";
+            return (enemy.type == Enemy.Type.SBIRE)? "default" : "extension";
         }
 
         public String getPath() {
-            return getDirectory() + enemy.name;
+            return getDirectory() + "/" + enemy.name;
         }
     }
 
