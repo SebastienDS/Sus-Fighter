@@ -18,22 +18,14 @@ public class Save {
     private static final Path SAVE_PATH = Path.of("src",  "main", "resources", "fr", "uge", "susfighter", "object", "save", "save.txt");
     private static Data DATA;
 
-    private static record Data(Set<String> characterUnlock) implements Serializable {
-        public Data {
-            Objects.requireNonNull(characterUnlock);
-        }
+    private static class Data implements Serializable {
+        Set<String> characterUnlock = new HashSet<>();
+        int campaignLevel = 0;
+        int campaignStep = 0;
 
         public Data() {
-            this(new HashSet<>());
             try {
                 var path = Path.of(Objects.requireNonNull(GameController.class.getResource("images/character/default")).toURI());
-                Files.walk(path, 2)
-                        .filter(Files::isDirectory)
-                        .forEach(f -> characterUnlock.add(f.getFileName().toString()));
-
-
-                // TODO: remove me :(
-                path = Path.of(Objects.requireNonNull(GameController.class.getResource("images/character/extension")).toURI());
                 Files.walk(path, 2)
                         .filter(Files::isDirectory)
                         .forEach(f -> characterUnlock.add(f.getFileName().toString()));
@@ -58,6 +50,28 @@ public class Save {
     public static Set<String> getCharactersUnlock() {
         var data = getData();
         return data.characterUnlock;
+    }
+
+    public static int getCampaignLevel() {
+        var data = getData();
+        return data.campaignLevel;
+    }
+
+    public static int getCampaignStep() {
+        var data = getData();
+        return data.campaignStep;
+    }
+
+    public static void setCampaignLevel(int level) {
+        var data = getData();
+        data.campaignLevel = level;
+        saveData(data);
+    }
+
+    public static void setCampaignStep(int step) {
+        var data = getData();
+        data.campaignStep = step;
+        saveData(data);
     }
 
     private static Data getData() {
