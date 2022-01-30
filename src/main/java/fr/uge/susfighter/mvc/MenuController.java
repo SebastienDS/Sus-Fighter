@@ -259,7 +259,7 @@ public class MenuController {
     private VBox quentin;
 
     @FXML
-    private VBox yoan;
+    private VBox michel;
 
     @FXML
     private Label nameSeb;
@@ -268,7 +268,7 @@ public class MenuController {
     private Label nameQuentin;
 
     @FXML
-    private Label nameYoyo;
+    private Label nameMichel;
 
     @FXML
     private Button addPage1;
@@ -299,6 +299,9 @@ public class MenuController {
 
     @FXML
     private Polygon arrow2;
+
+    @FXML
+    private ImageView sound;
 
     private final static int NUMBER_CASE = 7;
 
@@ -375,6 +378,12 @@ public class MenuController {
                 Objects.requireNonNull(this.getClass().getResource("sounds/menuMusic.mp3")).toExternalForm()
         ));
         MediaPlayerManager.setRepeat(true);
+        var name = (MediaPlayerManager.isMuted())? "unicornOff.png": "unicornOn.png";
+        sound.setImage(ImageManager.loadImage(
+                Objects.requireNonNull(this.getClass().getResource("images/sound/" + name)).toExternalForm()
+        ));
+        AnchorPane.setLeftAnchor(sound, StageManager.getWidth() - sound.getFitWidth());
+        AnchorPane.setTopAnchor(sound, StageManager.getHeight() - sound.getFitHeight());
     }
 
     private void initCampaign() throws IOException, URISyntaxException {
@@ -439,15 +448,16 @@ public class MenuController {
     private void initCredits() {
         var font = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 150);
         var font2 = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 35);
+        var font3 = Font.loadFont(Objects.requireNonNull(this.getClass().getResource("font/font.ttf")).toExternalForm(), 20);
         creditsTitle.setFont(font);
         AnchorPane.setLeftAnchor(creditsTitle, StageManager.getWidth() / 2. - creditsTitle.getPrefWidth() / 2);
         AnchorPane.setTopAnchor(creditsTitle, StageManager.getHeight() / 20.);
-        double spacingX = (StageManager.getWidth() - sebastien.getPrefWidth() - quentin.getPrefWidth() - yoan.getPrefHeight()) / 4;
+        double spacingX = (StageManager.getWidth() - sebastien.getPrefWidth() - quentin.getPrefWidth()) / 3;
         initAvatar(sebastien, nameSeb, spacingX, StageManager.getHeight() / 2. - quentin.getPrefHeight(), font2);
         initAvatar(quentin, nameQuentin, 2 * spacingX + sebastien.getPrefWidth(),
                 StageManager.getHeight() / 2. - quentin.getPrefHeight(), font2);
-        initAvatar(yoan, nameYoyo, 3 * spacingX + sebastien.getPrefWidth() * 2,
-                StageManager.getHeight() / 2. - quentin.getPrefHeight(), font2);
+        initAvatar(michel, nameMichel, StageManager.getWidth() - michel.getPrefWidth(),
+                StageManager.getHeight() - michel.getPrefHeight(), font3);
     }
 
     private void initAvatar(VBox vBox, Label name, double x, double y, Font font) {
@@ -688,7 +698,7 @@ public class MenuController {
 
 
     @FXML
-    void campaignMenu() {
+    private void campaignMenu() {
         buttonsMenuVisible(false);
         back.setVisible(true);
         campaignMenuVisible(true);
@@ -707,15 +717,24 @@ public class MenuController {
     }
 
     @FXML
-    void plus() throws IOException, URISyntaxException {
+    private void plus() throws IOException, URISyntaxException {
         levelChosen = (levelChosen + 1) % NUMBER_OF_CAMPAIGN;
         changeCharacter();
     }
 
     @FXML
-    void minus() throws IOException, URISyntaxException {
+    private void minus() throws IOException, URISyntaxException {
         levelChosen = (levelChosen - 1 < 0) ? NUMBER_OF_CAMPAIGN - 1 : levelChosen - 1;
         changeCharacter();
+    }
+
+    @FXML
+    private void changeSound(){
+        MediaPlayerManager.swapVolume();
+        var name = (MediaPlayerManager.isMuted())? "unicornOff.png": "unicornOn.png";
+        sound.setImage(ImageManager.loadImage(
+                Objects.requireNonNull(this.getClass().getResource("images/sound/" + name)).toExternalForm()
+        ));
     }
 
     private void changeCharacter() throws IOException, URISyntaxException {
@@ -748,7 +767,7 @@ public class MenuController {
     }
 
     @FXML
-    void chosePlayerCampaign(MouseEvent event) {
+    private void chosePlayerCampaign(MouseEvent event) {
         menu = Menu.CAMPAIGN_PLAYER;
         player1MenuVisible(true);
         campaignMenuVisible(false);
@@ -757,7 +776,7 @@ public class MenuController {
     }
 
     @FXML
-    void creditsMenu() {
+    private void creditsMenu() {
         menu = Menu.CREDITS;
         creditsVisible(true);
         back.setVisible(true);
@@ -765,7 +784,7 @@ public class MenuController {
     }
 
     @FXML
-    void duelMenu() {
+    private void duelMenu() {
         menu = Menu.MAP;
         buttonsMenuVisible(false);
         buttonMapVisible(true);
@@ -773,7 +792,7 @@ public class MenuController {
     }
 
     @FXML
-    void startGame(MouseEvent event) throws IOException, URISyntaxException {
+    private void startGame(MouseEvent event) throws IOException, URISyntaxException {
         var num = ((Button) event.getSource()).getId();
         num = num.substring(num.length() - 1);
 
@@ -1093,6 +1112,7 @@ public class MenuController {
         duel.setVisible(bool);
         credits.setVisible(bool);
         exit.setVisible(bool);
+        sound.setVisible(bool);
     }
 
     private void buttonMapVisible(boolean b) {
@@ -1106,7 +1126,7 @@ public class MenuController {
         creditsTitle.setVisible(b);
         quentin.setVisible(b);
         sebastien.setVisible(b);
-        yoan.setVisible(b);
+        michel.setVisible(b);
     }
 
     private void playerMenuVisible(boolean b) {

@@ -27,11 +27,6 @@ public class MediaPlayerManager {
         else mediaPlayer.setOnEndOfMedia(()-> mediaPlayer.pause());
     }
 
-    public static void setPlay(boolean b){
-        if(b) mediaPlayer.play();
-        else mediaPlayer.pause();
-    }
-
     public static void swapVolume(){
         isMuted = !isMuted;
         if(isMuted) mediaPlayer.setVolume(0);

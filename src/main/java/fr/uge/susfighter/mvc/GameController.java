@@ -141,6 +141,8 @@ public class GameController {
     private void initMenu() {
         AnchorPane.setLeftAnchor(menu, StageManager.getWidth() /2. - menu.getPrefWidth() / 2);
         AnchorPane.setTopAnchor(menu, StageManager.getStage().getHeight() /2. - menu.getPrefHeight() / 2);
+        var name = (MediaPlayerManager.isMuted())? "OFF" : "ON";
+        musicLabel.setText("MUSIC: " + name);
     }
 
     private void initTime() {
@@ -153,7 +155,6 @@ public class GameController {
         imageView.setFitWidth(StageManager.getWidth());
         imageView.setFitHeight(StageManager.getHeight());
         anchorpane.getChildren().add(imageView);
-
         toBack(imageView, anchorpane);
     }
 

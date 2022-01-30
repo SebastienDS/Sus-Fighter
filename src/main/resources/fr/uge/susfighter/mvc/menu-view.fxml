@@ -260,14 +260,14 @@
             <Label fx:id="nameQuentin" alignment="CENTER" prefHeight="120.0" prefWidth="335.0" styleClass="outline2" text="Quentin Boulet" textFill="WHITE" />
          </children>
       </VBox>
-      <VBox fx:id="yoan" alignment="CENTER" layoutX="311.0" layoutY="209.0" prefHeight="266.0" prefWidth="261.0" visible="false">
+      <VBox fx:id="michel" alignment="CENTER" layoutX="573.0" layoutY="261.0" prefHeight="214.0" prefWidth="161.0" visible="false">
          <children>
-            <ImageView fitHeight="207.0" fitWidth="185.0" pickOnBounds="true">
+            <ImageView fitHeight="39.0" fitWidth="45.0" pickOnBounds="true">
                <image>
-                  <Image url="@images/character/extension/ashe/IDLE.png" />
+                  <Image url="@images/character/extension/ekko/IDLE.png" />
                </image>
             </ImageView>
-            <Label fx:id="nameYoyo" alignment="CENTER" prefHeight="120.0" prefWidth="335.0" styleClass="outline2" text="Yohan Astier" textFill="WHITE" />
+            <Label fx:id="nameMichel" alignment="CENTER" prefHeight="28.0" prefWidth="162.0" styleClass="outline2" text="Laris Mocchine" textFill="WHITE" />
          </children>
       </VBox>
       <Button fx:id="addPage1" layoutX="55.0" layoutY="69.0" mnemonicParsing="false" onMouseClicked="#addPage" prefHeight="64.0" prefWidth="109.0" text="plus" visible="false" />
@@ -298,5 +298,6 @@
       <ImageView fx:id="historySelect1" fitHeight="252.0" fitWidth="200.0" layoutX="10.0" layoutY="97.0" pickOnBounds="true" preserveRatio="true" visible="false" />
       <ImageView fx:id="historySelect2" fitHeight="252.0" fitWidth="200.0" layoutX="20.0" layoutY="107.0" pickOnBounds="true" preserveRatio="true" visible="false" />
       <ImageView fx:id="historySelect3" fitHeight="252.0" fitWidth="200.0" layoutX="20.0" layoutY="107.0" pickOnBounds="true" preserveRatio="true" visible="false" />
+      <ImageView fx:id="sound" fitHeight="74.0" fitWidth="82.0" layoutX="585.0" layoutY="501.0" onMouseClicked="#changeSound" pickOnBounds="true" preserveRatio="true" visible="false" />
    </children>
 </AnchorPane>
