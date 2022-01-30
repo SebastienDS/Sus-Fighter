@@ -324,10 +324,13 @@ public class Player implements Fighter {
         body.setY(body.getY() + velocity.getY() + projectionVelocity.getY());
 
         var hitBoxX = (isFlipped)? body.getWidth() - (hitBox.getWidth() + hitBox.getX()) : hitBox.getX();
+        var lastPositionX = body.getX();
         body.setX(Math.min(Math.max(bounds.getX() - hitBoxX,
                 body.getX()), bounds.getX() + bounds.getWidth() - hitBox.getWidth() - hitBoxX));
         body.setY(Math.min(Math.max(bounds.getY() - hitBox.getY(),
                 body.getY()), bounds.getY() + bounds.getHeight() - hitBox.getHeight() - hitBox.getY()));
+
+        if (body.getX() != lastPositionX) projectionVelocity.setX(0);
     }
 
     private void manageJump(Rectangle bounds) {
@@ -335,8 +338,9 @@ public class Player implements Fighter {
             isGrounded = true;
             jumpCount = 0;
             velocity.setY(0);
-            projectionVelocity.setX(convergeTo0(projectionVelocity.getX(), 1));
+            projectionVelocity.setX(convergeTo0(projectionVelocity.getX(), 0.6));
         }
+        projectionVelocity.setX(convergeTo0(projectionVelocity.getX(), 0.3));
     }
 
     private Rectangle getAttackHitBox() {

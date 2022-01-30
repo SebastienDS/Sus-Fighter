@@ -804,7 +804,7 @@ public class MenuController {
     private void initDataDuel() throws URISyntaxException, IOException {
         MapData mapData = getFromJson("Maps/" + mapChosen + ".json", new TypeToken<MapData>(){}.getType());
         var players = initPlayers(mapData.startPosition);
-        var map = new Field(mapChosen, mapData.element, new ArrayList<>(), mapData.gravity,
+        var map = new Field(mapChosen, mapData.element, mapData.gravity,
                 new Rectangle(
                         StageManager.getWidth() * mapData.bounds.x / 100.0,
                         StageManager.getHeight() * mapData.bounds.y / 100.0,
@@ -812,7 +812,7 @@ public class MenuController {
                         StageManager.getHeight() * mapData.bounds.height / 100.0
                 )
         );
-        var duel = new Duel(players, map, Optional.empty(), 99);
+        var duel = new Duel(players, map, 99);
         MediaPlayerManager.setSound(new Media(
                 Objects.requireNonNull(this.getClass().getResource("sounds/" + mapData.sound)).toExternalForm()
         ));
@@ -839,7 +839,7 @@ public class MenuController {
                 select2, 2, true, step.getDirectory(), p1);
         var players = List.of(p1, p2);
 
-        var map = new Field(step.map, mapData.element, new ArrayList<>(), mapData.gravity,
+        var map = new Field(step.map, mapData.element, mapData.gravity,
                 new Rectangle(
                         StageManager.getWidth() * mapData.bounds.x / 100.0,
                         StageManager.getHeight() * mapData.bounds.y / 100.0,
@@ -847,7 +847,7 @@ public class MenuController {
                         StageManager.getHeight() * mapData.bounds.height / 100.0
                 )
         );
-        var duel = new Duel(players, map, Optional.empty(), 99, levelChosen, stepChosen);
+        var duel = new Duel(players, map, 99, levelChosen, stepChosen);
         MediaPlayerManager.setSound(new Media(
                 Objects.requireNonNull(this.getClass().getResource("sounds/" + mapData.sound)).toExternalForm()
         ));
@@ -1199,7 +1199,7 @@ public class MenuController {
         List<Step> story = getFromJson("Story/story" + level + ".json", new TypeToken<List<Step>>(){}.getType());
         ImageManager.loadImage(ImageKey.FIELD, "images/map/" + story.get(step).map + ".jpg");
         MapData mapData = getFromJson("Maps/" + story.get(step).map + ".json", new TypeToken<MapData>(){}.getType());
-        return new Field(story.get(step).map, mapData.element, new ArrayList<>(), mapData.gravity,
+        return new Field(story.get(step).map, mapData.element, mapData.gravity,
                 new Rectangle(
                         StageManager.getWidth() * mapData.bounds.x / 100.0,
                         StageManager.getHeight() * mapData.bounds.y / 100.0,
@@ -1283,7 +1283,6 @@ public class MenuController {
         Vec2 gravity;
         HitBox bounds;
         List<Vec2> startPosition;
-        List<Events> events;
         String sound;
     }
 

@@ -1,40 +1,34 @@
 package fr.uge.susfighter.mvc;
 
-import fr.uge.susfighter.object.*;
-import javafx.scene.input.KeyCode;
+import fr.uge.susfighter.object.Field;
+import fr.uge.susfighter.object.Fighter;
 import javafx.scene.input.KeyEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-
 
 public class Duel {
 
     private final List<Fighter> players;
     private final Field map;
-    private Optional<Event> currentEvent;
-    private final List<WeaponCase> weapons;
     private long startTime;
     private long endTime;
     private boolean pause;
     private final int level;
     private final int step;
 
-    public Duel(List<Fighter> players, Field map, Optional<Event> currentEvent, long time, int level, int step) {
+
+    public Duel(List<Fighter> players, Field map, long time, int level, int step) {
         this.players = List.copyOf(Objects.requireNonNull(players));
         this.map = map;
-        this.currentEvent = Objects.requireNonNull(currentEvent);
-        weapons = new ArrayList<>();
         startTime = System.currentTimeMillis();
         endTime = time;
         this.level = level;
         this.step = step;
     }
 
-    public Duel(List<Fighter> players, Field map, Optional<Event> currentEvent, long time) {
-        this(players, map, currentEvent, time, -1, -1);
+    public Duel(List<Fighter> players, Field map,  long time) {
+        this(players, map, time, -1, -1);
     }
 
     public long timeLeft() {
@@ -72,6 +66,11 @@ public class Duel {
         var player2 = players.get(1);
         if (player1.isDead()) return player2;
         if (player2.isDead()) return player1;
+
+        if (timeLeft() <= 0) {
+            if (player1.getStatistic().percentageHpLeft() < player2.getStatistic().percentageHpLeft()) return player2;
+            else return player1;
+        }
         return null;
     }
 

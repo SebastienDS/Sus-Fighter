@@ -115,7 +115,7 @@ public class WinnerController {
         MediaPlayerManager.setSound(new Media(
                 Objects.requireNonNull(this.getClass().getResource("sounds/" + mapData.sound)).toExternalForm()
         ));
-        DuelManager.setDuel(new Duel(List.of(p1, IA), map, Optional.empty(), 99, duel.getLevel(), duel.getStep()));
+        DuelManager.setDuel(new Duel(List.of(p1, IA), map, 99, duel.getLevel(), duel.getStep()));
         StageManager.setScene(StageManager.StageEnum.GAME);
         GameController.startGame();
     }
@@ -138,7 +138,7 @@ public class WinnerController {
         MediaPlayerManager.setSound(new Media(
                 Objects.requireNonNull(this.getClass().getResource("sounds/" + mapData.sound)).toExternalForm()
         ));
-        DuelManager.setDuel(new Duel(List.of(p1, p2), map, Optional.empty(), 99, duel.getLevel(), duel.getStep()));
+        DuelManager.setDuel(new Duel(List.of(p1, p2), map, 99, duel.getLevel(), duel.getStep()));
         StageManager.setScene(StageManager.StageEnum.GAME);
         GameController.startGame();
     }
@@ -164,7 +164,7 @@ public class WinnerController {
                 Objects.requireNonNull(this.getClass().getResource("sounds/" + mapData.sound)).toExternalForm()
         ));
         var IA = MenuController.initBot(level, step, p1, x, y);
-        DuelManager.setDuel(new Duel(List.of(p1, IA), map, Optional.empty(), 99, level, step));
+        DuelManager.setDuel(new Duel(List.of(p1, IA), map, 99, level, step));
         StageManager.setScene(StageManager.StageEnum.GAME);
         GameController.startGame();
     }
