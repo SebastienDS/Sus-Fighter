@@ -793,9 +793,16 @@ public class MenuController {
     }
 
     private void initDataDuel() throws URISyntaxException, IOException {
-        var players = initPlayers();
-        var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
-                new Rectangle(0, -1000, StageManager.getWidth(), 1000 + StageManager.getHeight() * 0.95));
+        MapData mapData = getFromJson("Maps/" + mapChosen + ".json", new TypeToken<MapData>(){}.getType());
+        var players = initPlayers(mapData.startPosition);
+        var map = new Field(mapChosen, mapData.element, new ArrayList<>(), mapData.gravity,
+                new Rectangle(
+                        StageManager.getWidth() * mapData.bounds.x / 100.0,
+                        StageManager.getHeight() * mapData.bounds.y / 100.0,
+                        StageManager.getWidth() * mapData.bounds.width / 100.0,
+                        StageManager.getHeight() * mapData.bounds.height / 100.0
+                )
+        );
         var duel = new Duel(players, map, Optional.empty(), 99);
         DuelManager.setDuel(duel);
         ImageManager.loadImage(ImageKey.FIELD, getNameMap());
@@ -804,15 +811,29 @@ public class MenuController {
     private void initDataCampaign() throws IOException, URISyntaxException {
         List<Step> story = getFromJson("Story/story" + levelChosen + ".json", new TypeToken<List<Step>>(){}.getType());
         var step = story.get(stepChosen);
+        MapData mapData = getFromJson("Maps/" + step.map + ".json", new TypeToken<MapData>(){}.getType());
+
         nameSelect2 = step.enemy.name + "20";
-        var p1 = initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+
+        var posPlayer1 = mapData.startPosition.get(0);
+        var posPlayer2 = mapData.startPosition.get(1);
+
+        var p1 = initPlayer(nameSelect1, (int)(StageManager.getWidth() * posPlayer1.getX() / 100.0),
+                (int)(StageManager.getHeight() * posPlayer1.getY() / 100.0),
                 Command.getDefaultP1(), select1, 1, false, getDirectory(select1));
-        var p2 = initBot(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+        var p2 = initBot(nameSelect2, (int)(StageManager.getWidth() * posPlayer2.getX() / 100.0),
+                (int)(StageManager.getHeight() * posPlayer2.getY() / 100.0),
                 select2, 2, true, step.getDirectory(), p1);
         var players = List.of(p1, p2);
 
-        var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
-                new Rectangle(0, -1000, StageManager.getWidth(), 1000 + StageManager.getHeight() * 0.95));
+        var map = new Field(step.map, mapData.element, new ArrayList<>(), mapData.gravity,
+                new Rectangle(
+                        StageManager.getWidth() * mapData.bounds.x / 100.0,
+                        StageManager.getHeight() * mapData.bounds.y / 100.0,
+                        StageManager.getWidth() * mapData.bounds.width / 100.0,
+                        StageManager.getHeight() * mapData.bounds.height / 100.0
+                )
+        );
         var duel = new Duel(players, map, Optional.empty(), 99, levelChosen, stepChosen);
         DuelManager.setDuel(duel);
         ImageManager.loadImage(ImageKey.FIELD, "images/map/" + step.map + ".jpg");
@@ -1102,10 +1123,15 @@ public class MenuController {
         addPage1.setVisible(b);
     }
 
-    private List<Fighter> initPlayers() throws URISyntaxException, IOException {
-        var p1 = initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+    private List<Fighter> initPlayers(List<Vec2> startPosition) throws URISyntaxException, IOException {
+        var posPlayer1 = startPosition.get(0);
+        var posPlayer2 = startPosition.get(1);
+
+        var p1 = initPlayer(nameSelect1, (int)(StageManager.getWidth() * posPlayer1.getX() / 100.0),
+                (int)(StageManager.getHeight() * posPlayer1.getY() / 100.0),
                 Command.getDefaultP1(), select1, 1, false, getDirectory(select1));
-        var p2 = initPlayer(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
+        var p2 = initPlayer(nameSelect2, (int)(StageManager.getWidth() * posPlayer2.getX() / 100.0),
+                (int)(StageManager.getHeight() * posPlayer2.getY() / 100.0),
                 Command.getDefaultP2(), select2, 2, true, getDirectory(select2));
         return List.of(p1, p2);
     }
@@ -1157,28 +1183,35 @@ public class MenuController {
     public static Field getMap(int level, int step) throws IOException, URISyntaxException {
         List<Step> story = getFromJson("Story/story" + level + ".json", new TypeToken<List<Step>>(){}.getType());
         ImageManager.loadImage(ImageKey.FIELD, "images/map/" + story.get(step).map + ".jpg");
-        return new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
-                new Rectangle(0, -1000, StageManager.getWidth(), 1000 + StageManager.getHeight() * 0.95));
+        MapData mapData = getFromJson("Maps/" + story.get(step).map + ".json", new TypeToken<MapData>(){}.getType());
+        return new Field(story.get(step).map, mapData.element, new ArrayList<>(), mapData.gravity,
+                new Rectangle(
+                        StageManager.getWidth() * mapData.bounds.x / 100.0,
+                        StageManager.getHeight() * mapData.bounds.y / 100.0,
+                        StageManager.getWidth() * mapData.bounds.width / 100.0,
+                        StageManager.getHeight() * mapData.bounds.height / 100.0
+                )
+        );
+    }
+
+    private static class HitBox {
+        int x;
+        int y;
+        int width;
+        int height;
+
+        @Override
+        public String toString() {
+            return "HitBox{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    ", width=" + width +
+                    ", height=" + height +
+                    '}';
+        }
     }
 
     private static class Statistics {
-        private static class HitBox {
-            int x;
-            int y;
-            int width;
-            int height;
-
-            @Override
-            public String toString() {
-                return "HitBox{" +
-                        "x=" + x +
-                        ", y=" + y +
-                        ", width=" + width +
-                        ", height=" + height +
-                        '}';
-            }
-        }
-
         Element type;
         int damage;
         int damageUltimate;
@@ -1228,7 +1261,15 @@ public class MenuController {
         }
     }
 
-    private static <T> T getFromJson(String jsonPath, Type type) throws IOException, URISyntaxException {
+    public static class MapData {
+        Element element;
+        Vec2 gravity;
+        HitBox bounds;
+        List<Vec2> startPosition;
+        List<Events> events;
+    }
+
+    public static <T> T getFromJson(String jsonPath, Type type) throws IOException, URISyntaxException {
         var path = Path.of(Objects.requireNonNull(MenuController.class.getResource(jsonPath)).toURI());
         try (var reader = Files.newBufferedReader(path)) {
             var gson = new Gson();

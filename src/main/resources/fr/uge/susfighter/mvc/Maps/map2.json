@@ -1,0 +1,24 @@
+{
+  "element": "WIND",
+  "gravity": {
+    "x": 0,
+    "y": 1.0
+  },
+  "bounds": {
+    "x": 0,
+    "y": -100,
+    "width": 100,
+    "height": 195
+  },
+  "startPosition": [
+    {
+      "x": 30,
+      "y": 75
+    },
+    {
+      "x": 70,
+      "y": 75
+    }
+  ],
+  "events": []
+}

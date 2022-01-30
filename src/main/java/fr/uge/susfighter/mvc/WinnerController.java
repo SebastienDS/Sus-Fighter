@@ -1,5 +1,6 @@
 package fr.uge.susfighter.mvc;
 
+import com.google.gson.reflect.TypeToken;
 import fr.uge.susfighter.object.Bot;
 import fr.uge.susfighter.object.Fighter;
 import fr.uge.susfighter.object.Player;
@@ -18,6 +19,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import fr.uge.susfighter.mvc.ImageManager.ImageKey;
+
+import static fr.uge.susfighter.mvc.MenuController.getFromJson;
 
 public class WinnerController {
 
@@ -84,20 +87,27 @@ public class WinnerController {
     }
 
     @FXML
-    void retry() throws IOException {
+    void retry() throws IOException, URISyntaxException {
         var duel = DuelManager.getDuel();
         if(duel.getStep() == -1) startPvP(duel);
         else startPvBot(duel);
 
     }
 
-    private void startPvBot(Duel duel) throws IOException {
-        var x = StageManager.getWidth() / 3;
-        var y = StageManager.getHeight() / 3;
+    private void startPvBot(Duel duel) throws IOException, URISyntaxException {
+        MenuController.MapData mapData = getFromJson("Maps/" + duel.getMap().name() + ".json", new TypeToken<MenuController.MapData>(){}.getType());
+
+        var posPlayer1 = mapData.startPosition.get(0);
+        var posPlayer2 = mapData.startPosition.get(1);
+
+        var x = (int)(StageManager.getWidth() * posPlayer1.getX() / 100.0);
+        var y = (int)(StageManager.getHeight() * posPlayer1.getY() / 100.0);
         var p1 = new Player((Player)duel.getPlayer(0), x, y, false, 1);
         var map = duel.getMap();
-        x *= StageManager.getWidth();
-        y *= StageManager.getHeight();
+
+        x = (int)(StageManager.getWidth() * posPlayer2.getX() / 100.0);
+        y = (int)(StageManager.getHeight() * posPlayer2.getY() / 100.0);
+
         var IA = new Bot((Bot)duel.getPlayer(1), p1, x, y);
         DuelManager.setDuel(new Duel(List.of(p1, IA), map, Optional.empty(), 99, duel.getLevel(), duel.getStep()));
         StageManager.setScene(StageManager.StageEnum.GAME);
