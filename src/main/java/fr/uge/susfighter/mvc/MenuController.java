@@ -773,6 +773,7 @@ public class MenuController {
         campaignMenuVisible(false);
         var buttonID = ((Button)(event.getSource())).getId();
         stepChosen = Integer.parseInt(buttonID.substring(buttonID.length() - 1)) -1;
+        white1.setDisable(false);
     }
 
     @FXML
@@ -976,10 +977,11 @@ public class MenuController {
             campaignMenuVisible(false);
             buttonsMenuVisible(true);
         }
-        if (menu == Menu.CAMPAIGN_PLAYER){
+        if (menu == Menu.CAMPAIGN_PLAYER) {
             player1MenuVisible(false);
             campaignMenuVisible(true);
             reinitializeCharacter();
+            menu = Menu.CAMPAIGN;
         }
     }
 
