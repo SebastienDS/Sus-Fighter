@@ -419,7 +419,7 @@ public class MenuController {
     }
 
     private void placeButton(Button button, double x, double y, int step) {
-        if(Save.getCampaignLevel() == 0 && Save.getCampaignStep() < step){
+        if(!(Save.getCampaignStep() >= step || Save.getCampaignLevel() > 0)){
             button.setDisable(true);
             button.setOpacity(0.4);
         }
@@ -804,10 +804,7 @@ public class MenuController {
     private void initDataCampaign() throws IOException, URISyntaxException {
         List<Step> story = getFromJson("Story/story" + levelChosen + ".json", new TypeToken<List<Step>>(){}.getType());
         var step = story.get(stepChosen);
-
         nameSelect2 = step.enemy.name + "20";
-        // TODO: Init player with his size ...
-
         var p1 = initPlayer(nameSelect1, StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
                 Command.getDefaultP1(), select1, 1, false, getDirectory(select1));
         var p2 = initBot(nameSelect2, 2 * StageManager.getWidth() / 3, 2 * StageManager.getHeight() / 3,
@@ -816,7 +813,7 @@ public class MenuController {
 
         var map = new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
                 new Rectangle(0, -1000, StageManager.getWidth(), 1000 + StageManager.getHeight() * 0.95));
-        var duel = new Duel(players, map, Optional.empty(), 99, Save.getCampaignLevel(), Save.getCampaignStep());
+        var duel = new Duel(players, map, Optional.empty(), 99, levelChosen, stepChosen);
         DuelManager.setDuel(duel);
         ImageManager.loadImage(ImageKey.FIELD, "images/map/" + step.map + ".jpg");
     }
@@ -894,7 +891,6 @@ public class MenuController {
 
     private static void manageUnlockCharacter(String nameSelect, Button confirmPlayer) {
         var character = nameSelect.substring(0, nameSelect.length() - 2);
-
         confirmPlayer.setDisable(!Save.isCharacterUnlock(character));
     }
 
@@ -1141,6 +1137,28 @@ public class MenuController {
         var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
         return new Bot(name, new Rectangle(x, y, image.getWidth(), image.getHeight()), hitBox, data.type,
                 stat, numPlayer, isFlipped, type, enemy);
+    }
+
+    public static Bot initBot(int level, int step, Player player) throws IOException, URISyntaxException {
+        List<Step> story = getFromJson("Story/story" + level + ".json", new TypeToken<List<Step>>(){}.getType());
+        var name = story.get(step).enemy.name;
+        Statistics data = getFromJson("Statistics/" + name + ".json", new TypeToken<Statistics>(){}.getType());
+        var stat = new Statistic(data.hp, 0, data.energyPerAttack, data.maxEnergy, data.damage, data.damageUltimate,
+                0, 0, data.speed, data.attackSpeed);
+        var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
+        var path = "images/character/" + story.get(step).getPath() + "/IDLE.png";
+        var image = ImageManager.loadImage(Objects.requireNonNull(MenuController.class.getResource(path)).toString());
+        var x = 2 * StageManager.getWidth() / 3;
+        var y = 2 * StageManager.getHeight() / 3;
+        return new Bot(name, new Rectangle(x, y, image.getWidth(), image.getHeight()), hitBox, data.type,
+                stat, 2, true, story.get(step).getDirectory(), player);
+    }
+
+    public static Field getMap(int level, int step) throws IOException, URISyntaxException {
+        List<Step> story = getFromJson("Story/story" + level + ".json", new TypeToken<List<Step>>(){}.getType());
+        ImageManager.loadImage(ImageKey.FIELD, "images/map/" + story.get(step).map + ".jpg");
+        return new Field(Element.WATER, new ArrayList<>(), new Vec2(0, 1),
+                new Rectangle(0, -1000, StageManager.getWidth(), 1000 + StageManager.getHeight() * 0.95));
     }
 
     private static class Statistics {

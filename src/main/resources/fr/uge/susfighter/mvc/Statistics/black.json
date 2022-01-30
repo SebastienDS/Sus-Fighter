@@ -1,6 +1,6 @@
 {
   "type": "DARK",
-  "damage": 25,
+  "damage": 20005,
   "damageUltimate": 100,
   "hp": 1000,
   "speed": 10,

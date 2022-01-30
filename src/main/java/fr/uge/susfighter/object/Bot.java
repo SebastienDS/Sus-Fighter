@@ -30,6 +30,13 @@ public class Bot implements Fighter {
         random = new Random();
     }
 
+    public Bot(Bot bot, Player enemy, int x, int y) {
+        this.player = new Player(bot.player, x , y, true, 2);
+        this.enemy = enemy;
+        random = new Random();
+    }
+
+
     @Override
     public void keyPressed(KeyCode code) {}
 

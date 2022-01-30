@@ -64,6 +64,22 @@ public class Player implements Fighter {
         maxJumpCount = 2;
     }
 
+    public Player(Player player, int x, int y, boolean isFlipped, int numPlayer){
+        this.name = player.name;
+        this.body = player.body;
+        body.setX(x);
+        body.setY(y);
+        this.hitBox = player.hitBox;
+        this.element = player.element;
+        this.command = player.command;
+        this.statistic = player.statistic;
+        statistic.reset();
+        this.numPlayer = numPlayer;
+        this.isFlipped = isFlipped;
+        this.type = player.type;
+        maxJumpCount = player.maxJumpCount;
+    }
+
     @Override
     public void keyPressed(KeyCode key) {
         if (key == command.get(Key.LEFT)) moveLeft();

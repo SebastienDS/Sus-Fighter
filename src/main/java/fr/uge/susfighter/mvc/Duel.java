@@ -77,4 +77,8 @@ public class Duel {
     public int getStep() {
         return step;
     }
+
+    public Field getMap() {
+        return map;
+    }
 }

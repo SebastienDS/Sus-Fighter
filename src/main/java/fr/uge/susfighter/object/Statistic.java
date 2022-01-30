@@ -81,4 +81,9 @@ public class Statistic {
     public int speed() {
         return speed;
     }
+
+    public void reset() {
+        hp = maxHp;
+        energy = 0;
+    }
 }
