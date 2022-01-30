@@ -18,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -366,6 +367,14 @@ public class MenuController {
         initCharacterMenu();
         initCredits();
         initCampaign();
+        initializeSound();
+    }
+
+    private void initializeSound() {
+        MediaPlayerManager.setSound(new Media(
+                Objects.requireNonNull(this.getClass().getResource("sounds/menuMusic.mp3")).toExternalForm()
+        ));
+        MediaPlayerManager.setRepeat(true);
     }
 
     private void initCampaign() throws IOException, URISyntaxException {
@@ -1150,7 +1159,7 @@ public class MenuController {
                 0, 0, data.speed, data.attackSpeed);
         var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
         return new Player(name, new Rectangle(x, y, image.getWidth(), image.getHeight()), hitBox, data.type,
-                stat, command, numPlayer, isFlipped, type);
+                stat, command, numPlayer, isFlipped, type, data.maxJumpCount);
     }
 
     private Bot initBot(String nameSelect, int x, int y, VBox select,
@@ -1162,7 +1171,7 @@ public class MenuController {
                 0, 0, data.speed, data.attackSpeed);
         var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
         return new Bot(name, new Rectangle(x, y, image.getWidth(), image.getHeight()), hitBox, data.type,
-                stat, numPlayer, isFlipped, type, enemy);
+                stat, numPlayer, isFlipped, type, enemy, data.maxJumpCount);
     }
 
     public static Bot initBot(int level, int step, Player player) throws IOException, URISyntaxException {
@@ -1177,7 +1186,7 @@ public class MenuController {
         var x = 2 * StageManager.getWidth() / 3;
         var y = 2 * StageManager.getHeight() / 3;
         return new Bot(name, new Rectangle(x, y, image.getWidth(), image.getHeight()), hitBox, data.type,
-                stat, 2, true, story.get(step).getDirectory(), player);
+                stat, 2, true, story.get(step).getDirectory(), player, data.maxJumpCount);
     }
 
     public static Field getMap(int level, int step) throws IOException, URISyntaxException {
@@ -1221,6 +1230,7 @@ public class MenuController {
         int energyPerAttack;
         double attackSpeed;
         HitBox hitBox;
+        int maxJumpCount;
 
         @Override
         public String toString() {
@@ -1234,6 +1244,7 @@ public class MenuController {
                     ", energyPerAttack=" + energyPerAttack +
                     ", attackSpeed=" + attackSpeed +
                     ", hitBox=" + hitBox +
+                    ", maxJumpCount=" + maxJumpCount +
                     '}';
         }
     }

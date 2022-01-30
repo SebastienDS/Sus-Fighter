@@ -12,5 +12,6 @@
     "y": 15,
     "width": 106,
     "height": 182
-  }
+  },
+  "maxJumpCount": 2
 }

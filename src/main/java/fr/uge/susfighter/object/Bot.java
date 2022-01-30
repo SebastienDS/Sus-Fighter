@@ -24,8 +24,8 @@ public class Bot implements Fighter {
 
 
     public Bot(String name, Rectangle body, Rectangle hitBox, Element element, Statistic stat,
-                int numPlayer, boolean isFlipped, String type, Player enemy) {
-        this.player = new Player(name, body, hitBox, element, stat, new Command(), numPlayer, isFlipped, type);
+                int numPlayer, boolean isFlipped, String type, Player enemy, int maxJumpCount) {
+        this.player = new Player(name, body, hitBox, element, stat, new Command(), numPlayer, isFlipped, type, maxJumpCount);
         this.enemy = Objects.requireNonNull(enemy);
         random = new Random();
     }

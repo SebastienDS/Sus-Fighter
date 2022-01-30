@@ -51,7 +51,7 @@ public class Player implements Fighter {
 
 
     public Player(String name, Rectangle body, Rectangle hitBox, Element element, Statistic stat,
-                  Command command, int numPlayer, boolean isFlipped, String type) {
+                  Command command, int numPlayer, boolean isFlipped, String type, int maxJumpCount) {
         this.name = Objects.requireNonNull(name);
         this.body = Objects.requireNonNull(body);
         this.hitBox = Objects.requireNonNull(hitBox);
@@ -61,7 +61,7 @@ public class Player implements Fighter {
         this.isFlipped = isFlipped;
         this.numPlayer = numPlayer;
         this.type = type;
-        maxJumpCount = 2;
+        this.maxJumpCount = maxJumpCount;
     }
 
     public Player(Player player, int x, int y, boolean isFlipped, int numPlayer){

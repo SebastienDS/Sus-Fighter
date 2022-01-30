@@ -3,7 +3,7 @@
   "damage": 40,
   "damageUltimate": 500,
   "hp": 500,
-  "speed": 10,
+  "speed": 15,
   "maxEnergy": 15,
   "energyPerAttack": 1,
   "attackSpeed": 2,
@@ -12,5 +12,6 @@
     "y": 42,
     "width": 90,
     "height": 129
-  }
+  },
+  "maxJumpCount": 2
 }
