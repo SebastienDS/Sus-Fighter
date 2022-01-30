@@ -114,13 +114,20 @@ public class WinnerController {
         GameController.startGame();
     }
 
-    private void startPvP(Duel duel) throws IOException {
-        var x = StageManager.getWidth() / 3;
-        var y = StageManager.getHeight() / 3;
+    private void startPvP(Duel duel) throws IOException, URISyntaxException {
+        MenuController.MapData mapData = getFromJson("Maps/" + duel.getMap().name() + ".json", new TypeToken<MenuController.MapData>(){}.getType());
+
+        var posPlayer1 = mapData.startPosition.get(0);
+        var posPlayer2 = mapData.startPosition.get(1);
+
+        var x = (int)(StageManager.getWidth() * posPlayer1.getX() / 100.0);
+        var y = (int)(StageManager.getHeight() * posPlayer1.getY() / 100.0);
         var p1 = new Player((Player)duel.getPlayer(0), x, y, false, 1);
         var map = duel.getMap();
-        x *= StageManager.getWidth();
-        y *= StageManager.getHeight();
+
+        x = (int)(StageManager.getWidth() * posPlayer2.getX() / 100.0);
+        y = (int)(StageManager.getHeight() * posPlayer2.getY() / 100.0);
+
         var p2 = new Player((Player)duel.getPlayer(1), x, y, true, 2);
         DuelManager.setDuel(new Duel(List.of(p1, p2), map, Optional.empty(), 99, duel.getLevel(), duel.getStep()));
         StageManager.setScene(StageManager.StageEnum.GAME);
@@ -132,11 +139,19 @@ public class WinnerController {
         var duel = DuelManager.getDuel();
         var step = (duel.getStep() + 1) % 3;
         var level = (step == 0)? duel.getLevel() + 1: duel.getLevel();
-        var x = StageManager.getWidth() / 3;
-        var y = StageManager.getHeight() / 3;
+
+        MenuController.MapData mapData = getFromJson("Maps/" + duel.getMap().name() + ".json", new TypeToken<MenuController.MapData>(){}.getType());
+        var posPlayer1 = mapData.startPosition.get(0);
+        var posPlayer2 = mapData.startPosition.get(1);
+
+        var x = (int)(StageManager.getWidth() * posPlayer1.getX() / 100.0);
+        var y = (int)(StageManager.getHeight() * posPlayer1.getY() / 100.0);
         var p1 = new Player((Player)duel.getPlayer(0), x, y, false, 1);
+
+        x = (int)(StageManager.getWidth() * posPlayer2.getX() / 100.0);
+        y = (int)(StageManager.getHeight() * posPlayer2.getY() / 100.0);
         var map = MenuController.getMap(level, step);
-        var IA = MenuController.initBot(level, step, p1);
+        var IA = MenuController.initBot(level, step, p1, x, y);
         DuelManager.setDuel(new Duel(List.of(p1, IA), map, Optional.empty(), 99, level, step));
         StageManager.setScene(StageManager.StageEnum.GAME);
         GameController.startGame();
