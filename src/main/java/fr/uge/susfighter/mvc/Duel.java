@@ -1,6 +1,7 @@
 package fr.uge.susfighter.mvc;
 
 import fr.uge.susfighter.object.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class Duel {
     private final List<WeaponCase> weapons;
     private long startTime;
     private long endTime;
+    private boolean pause;
     private final int level;
     private final int step;
 
@@ -40,6 +42,7 @@ public class Duel {
     }
 
     public void update() {
+        if(pause) return;
         var player1 = players.get(0);
         var player2 = players.get(1);
 
@@ -51,10 +54,12 @@ public class Duel {
     }
 
     public void pressed(KeyEvent keyEvent){
+        if(pause) return;
         players.forEach(player -> player.keyPressed(keyEvent.getCode()));
     }
 
     public void release(KeyEvent keyEvent) {
+        if(pause) return;
         players.forEach(p -> p.keyReleased(keyEvent.getCode()));
     }
 
@@ -80,5 +85,18 @@ public class Duel {
 
     public Field getMap() {
         return map;
+    }
+
+    public boolean isPaused() {
+        return pause;
+    }
+
+    public void swapPause() {
+        pause = !pause;
+    }
+
+    public void manageTime(long startTime, long endTime) {
+        if(pause) return;
+        this.startTime += endTime - startTime;
     }
 }

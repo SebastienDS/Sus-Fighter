@@ -813,6 +813,10 @@ public class MenuController {
                 )
         );
         var duel = new Duel(players, map, Optional.empty(), 99);
+        MediaPlayerManager.setSound(new Media(
+                Objects.requireNonNull(this.getClass().getResource("sounds/" + mapData.sound)).toExternalForm()
+        ));
+        MediaPlayerManager.setRepeat(true);
         DuelManager.setDuel(duel);
         ImageManager.loadImage(ImageKey.FIELD, getNameMap());
     }
@@ -844,6 +848,10 @@ public class MenuController {
                 )
         );
         var duel = new Duel(players, map, Optional.empty(), 99, levelChosen, stepChosen);
+        MediaPlayerManager.setSound(new Media(
+                Objects.requireNonNull(this.getClass().getResource("sounds/" + mapData.sound)).toExternalForm()
+        ));
+        MediaPlayerManager.setRepeat(true);
         DuelManager.setDuel(duel);
         ImageManager.loadImage(ImageKey.FIELD, "images/map/" + step.map + ".jpg");
     }
@@ -1276,6 +1284,7 @@ public class MenuController {
         HitBox bounds;
         List<Vec2> startPosition;
         List<Events> events;
+        String sound;
     }
 
     public static <T> T getFromJson(String jsonPath, Type type) throws IOException, URISyntaxException {

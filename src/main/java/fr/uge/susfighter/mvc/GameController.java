@@ -10,18 +10,23 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class GameController {
@@ -91,10 +96,18 @@ public class GameController {
     @FXML
     private ImageView ultimate2;
 
-    private static double SPACING_BAR = 50;
-    private static double outline = 4;
+    @FXML
+    private VBox menu;
+
+    @FXML
+    private Button musicLabel;
+
+    private static final double SPACING_BAR = 50;
+    private static final double outline = 4;
 
     private Timeline timeline;
+
+    private static long START_ESCAPE;
 
     @FXML
     public void initialize() {
@@ -102,6 +115,32 @@ public class GameController {
         setPlayers();
         initTimeline();
         initTime();
+        initMenu();
+    }
+
+    @FXML
+    private void resumeGame(){
+        resume(DuelManager.getDuel());
+    }
+
+    @FXML
+    private void leaveGame() throws IOException {
+        StageManager.setScene(StageManager.StageEnum.MENU);
+        MediaPlayerManager.setSound(new Media(
+                Objects.requireNonNull(this.getClass().getResource("sounds/menuMusic.mp3")).toExternalForm()
+        ));
+    }
+
+    @FXML
+    private void musicVolume(){
+        MediaPlayerManager.swapVolume();
+        var mode = (MediaPlayerManager.isMuted())? "OFF": "ON";
+        musicLabel.setText("MUSIC: " + mode);
+    }
+
+    private void initMenu() {
+        AnchorPane.setLeftAnchor(menu, StageManager.getWidth() /2. - menu.getPrefWidth() / 2);
+        AnchorPane.setTopAnchor(menu, StageManager.getStage().getHeight() /2. - menu.getPrefHeight() / 2);
     }
 
     private void initTime() {
@@ -211,6 +250,11 @@ public class GameController {
 
     private boolean update() {
         var duel = DuelManager.getDuel();
+        if(duel.isPaused()){
+            menu.setVisible(true);
+            return false;
+        }
+        menu.setVisible(false);
         time.setText(String.valueOf(duel.timeLeft()));
         duel.update();
         var p = duel.getPlayer(0);
@@ -295,7 +339,18 @@ public class GameController {
 
     private static void keyPressedHandler(KeyEvent keyEvent) {
         var duel = DuelManager.getDuel();
+        var haveChanged = false;
+        if(keyEvent.getCode() == KeyCode.ESCAPE) haveChanged = true;
+        if(haveChanged){
+            resume(duel);
+        }
         duel.pressed(keyEvent);
+    }
+
+    private static void resume(Duel duel) {
+        duel.swapPause();
+        duel.manageTime(START_ESCAPE, System.currentTimeMillis());
+        START_ESCAPE = System.currentTimeMillis();
     }
 
     private static void release(KeyEvent keyEvent) {

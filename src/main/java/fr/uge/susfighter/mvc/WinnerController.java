@@ -1,15 +1,14 @@
 package fr.uge.susfighter.mvc;
 
 import com.google.gson.reflect.TypeToken;
+import fr.uge.susfighter.mvc.ImageManager.ImageKey;
 import fr.uge.susfighter.object.Bot;
-import fr.uge.susfighter.object.Fighter;
 import fr.uge.susfighter.object.Player;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
 import javafx.scene.text.Font;
 
 import java.io.IOException;
@@ -17,8 +16,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import fr.uge.susfighter.mvc.ImageManager.ImageKey;
 
 import static fr.uge.susfighter.mvc.MenuController.getFromJson;
 
@@ -47,12 +44,16 @@ public class WinnerController {
         AnchorPane.setTopAnchor(player, 2 * StageManager.getHeight() / 3 - winner.getHeight() / 2);
         AnchorPane.setLeftAnchor(player, StageManager.getWidth() / 2 - winner.getWidth() / 2);
         initButtons(duel.getWinner().getNumPlayer(), duel.getStep());
-        initBackground();
+        initBackgroundAndSound();
     }
 
-    private void initBackground() {
+    private void initBackgroundAndSound() {
         var name = "defeat.png";
-        if(DuelManager.getDuel().getWinner().getNumPlayer() == 1 || DuelManager.getDuel().getStep() == -1) name = "winner.png";
+        var sound = "defeat.mp3";
+        if(DuelManager.getDuel().getWinner().getNumPlayer() == 1 || DuelManager.getDuel().getStep() == -1){
+            name = "winner.png";
+            sound = "winner.mp3";
+        }
         var img = ImageManager.loadImage(
                 Objects.requireNonNull(this.getClass().getResource("images/background/" + name)).toExternalForm()
         );
@@ -62,6 +63,8 @@ public class WinnerController {
                 BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT);
         var bGround = new Background(bImg);
+        MediaPlayerManager.setSound(new Media(
+                Objects.requireNonNull(this.getClass().getResource("sounds/" + sound)).toExternalForm()), false);
         pane.setBackground(bGround);
     }
 
@@ -109,6 +112,9 @@ public class WinnerController {
         y = (int)(StageManager.getHeight() * posPlayer2.getY() / 100.0);
 
         var IA = new Bot((Bot)duel.getPlayer(1), p1, x, y);
+        MediaPlayerManager.setSound(new Media(
+                Objects.requireNonNull(this.getClass().getResource("sounds/" + mapData.sound)).toExternalForm()
+        ));
         DuelManager.setDuel(new Duel(List.of(p1, IA), map, Optional.empty(), 99, duel.getLevel(), duel.getStep()));
         StageManager.setScene(StageManager.StageEnum.GAME);
         GameController.startGame();
@@ -129,6 +135,9 @@ public class WinnerController {
         y = (int)(StageManager.getHeight() * posPlayer2.getY() / 100.0);
 
         var p2 = new Player((Player)duel.getPlayer(1), x, y, true, 2);
+        MediaPlayerManager.setSound(new Media(
+                Objects.requireNonNull(this.getClass().getResource("sounds/" + mapData.sound)).toExternalForm()
+        ));
         DuelManager.setDuel(new Duel(List.of(p1, p2), map, Optional.empty(), 99, duel.getLevel(), duel.getStep()));
         StageManager.setScene(StageManager.StageEnum.GAME);
         GameController.startGame();
@@ -151,6 +160,9 @@ public class WinnerController {
         x = (int)(StageManager.getWidth() * posPlayer2.getX() / 100.0);
         y = (int)(StageManager.getHeight() * posPlayer2.getY() / 100.0);
         var map = MenuController.getMap(level, step);
+        MediaPlayerManager.setSound(new Media(
+                Objects.requireNonNull(this.getClass().getResource("sounds/" + mapData.sound)).toExternalForm()
+        ));
         var IA = MenuController.initBot(level, step, p1, x, y);
         DuelManager.setDuel(new Duel(List.of(p1, IA), map, Optional.empty(), 99, level, step));
         StageManager.setScene(StageManager.StageEnum.GAME);
