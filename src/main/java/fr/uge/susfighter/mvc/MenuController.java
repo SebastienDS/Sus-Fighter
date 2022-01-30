@@ -1165,7 +1165,7 @@ public class MenuController {
                 stat, numPlayer, isFlipped, type, enemy);
     }
 
-    public static Bot initBot(int level, int step, Player player) throws IOException, URISyntaxException {
+    public static Bot initBot(int level, int step, Player player, int x, int y) throws IOException, URISyntaxException {
         List<Step> story = getFromJson("Story/story" + level + ".json", new TypeToken<List<Step>>(){}.getType());
         var name = story.get(step).enemy.name;
         Statistics data = getFromJson("Statistics/" + name + ".json", new TypeToken<Statistics>(){}.getType());
@@ -1174,8 +1174,6 @@ public class MenuController {
         var hitBox = new Rectangle(data.hitBox.x, data.hitBox.y, data.hitBox.width, data.hitBox.height);
         var path = "images/character/" + story.get(step).getPath() + "/IDLE.png";
         var image = ImageManager.loadImage(Objects.requireNonNull(MenuController.class.getResource(path)).toString());
-        var x = 2 * StageManager.getWidth() / 3;
-        var y = 2 * StageManager.getHeight() / 3;
         return new Bot(name, new Rectangle(x, y, image.getWidth(), image.getHeight()), hitBox, data.type,
                 stat, 2, true, story.get(step).getDirectory(), player);
     }
