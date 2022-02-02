@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -28,7 +29,7 @@ public class Save {
                 var path = Path.of(Objects.requireNonNull(GameController.class.getResource("images/character/default")).toURI());
                 Files.walk(path, 2)
                         .filter(Files::isDirectory)
-                        .sorted()
+                        .sorted(Comparator.comparing(f -> f.getFileName().toString()))
                         .forEach(f -> characterUnlock.add(f.getFileName().toString()));
             }
             catch (IOException | URISyntaxException e) {
