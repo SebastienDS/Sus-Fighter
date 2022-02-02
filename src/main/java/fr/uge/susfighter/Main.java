@@ -23,6 +23,7 @@ public class Main extends Application {
         var screen = Screen.getPrimary().getBounds();
         StageManager.setStage(stage, (int)(screen.getWidth() * 0.8), (int)(screen.getHeight() * 0.8));
         stage.setTitle("Sus-Fighter");
+        stage.setResizable(false);
         StageManager.setScene(StageManager.StageEnum.MENU);
         stage.show();
     }
