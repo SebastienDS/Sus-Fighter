@@ -80,6 +80,10 @@ public class Player implements Fighter {
         maxJumpCount = player.maxJumpCount;
     }
 
+    /**
+     * Start the action of a key pressed
+     * @param key key
+     */
     @Override
     public void keyPressed(KeyCode key) {
         if (key == command.get(Key.LEFT)) moveLeft();
@@ -91,6 +95,10 @@ public class Player implements Fighter {
         else if (key == command.get(Key.BLOCK) && action == Action.IDLE) block();
     }
 
+    /**
+     * End the action of a key pressed
+     * @param key key
+     */
     @Override
     public void keyReleased(KeyCode key) {
         if ((key == command.get(Key.LEFT) || key == command.get(Key.RIGHT)) && key == command.get(xMovement)) {
@@ -100,6 +108,11 @@ public class Player implements Fighter {
         }
     }
 
+    /**
+     * Update player informations
+     * @param gravity gravity of the map that must be applied to the player
+     * @param bounds bounds of the map to restrict the player to a specific area
+     */
     @Override
     public void update(Vec2 gravity, Rectangle bounds) {
         projectionVelocity.setY(convergeTo0(projectionVelocity.getY(), gravity.getY()));
@@ -113,22 +126,38 @@ public class Player implements Fighter {
         manageUltimate();
     }
 
+    /**
+     * Apply the interaction between the player and another player
+     * @param player2 other player
+     */
     @Override
     public void interact(Fighter player2) {
         checkUltimate(player2);
         checkBasicAttack(player2);
     }
 
+    /**
+     * Check if the player is dead
+     * @return true if the player is dead
+     */
     @Override
     public boolean isDead() {
         return statistic.isDead();
     }
 
+    /**
+     * Get the body of the player
+     * @return body
+     */
     @Override
     public Rectangle getBody() {
         return body;
     }
 
+    /**
+     * Get the HitBox of the player
+     * @return hitBox
+     */
     @Override
     public Rectangle getHitBox() {
         var hitBoxX = isFlipped ? body.getWidth() - (hitBox.getWidth() + hitBox.getX()) : hitBox.getX();
@@ -140,6 +169,10 @@ public class Player implements Fighter {
         );
     }
 
+    /**
+     * Get the HitBox for the blocking fist
+     * @return Rectangle
+     */
     @Override
     public Rectangle getBlockHitBox() {
         var flip = isFlipped ? -1: 1;
@@ -156,96 +189,168 @@ public class Player implements Fighter {
         return rect;
     }
 
+    /**
+     * Get the Hitbox for the attacking fist
+     * @return Rectangle
+     */
     @Override
     public Rectangle getAttack() {
         return getAttackHitBox();
     }
 
+    /**
+     * Get the HitBox for the ultimate attack
+     * @return Rectangle
+     */
     @Override
     public Rectangle getUltimate() {
         return ultimate;
     }
 
+    /**
+     * Get the statistic of the player
+     * @return statistic
+     */
     @Override
     public Statistic getStatistic() {
         return statistic;
     }
 
+    /**
+     * Get the element of the player
+     * @return Element
+     */
     @Override
     public Element getElement() {
         return element;
     }
 
+    /**
+     * Project the player with a given force
+     * @param velocity projection force
+     */
     @Override
     public void project(Vec2 velocity) {
         projectionVelocity.addX(velocity.getX());
         projectionVelocity.setY(velocity.getY());
     }
 
+    /**
+     * Get the percentage HP left
+     * @return percentage HP left
+     */
     @Override
     public double percentageHpLeft() {
         return statistic.percentageHpLeft();
     }
 
+    /**
+     * Get the percentage Energy left
+     * @return percentage Energy left
+     */
     @Override
     public double percentageEnergy() {
         return statistic.percentageEnergy();
     }
 
+    /**
+     * Get the number of the player
+     * @return number of the player
+     */
     @Override
     public int getNumPlayer() {
         return numPlayer;
     }
 
+    /**
+     * Check if the player is flipped
+     * @return true if the player is turned toward the left
+     */
     @Override
     public boolean isFlipped() {
         return isFlipped;
     }
 
+    /**
+     * Get the name of the player
+     * @return name
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     * Check if the player is Attacking
+     * @return true if the player is attacking
+     */
     @Override
     public boolean isAttacking() {
         return action == Action.ATTACK;
     }
 
+    /**
+     * Check if the player is Blocking
+     * @return true if the player is blocking
+     */
     @Override
     public boolean isBlocking() {
         return action == Action.BLOCK;
     }
 
+    /**
+     * Get the type of the player
+     * @return type
+     */
     @Override
     public String getType() {
         return type;
     }
 
+    /**
+     * Check if the player can use his ultimate
+     * @return true if the player can use his ultimate
+     */
     public boolean canUltimate() {
         return statistic.isFullEnergy();
     }
 
+    /**
+     * Check if the player can jump
+     * @return true if the player can jump
+     */
     public boolean canJump() {
         return isGrounded || jumpCount < maxJumpCount;
     }
 
+    /**
+     * Move the player to the left
+     */
     public void moveLeft() {
         velocity.setX(-statistic.speed());
         xMovement = Key.LEFT;
         isFlipped = true;
     }
 
+    /**
+     * Move the player to the right
+     */
     public void moveRight() {
         velocity.setX(statistic.speed());
         xMovement = Key.RIGHT;
         isFlipped = false;
     }
 
+    /**
+     * Stop the player movement
+     */
     public void stopMoving() {
         velocity.setX(0);
     }
 
+    /**
+     * Jump player
+     */
     public void jump() {
         if (!canJump()) throw new IllegalStateException("Can't jump");
 
@@ -254,6 +359,9 @@ public class Player implements Fighter {
         isGrounded = false;
     }
 
+    /**
+     * Move down the player faster
+     */
     public void down() {
         if (jumpCount <= 0) throw new IllegalStateException("Can't move down");
 
@@ -261,6 +369,9 @@ public class Player implements Fighter {
         else velocity.addY(50);
     }
 
+    /**
+     * Apply the attack action
+     */
     public void attack() {
         if (action != Action.IDLE) throw new IllegalStateException("Can't attack while another action is active");
 
@@ -275,6 +386,9 @@ public class Player implements Fighter {
         }
     }
 
+    /**
+     * Consume the player's energy and perform an ultimate attack
+     */
     public void ultimateAttack() {
         if (!statistic.isFullEnergy()) throw new IllegalStateException("Can't ultimate, energy is not full");
 
@@ -290,16 +404,25 @@ public class Player implements Fighter {
         statistic.consumeEnergy();
     }
 
+    /**
+     * Apply the blocking action
+     */
     public void block() {
         if (action != Action.IDLE) throw new IllegalStateException("Can't block while another action is active");
         action = Action.BLOCK;
     }
 
+    /**
+     * Stop the blocking action
+     */
     public void stopBlocking() {
         if (action != Action.BLOCK) throw new IllegalStateException("Can't stop blocking if player is not blocking");
         action = Action.IDLE;
     }
 
+    /**
+     * Update the attack
+     */
     private void manageAttack() {
         if (action == Action.ATTACK && attack.getX() > ATTACK_DISTANCE) {
             if (!hasAlreadyHit || combo == 2) combo = 0;
@@ -315,10 +438,17 @@ public class Player implements Fighter {
         }
     }
 
+    /**
+     * Update the ultimate
+     */
     private void manageUltimate() {
         ultimate.setX(ultimate.getX() + ultimateVelocity.getX());
     }
 
+    /**
+     * Update the player position
+     * @param bounds bounds of the resticted area where the player can move
+     */
     private void managePosition(Rectangle bounds) {
         body.setX(body.getX() + velocity.getX() + projectionVelocity.getX());
         body.setY(body.getY() + velocity.getY() + projectionVelocity.getY());
@@ -333,6 +463,10 @@ public class Player implements Fighter {
         if (body.getX() != lastPositionX) projectionVelocity.setX(0);
     }
 
+    /**
+     * Update the jump
+     * @param bounds bounds of the restricted area where the player can move
+     */
     private void manageJump(Rectangle bounds) {
         if (body.getY() + hitBox.getY() + hitBox.getHeight() >= bounds.getY() + bounds.getHeight()) {
             isGrounded = true;
@@ -343,6 +477,10 @@ public class Player implements Fighter {
         projectionVelocity.setX(convergeTo0(projectionVelocity.getX(), 0.3));
     }
 
+    /**
+     * Get the Attack HitBox
+     * @return Rectangle
+     */
     private Rectangle getAttackHitBox() {
         var flip = isFlipped ? -1: 1;
         var center = getPlayerCenter(attack);
@@ -357,6 +495,10 @@ public class Player implements Fighter {
         return box;
     }
 
+    /**
+     * Check if the ultimate hit the enemy and apply the damage
+     * @param player2 enemy
+     */
     private void checkUltimate(Fighter player2) {
         if (hasAlreadyHitUltimate) return;
 
@@ -365,6 +507,10 @@ public class Player implements Fighter {
         if (hasAlreadyHitUltimate) player2.getStatistic().loseHP(-(int)(statistic.damageUltimate() * element.getElementMultiplicator(player2.getElement())));
     }
 
+    /**
+     * Check if the basic attack hit the enemy and apply the damage
+     * @param player2 enemy
+     */
     private void checkBasicAttack(Fighter player2) {
         if (action != Action.ATTACK || hasAlreadyHit) return;
 
@@ -388,12 +534,23 @@ public class Player implements Fighter {
         }
     }
 
+    /**
+     * Apply the combo projection to the enemy if it is the last part of the combo
+     * @param flip flip
+     * @param player2 enemy
+     */
     private void applyCombo(int flip, Fighter player2) {
         if (combo >= 2) {
             player2.project(new Vec2(15 * flip, -30));
         }
     }
 
+    /**
+     * Converge the given value the 0 with a step of decrementValue
+     * @param value value
+     * @param decrementValue value
+     * @return converged value
+     */
     private static double convergeTo0(double value, double decrementValue) {
         if (value == 0) return 0;
 
@@ -401,6 +558,10 @@ public class Player implements Fighter {
         return Math.abs(tmp) <= 1 ? 0 : tmp;
     }
 
+    /**
+     * Get the specific attack of the combo
+     * @return Attack
+     */
     private Vec2 getComboAttack() {
         return switch (combo) {
             case 1 -> {
@@ -415,6 +576,11 @@ public class Player implements Fighter {
         };
     }
 
+    /**
+     * Get the center of the player
+     * @param attack attack
+     * @return Player center
+     */
     private Vec2 getPlayerCenter(Rectangle attack) {
         var box = getHitBox();
         return new Vec2(box.getX() + box.getWidth() / 2 - attack.getWidth() / 2,

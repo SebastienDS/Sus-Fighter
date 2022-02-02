@@ -17,26 +17,50 @@ public class Vec2 {
                 '}';
     }
 
+    /**
+     * Set the X value
+     * @param x value
+     */
     public void setX(double x) {
         this.x = x;
     }
 
+    /**
+     * Add the X value
+     * @param x value
+     */
     public void addX(double x) {
         this.x += x;
     }
 
+    /**
+     * Get the X value
+     * @return x value
+     */
     public double getX() {
         return x;
     }
 
+    /**
+     * Set the Y value
+     * @param y value
+     */
     public void setY(double y) {
         this.y = y;
     }
 
+    /**
+     * Add the Y value
+     * @param y value
+     */
     public void addY(double y) {
         this.y += y;
     }
 
+    /**
+     * Get the Y value
+     * @return y value
+     */
     public double getY() {
         return y;
     }

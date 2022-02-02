@@ -17,6 +17,11 @@ public enum Element {
         this.badAgainst = badAgainst;
     }
 
+    /**
+     * Get the bonus multiplicator against the given Element
+     * @param enemy enemy element
+     * @return the multiplicator of the element against the given enemy element
+     */
     public double getElementMultiplicator(Element enemy) {
         if (enemy == Element.valueOf(goodAgainst)) {
             return 1.25;

@@ -24,17 +24,32 @@ public class Command {
         keyCodes = new HashMap<>();
     }
 
+    /**
+     * Assign to a Key the specific KeyCode
+     * @param key key to bind
+     * @param code value of the key
+     * @return the instance to be able to chain the calls
+     */
     public Command addKeyCode(Key key, KeyCode code) {
         Objects.requireNonNull(key);
         keyCodes.put(key, code);
         return this;
     }
 
+    /**
+     * Get the KeyCode of a Key
+     * @param key key binded
+     * @return the keyCode value for the given key
+     */
     public KeyCode get(Key key) {
         Objects.requireNonNull(key);
         return keyCodes.get(key);
     }
 
+    /**
+     * Get the default keys for the player 1
+     * @return the default keys
+     */
     public static Command getDefaultP1(){
         var command = new Command();
         command.addKeyCode(Key.LEFT, KeyCode.Q)
@@ -47,6 +62,10 @@ public class Command {
         return command;
     }
 
+    /**
+     * Get the default keys for the player 2
+     * @return the default keys
+     */
     public static Command getDefaultP2(){
         var command = new Command();
         command.addKeyCode(Key.LEFT, KeyCode.LEFT)
