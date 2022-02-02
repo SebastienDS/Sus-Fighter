@@ -28,6 +28,7 @@ public class Save {
                 var path = Path.of(Objects.requireNonNull(GameController.class.getResource("images/character/default")).toURI());
                 Files.walk(path, 2)
                         .filter(Files::isDirectory)
+                        .sorted()
                         .forEach(f -> characterUnlock.add(f.getFileName().toString()));
             }
             catch (IOException | URISyntaxException e) {
