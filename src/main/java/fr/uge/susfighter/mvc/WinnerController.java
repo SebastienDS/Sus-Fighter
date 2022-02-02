@@ -58,10 +58,10 @@ public class WinnerController {
                 Objects.requireNonNull(this.getClass().getResource("images/background/" + name)).toExternalForm()
         );
         var bImg = new BackgroundImage(img,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.REPEAT,
+                BackgroundRepeat.REPEAT,
                 BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
+                new BackgroundSize(1.0, 1.0, true, true, false, false));
         var bGround = new Background(bImg);
         MediaPlayerManager.setSound(new Media(
                 Objects.requireNonNull(this.getClass().getResource("sounds/" + sound)).toExternalForm()), false);
