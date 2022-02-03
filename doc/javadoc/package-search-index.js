@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"fr.uge.susfighter","l":"fr.uge.susfighter"},{"m":"fr.uge.susfighter","l":"fr.uge.susfighter.mvc"},{"m":"fr.uge.susfighter","l":"fr.uge.susfighter.object"}];updateSearchResults();
